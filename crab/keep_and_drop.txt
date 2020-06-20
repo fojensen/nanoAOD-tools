@@ -1,0 +1,9 @@
+# this is a comment
+drop * # start with all
+keep Electron*
+keep Muon*
+keep Tau*
+keep Jet*
+keep MET*
+keep MuTauProducer*
+keep MuMuProducer*
