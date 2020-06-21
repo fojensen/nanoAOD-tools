@@ -5,5 +5,7 @@ keep Muon*
 keep Tau*
 keep Jet*
 keep MET*
+keep GenPart*
+keep GenVisTau*
 keep MuTauProducer*
 keep MuMuProducer*

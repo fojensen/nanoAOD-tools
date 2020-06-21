@@ -20,7 +20,7 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import inputF
 
 cut_Mu = "(Sum$(Muon_pt>=27. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=6)>0)"
 cut_Trigger = "(HLT_IsoMu24||HLT_IsoMu27)"
-cut_Tau = "(Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && (8&Tau_idDeepTau2017v2p1VSmu) && (128&Tau_idDeepTau2017v2p1VSe))>0)"
+cut_Tau = "(Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && (8&Tau_idDeepTau2017v2p1VSmu) && (128&Tau_idDeepTau2017v2p1VSe) && !(Tau_decayMode==5||Tau_decayMode==6))>0)"
 cut_Electron = "(Sum$(Electron_pt>=20. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V1Iso_WPL)==0)"
 cut_Flag = "(Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter)"
 cut_ = cut_Mu + " && " + cut_Trigger + " && " + cut_Tau + " && " + cut_Electron + " && " + cut_Flag

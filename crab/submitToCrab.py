@@ -39,7 +39,7 @@ with open(infile) as json_file:
       #f.write("config.Data.splitting='Automatic'\n")
       f.write("config.Data.splitting = 'FileBased'\n")
       f.write("config.Data.unitsPerJob = 1\n")
-      f.write("config.Data.outLFNDirBase = '/store/user/fjensen/tauHats_19062020/'\n")
+      f.write("config.Data.outLFNDirBase = '/store/user/fjensen/tauHats_20062020/'\n")
       f.write("config.Data.publication = False\n")
       f.write("\n")
 
