@@ -65,7 +65,7 @@ class MuTauProducer(Module):
         goodTauIdx = []
         for i, tau in enumerate(taus):
             #tauID = True
-            tauID = (8&tau.idDeepTau2017v2p1VSmu) and (128&tau.idDeepTau2017v2p1VSe) and not (tau.decayMode==5||tau.decayMode==6)
+            tauID = (8&tau.idDeepTau2017v2p1VSmu) and (128&tau.idDeepTau2017v2p1VSe) and not (tau.decayMode==5 or tau.decayMode==6)
             if tau.pt>=20. and abs(tau.eta)<2.3 and tauID:
                 goodTauIdx.append(i)
         nGoodTau = len(goodTauIdx)

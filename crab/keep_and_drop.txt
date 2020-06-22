@@ -7,5 +7,6 @@ keep Jet*
 keep MET*
 keep GenPart*
 keep GenVisTau*
+keep puWeight*
 keep MuTauProducer*
 keep MuMuProducer*

@@ -10,13 +10,13 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import *
 #this takes care of converting the input files from CRAB
 from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import inputFiles,runsAndLumis
 
-#testfile = [
-#    "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/E78C9017-BB6E-FE48-BA37-E059AEA79CD3.root"
+testfile = [
+    "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/E78C9017-BB6E-FE48-BA37-E059AEA79CD3.root"
     #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/250000/8969BAAF-2D11-7449-A180-97850997CD0A.root",
 #    "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root" 
     #"file:E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root"
-#]
-#print testfile
+]
+print testfile
 
 cut_Mu = "(Sum$(Muon_pt>=27. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=6)>0)"
 cut_Trigger = "(HLT_IsoMu24||HLT_IsoMu27)"
@@ -30,13 +30,18 @@ from PhysicsTools.NanoAODTools.postprocessing.examples.MuTauProducer import MuTa
 from PhysicsTools.NanoAODTools.postprocessing.examples.MuMuProducer import MuMuProducerConstr
 modules_ = [MuTauProducerConstr(), MuMuProducerConstr()]
 
+isMC = True
+if isMC:
+   from PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer import puWeight_2018
+   modules_.append(puWeight_2018())
+
 p=PostProcessor(
     outputDir = "./",
-    inputFiles = inputFiles(),
-    #inputFiles = testfile,
+#    inputFiles = inputFiles(),
+    inputFiles = testfile,
     cut = cut_,
     modules = modules_,
-    #maxEntries = 100000,
+    maxEntries = 100000,
     provenance = True,
     fwkJobReport = True,
     #haddFileName = "DYJetsToLL_M-50.root",
