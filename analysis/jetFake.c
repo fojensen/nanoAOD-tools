@@ -13,9 +13,9 @@ TFile * runMCSum()
    const TString samples[3] = {"WJetsToLNu", "DYJetsToLL_M-50", "TTJets"};
    const double lumi = 31742.979;
    double xsweight[3];
-   xsweight[2] = lumi * 831.76 / 10244307.;
-   xsweight[1] = lumi * 6025.2 / 100194597.;
    xsweight[0] = lumi * 61334.9 / 70454125.;
+   xsweight[1] = lumi * 6025.2 / 100194597.;
+   xsweight[2] = lumi * 831.76 / 10244307.
 
    TH1D *h_pt_sum = new TH1D("h_pt_sum", ";#tau_{h} p_{T} [GeV];events / 10 GeV", 10, 20., 120.);
    TH1D *h_eta_sum = new TH1D("h_eta_sum", ";#tau_{h} |#eta|;events / 0.23", 10, 0., 2.3);
@@ -68,7 +68,7 @@ TFile * runMCSum()
       g_eta[i]->SetMarkerColor(2+i);
    }
 
-   TFile * f = new TFile("./hists.mcsum.root", "RECREATE");
+   TFile * f = new TFile("./outputData/mcsum.hists.root", "RECREATE");
    h_pt_sum->Write("h_pt");
    h_eta_sum->Write("h_eta");
    for (int i = 0; i < 8; ++i) {
@@ -136,7 +136,7 @@ TFile * runPoint(const TString tag)
       g_eta[i]->SetTitle(buffer_eta);
    }
  
-   TFile * fout = new TFile("./hists."+tag+".root", "RECREATE");
+   TFile * fout = new TFile("./outputData/"+tag+".hists.root", "RECREATE");
    h_pt->Write();
    h_eta->Write();
    for (int i = 0; i < 8; ++i) {
@@ -152,7 +152,7 @@ TFile * runPoint(const TString tag)
 void makePlot()
 {
    TGraphAsymmErrors *g_pt_data[8], *g_eta_data[8];
-   TFile * f_data = TFile::Open("./hists.SingleMuon_2018D.root");
+   TFile * f_data = TFile::Open("./outputData/SingleMuon_2018D.hists.root");
    for (int i = 0; i < 8; ++i) {
       g_pt_data[i] = (TGraphAsymmErrors*)f_data->Get("g_pt_"+TString::Itoa(i, 10));
       g_pt_data[i]->SetMarkerStyle(47);
@@ -165,7 +165,7 @@ void makePlot()
    }
    
    TGraphAsymmErrors *g_pt_mc[8], *g_eta_mc[8];
-   TFile * f_mc = TFile::Open("./hists.mcsum.root");
+   TFile * f_mc = TFile::Open("./outputData/mcsum.hists.root");
    for (int i = 0; i < 8; ++i) {
       g_pt_mc[i] = (TGraphAsymmErrors*)f_mc->Get("g_pt_"+TString::Itoa(i, 10));
       g_pt_mc[i]->SetMarkerStyle(20);
@@ -220,11 +220,11 @@ void makePlot()
 
 void jetFake()
 {
-//   const TString samples[3] = {"WJetsToLNu", "DYJetsToLL_M-50", "TTJets"};
-  // TFile * f_mc[3];
-  // for (int i = 0; i < 3; ++i) f_mc[i] = runPoint(samples[i]);
-//   runMCSum();
-  // TFile * f_data = runPoint("SingleMuon_2018D");
+   const TString samples[3] = {"WJetsToLNu", "DYJetsToLL_M-50", "TTJets"};
+   TFile * f_mc[3];
+   for (int i = 0; i < 3; ++i) f_mc[i] = runPoint(samples[i]);
+   runMCSum();
+   TFile * f_data = runPoint("SingleMuon_2018D");
    makePlot();
 }
 
