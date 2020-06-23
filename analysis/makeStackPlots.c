@@ -75,7 +75,10 @@ void runPoint(TH1D * h, const TString var)
 
 void makeStackPlots()
 {
-   TH1D * h_tauPt = new TH1D("h_tauPt", ";#tau_{h} p_{T} [GeV];events / 25 GeV", 10, 0., 250.);
+   TH1D * h_DeltaPhi = new TH1D("h_DeltaPhi", ";#Delta#phi;events / 0.4", 9, 0., 3.6);
+   runPoint(h_DeltaPhi, "MuTauProducer_DeltaPhi");
+
+  /* TH1D * h_tauPt = new TH1D("h_tauPt", ";#tau_{h} p_{T} [GeV];events / 25 GeV", 10, 0., 250.);
    runPoint(h_tauPt, "Tau_pt[MuTauProducer_TauIdx]");
 
    TH1D * h_muPt = new TH1D("h_muPt", ";#mu p_{T} [GeV];events / 25 GeV", 10, 0., 250.);
@@ -109,12 +112,12 @@ void makeStackPlots()
    runPoint(h_DeltaPhi, "MuTauProducer_DeltaPhi");
 
    TH1D * h_qq = new TH1D("h_qq", ";q_{#mu} * q_{#tau_{h}};events / 1", 3, -1.5, 1.5);
-   runPoint(h_qq, "MuTauProducer_qq");
+   runPoint(h_qq, "MuTauProducer_qq");*/
 
-   TH1D * h_MET = new TH1D("h_MET", ";MET [GeV];events / 25 GeV", 10, 0., 250.);
-   runPoint(h_MET, "MET_pt");
+  // TH1D * h_MET = new TH1D("h_MET", ";MET [GeV];events / 25 GeV", 10, 0., 250.);
+  // runPoint(h_MET, "MET_pt");
 
-   TH1D * h_decayMode = new TH1D("h_decayMode", ";decayMode;events / 1", 12, -0.5, 11.5);
-   runPoint(h_decayMode, "Tau_decayMode[MuTauProducer_TauIdx]");
+//   TH1D * h_decayMode = new TH1D("h_decayMode", ";decayMode;events / 1", 12, -0.5, 11.5);
+  // runPoint(h_decayMode, "Tau_decayMode[MuTauProducer_TauIdx]");
 }
 

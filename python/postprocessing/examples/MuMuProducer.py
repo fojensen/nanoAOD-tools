@@ -34,7 +34,7 @@ class MuMuProducer(Module):
             if mu1.pt>=27. and abs(mu1.eta)<2.4 and mu1Id:
                 for mu2 in muons:
                     mu2Id = mu2.mediumId and mu2.pfIsoId>=2
-                    if mu2.pt>=20. and abs(mu2.eta)<2.4 and mu2Id:
+                    if mu2.pt>=15. and abs(mu2.eta)<2.4 and mu2Id:
                         if (mu1.charge*mu2.charge)<0:
                             Mass = (mu1.p4()+mu2.p4()).M()
                             HavePair = HavePair+1
