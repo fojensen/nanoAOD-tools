@@ -37,13 +37,16 @@ root roc.c+
 ##tau ID mistag rate in data
 
 ###submit jobs to crab
+preselection is seen here: https://github.com/fojensen/nanoAOD-tools/blob/tauHats/crab/crab_script.py#L21-L27
 ```
 cd /CMSSW_10_2_18/src/PhysicsTools/NanoAODTools/crab/
+python samples.py
 python submitToCrab.py
 ```
 ... let jobs run ...
 
 ####hadd the job output
+you need to manually add the correct path from eos into haddSamples.sh
 ```
 cd /CMSSW_10_2_18/src/PhysicsTools/NanoAODTools/analysis/
 source haddSamples.sh
@@ -60,3 +63,12 @@ root makeStackPlots.c+
 cd /CMSSW_10_2_18/src/PhysicsTools/NanoAODTools/analysis/
 root jetFake.c+
 ```
+
+###split DYJetsToLL_M-50 into ee+mumu and TauTau
+```
+root splitDY.c+
+```
+
+###install Higgs Combine, follow recipe here:
+https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/
+

@@ -7,6 +7,9 @@ keep Jet*
 keep MET*
 keep GenPart*
 keep GenVisTau*
+keep event
+keep run
+keep luminosityBlock
 keep puWeight*
 keep MuTauProducer*
 keep MuMuProducer*

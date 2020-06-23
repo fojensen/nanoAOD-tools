@@ -10,12 +10,14 @@
 TFile * runMCSum()
 {
    std::cout << "running on summed mc..." << std::endl;
-   const TString samples[3] = {"WJetsToLNu", "DYJetsToLL_M-50", "TTJets"};
+   const int nmc = 4;
+   const TString samples[nmc] = {"WJetsToLNu", "DYJetsToEEMuMu_M-50", "DYJetsToTauTau_M-50", "TTJets"};
    const double lumi = 31742.979;
-   double xsweight[3];
+   double xsweight[nmc];
    xsweight[0] = lumi * 61334.9 / 70454125.;
    xsweight[1] = lumi * 6025.2 / 100194597.;
-   xsweight[2] = lumi * 831.76 / 10244307.
+   xsweight[2] = lumi * 6025.2 / 100194597.;
+   xsweight[3] = lumi * 831.76 / 10244307.;  
 
    TH1D *h_pt_sum = new TH1D("h_pt_sum", ";#tau_{h} p_{T} [GeV];events / 10 GeV", 10, 20., 120.);
    TH1D *h_eta_sum = new TH1D("h_eta_sum", ";#tau_{h} |#eta|;events / 0.23", 10, 0., 2.3);
@@ -25,9 +27,9 @@ TFile * runMCSum()
       h_eta_sum_num[i] = (TH1D*)h_eta_sum->Clone("h_eta_sum_num_"+TString::Itoa(i, 10));
    }
 
-   for (int i = 0; i < 3; ++i) {
+   for (int i = 0; i < nmc; ++i) {
       std::cout << samples[i] << std::endl;
-      TFile *f = TFile::Open("./hists."+samples[i]+".root");
+      TFile *f = TFile::Open("./outputData/"+samples[i]+".hists.root");
 
       TH1D * htemp_pt = (TH1D*)f->Get("h_pt");
       std::cout << xsweight[i]*htemp_pt->Integral() << std::endl;
@@ -87,7 +89,8 @@ TFile * runPoint(const TString tag)
    TFile *f = TFile::Open("outputData/"+tag+".root");
    TTree *t = (TTree*)f->Get("Events");
 
-   TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair>0 && MuTauProducer_mT>=40. && MuTauProducer_nBJetT==0 && MuTauProducer_VisMass>=91.1876";
+   TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1 && MuTauProducer_nGoodMuon==1 && MuTauProducer_nGoodTau==1";
+   baseline = baseline && TCut("MuTauProducer_mT>=40. && MuTauProducer_nBJetT==0");
    baseline = baseline && TCut("Tau_pt[MuTauProducer_TauIdx]<120.");
 
    TH1D *h_pt = new TH1D("h_pt", ";#tau_{h} p_{T} [GeV];events / 10 GeV", 10, 20., 120.);
@@ -194,6 +197,7 @@ void makePlot()
       l->AddEntry(g_pt_mc[i], "mc", "P");
       l->Draw();
    }
+   c->SaveAs("./plots/fakerate.pdf");
 
    TGraphAsymmErrors *r_pt[8];//, *r_eta[8];
    for (int i = 0; i < 8; ++i) {
@@ -216,13 +220,15 @@ void makePlot()
       r_pt[i]->SetMinimum(0.75);
       r_pt[i]->SetMaximum(1.25);
    }
+   c2->SaveAs("./plots/scalefactors.pdf");
 }
 
 void jetFake()
 {
-   const TString samples[3] = {"WJetsToLNu", "DYJetsToLL_M-50", "TTJets"};
-   TFile * f_mc[3];
-   for (int i = 0; i < 3; ++i) f_mc[i] = runPoint(samples[i]);
+   const int nmc = 4;
+   const TString samples[nmc] = {"WJetsToLNu", "DYJetsToEEMuMu_M-50", "DYJetsToTauTau_M-50", "TTJets"};
+   TFile * f_mc[nmc];
+   for (int i = 0; i < nmc; ++i) f_mc[i] = runPoint(samples[i]);
    runMCSum();
    TFile * f_data = runPoint("SingleMuon_2018D");
    makePlot();

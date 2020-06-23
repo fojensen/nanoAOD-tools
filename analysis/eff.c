@@ -11,13 +11,13 @@ void eff(const bool isSig=true)
 {
    TString infile;
    if (isSig) {
-      //infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
-      infile = "E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
+//      infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
+      infile = "../../../E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
    } else {
       //infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/240000/2438666B-82C0-4545-8304-1DA4B7A4E46C.root";
       //infile = "2438666B-82C0-4545-8304-1DA4B7A4E46C.root";
       //infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/60000/BAEC21E7-03AB-6C41-B1BD-646EEB265CCA.root";
-      infile = "BAEC21E7-03AB-6C41-B1BD-646EEB265CCA.root";
+      infile = "../../../BAEC21E7-03AB-6C41-B1BD-646EEB265CCA.root";
    }
 
    TFile * f = TFile::Open(infile);
@@ -35,6 +35,7 @@ void eff(const bool isSig=true)
    Float_t Tau_pt[50];
    Float_t Tau_eta[50];
    UChar_t Tau_genPartFlav[50];
+   Int_t Tau_decayMode[50];
    UChar_t Tau_idDeepTau2017v2p1VSe[50];
    UChar_t Tau_idDeepTau2017v2p1VSmu[50];
    UChar_t Tau_idDeepTau2017v2p1VSjet[50];
@@ -137,7 +138,7 @@ void eff(const bool isSig=true)
    }
    for (int i = 1; i < 8; ++i) g_eta[i]->Draw("PE, SAME"); 
    //l->Draw();
-   c1->SaveAs("./plots/.pdf");
+   isSig ? c1->SaveAs("./plots/eff.WJetsToLNu.pdf") : c1->SaveAs("./plots/eff.QCD_Pt_30to50.pdf");
 
    TCanvas *c2 = new TCanvas("c2", title, 800, 400);
    c2->Divide(2, 1);
@@ -148,6 +149,6 @@ void eff(const bool isSig=true)
    c2->cd(2);
    h_eta->Draw("HIST, E");
    h_eta->SetMinimum(0.);
-   c2->SaveAs("./plots/.pdf");
+   isSig ? c2->SaveAs("./plots/dists.WJetsToLNu.pdf") : c2->SaveAs("./plots/dists.QCD_Pt_30to50.pdf");
 }
 

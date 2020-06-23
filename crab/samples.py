@@ -35,13 +35,13 @@ data['people'].append({
    'nFiles': '58',
    'xs': '6025.2', 
 })
-data['people'].append({
-    'name': 'QCD_Pt_30to50',
-    'das': '/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/RunIIAutumn18NanoAODv6-Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/NANOAODSIM',
-    'nEvents': '18872000',
-    'nFiles': '11',
-    'xs': '19046100.',
-})
+#data['people'].append({
+#    'name': 'QCD_Pt_30to50',
+#    'das': '/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/RunIIAutumn18NanoAODv6-Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/NANOAODSIM',
+#    'nEvents': '18872000',
+#    'nFiles': '11',
+#    'xs': '19046100.',
+#})
 
 with open('samples.json', 'w') as outfile:
    json.dump(data, outfile)
