@@ -13,7 +13,7 @@ git clone --single-branch --branch tauHats https://github.com/fojensen/nanoAOD-t
 scram build -j 4
 ```
 
-#DeepTau tagging efficiencies
+# DeepTau tagging efficiencies
 
 ## tagging efficiencies in MC, using truth information
 
