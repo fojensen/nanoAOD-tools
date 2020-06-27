@@ -1,21 +1,22 @@
 imax 1 number of bins
 jmax 4 number of processes minus 1
-kmax 7 number of nuisance parameters
+kmax 8 number of nuisance parameters
 ----------------------------------------------------------------------------------------------------------------------------------
 shapes *    ch1  FAKE
 ----------------------------------------------------------------------------------------------------------------------------------
 bin          ch1
 observation  320887
 ----------------------------------------------------------------------------------------------------------------------------------
-bin                                ch1      ch1      ch1      ch1    ch1
-process                            ZTT      ZEEMUMU  TT       W      QCD
-process                            0        1        2        3      4
-rate                               81716.5  14738.3  8564.330 141377 68280.8
+bin                                ch1      ch1      ch1      ch1      ch1
+process                            ZTT      ZEEMUMU  TT       W        QCD
+process                            0        1        2        3        4
+rate                               42568.5  3260.64  1554.11  5167.62  2774.93
 ----------------------------------------------------------------------------------------------------------------------------------
-CMS_eff_m               lnN        1.02   1.02     1.02   1.02     -
-CMS_trigEff_m           lnN        1.02   1.02     1.02   1.02     -
-CMS_eff_t               lnN        1.05   1.05     1.05   1.05     -
-QCD_method              lnN        -      -        -      -        1.2
-lumi_13TeV              lnN        1.025  1.025    1.025  1.025    -
-theory_13TeV_TT         lnN        -      1.05     1.1    -        -
-theory_13TeV_W          lnN        -      -        -      1.1     -
+CMS_eff_m               lnN        1.02     1.02     1.02     1.02     -
+CMS_trigEff_m           lnN        1.02     1.02     1.02     1.02     -
+CMS_eff_t               lnN        1.05     1.05     1.05     1.05     -
+QCD_method              lnN        -        -        -        -        2.0
+lumi_13TeV              lnN        1.025    1.025    1.025    1.025    -
+theory_13_TeV_Z         lnN        1.1      1.1      -        -        -
+theory_13TeV_TT         lnN        -        -        1.1      -        -
+theory_13TeV_W          lnN        -        -        -        1.1      -

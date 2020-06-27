@@ -15,8 +15,8 @@ TFile * runMCSum()
    const double lumi = 31742.979;
    double xsweight[nmc];
    xsweight[0] = lumi * 61334.9 / 70454125.;
-   xsweight[1] = lumi * 6025.2 / 100194597.;
-   xsweight[2] = lumi * 6025.2 / 100194597.;
+   xsweight[1] = lumi * 6025.2 / (100194597.*(51./58.));
+   xsweight[2] = lumi * 6025.2 / (100194597.*(51./58.));
    xsweight[3] = lumi * 831.76 / 10244307.;  
 
    TH1D *h_pt_sum = new TH1D("h_pt_sum", ";#tau_{h} p_{T} [GeV];events / 10 GeV", 10, 20., 120.);
@@ -90,7 +90,7 @@ TFile * runPoint(const TString tag)
    TTree *t = (TTree*)f->Get("Events");
 
    TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1 && MuTauProducer_nGoodMuon==1 && MuTauProducer_nGoodTau==1";
-   baseline = baseline && TCut("MuTauProducer_mT>=40. && MuTauProducer_nBJetT==0");
+   baseline = baseline && TCut("MuTauProducer_mT>=40. && MuTauProducer_nBJetM==0 && MuTauProducer_MuTauVisMass>=91.1876");
    baseline = baseline && TCut("Tau_pt[MuTauProducer_TauIdx]<120.");
 
    TH1D *h_pt = new TH1D("h_pt", ";#tau_{h} p_{T} [GeV];events / 10 GeV", 10, 20., 120.);
@@ -180,6 +180,8 @@ void makePlot()
       g_eta_mc[i]->SetLineColor(2+i);
    }
 
+   const TString taglabels[8] = {"VVVLoose", "VVLoose" ,"VLoose" ,"Loose", "Medium", "Tight", "VTight", "VVTight"};
+
    TCanvas * c = new TCanvas("c", "", 1600, 800);
    c->Divide(4, 2);
    for (int i = 0; i < 8; ++i) {
@@ -187,6 +189,7 @@ void makePlot()
       g_pt_data[i]->Draw("APE");
       g_pt_data[i]->SetMaximum(1.);
       g_pt_data[i]->SetMinimum(0.001);
+      g_pt_data[i]->SetTitle(taglabels[i]);
       g_pt_mc[i]->Draw("PE, SAME");
       g_pt_data[i]->Draw("PE, SAME");
       p->SetLogy();
@@ -219,6 +222,7 @@ void makePlot()
       r_pt[i]->Draw("APE");
       r_pt[i]->SetMinimum(0.75);
       r_pt[i]->SetMaximum(1.25);
+      r_pt[i]->SetTitle(taglabels[i]);
    }
    c2->SaveAs("./plots/scalefactors.pdf");
 }

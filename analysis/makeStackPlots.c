@@ -10,12 +10,11 @@
 void runPoint(TH1D * h, const TString var)
 {
    std::cout << "plotting " << var << std::endl;
-   TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1 && MuTauProducer_nGoodMuon==1 && MuTauProducer_nGoodTau==1";
-   baseline = baseline && TCut("128&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]");      
-   //DY
-   baseline = baseline && TCut("MuTauProducer_qq==-1 && MuTauProducer_mT<40. && MuTauProducer_nBJetT==0");
-   //W
-   //baseline = baseline && TCut("MuTauProducer_nBJetT==0");
+
+   TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1";
+
+   //extra cuts for mu+tau
+   baseline = baseline && TCut("MuTauProducer_qq==-1 && 128&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]");   
 
    TFile * f_data = TFile::Open("./outputData/SingleMuon_2018D.root");
    TTree * t_data = (TTree*)f_data->Get("Events"); 
@@ -27,8 +26,8 @@ void runPoint(TH1D * h, const TString var)
    TString samples[nmc] = {"TTJets", "DYJetsToEEMuMu_M-50", "DYJetsToTauTau_M-50", "WJetsToLNu"};
    double xsweight[nmc];
    xsweight[0] = lumi * 831.76 / 10244307.;
-   xsweight[1] = lumi * 6025.2 / 100194597.;
-   xsweight[2] = lumi * 6025.2 / 100194597.;
+   xsweight[1] = lumi * 6025.2 / (100194597.*(51./58.));
+   xsweight[2] = lumi * 6025.2 / (100194597.*(51./58.));
    xsweight[3] = lumi * 61334.9 / 70454125.;
 
    THStack * s = new THStack("s", "");
@@ -71,18 +70,21 @@ void runPoint(TH1D * h, const TString var)
    l->AddEntry(h_data, "data", "P");
    for (int i = 0; i < nmc; ++i) l->AddEntry(h_mc[i], samples[i], "F");
    l->Draw();
+
+   c->SaveAs("./plots/"+TString(h->GetName())+".W.pdf");
+
 }
 
 void makeStackPlots()
 {
-   TH1D * h_DeltaPhi = new TH1D("h_DeltaPhi", ";#Delta#phi;events / 0.4", 9, 0., 3.6);
-   runPoint(h_DeltaPhi, "MuTauProducer_DeltaPhi");
+   //TH1D * h_DeltaPhi = new TH1D("h_DeltaPhi", ";#Delta#phi;events / 0.4", 9, 0., 3.6);
+   //runPoint(h_DeltaPhi, "MuTauProducer_DeltaPhi");
 
-  /* TH1D * h_tauPt = new TH1D("h_tauPt", ";#tau_{h} p_{T} [GeV];events / 25 GeV", 10, 0., 250.);
-   runPoint(h_tauPt, "Tau_pt[MuTauProducer_TauIdx]");
+//   TH1D * h_tauPt = new TH1D("h_tauPt", ";#tau_{h} p_{T} [GeV];events / 25 GeV", 10, 0., 250.);
+  // runPoint(h_tauPt, "Tau_pt[MuTauProducer_TauIdx]");
 
-   TH1D * h_muPt = new TH1D("h_muPt", ";#mu p_{T} [GeV];events / 25 GeV", 10, 0., 250.);
-   runPoint(h_muPt, "Muon_pt[MuTauProducer_MuIdx]");
+  // TH1D * h_muPt = new TH1D("h_muPt", ";#mu p_{T} [GeV];events / 25 GeV", 10, 0., 250.);
+  // runPoint(h_muPt, "Muon_pt[MuTauProducer_MuIdx]");
 
    TH1D * h_mT = new TH1D("h_mT", ";m_{T} [GeV];events / 25 GeV", 10, 0., 250.);
    runPoint(h_mT, "MuTauProducer_mT");
@@ -93,31 +95,43 @@ void makeStackPlots()
    TH1D * h_nBJetM = new TH1D("h_nBJetM", ";# of b-tagged jets (medium);events / 1", 5, -0.5, 4.5);
    runPoint(h_nBJetM, "MuTauProducer_nBJetM");
 
-   TH1D * h_nJet = new TH1D("h_nJet", ";# of jets;events / 1", 7, -0.5, 6.5);
-   runPoint(h_nJet, "MuTauProducer_nJet");
+   //TH1D * h_nJet = new TH1D("h_nJet", ";# of jets;events / 1", 7, -0.5, 6.5);
+   //runPoint(h_nJet, "MuTauProducer_nJet");
 
    TH1D * h_VisMass = new TH1D("h_VisMass", ";#mu+#tau_{h} visible mass [GeV];events / 25 GeV", 10, 0., 250.);
-   runPoint(h_VisMass, "MuTauProducer_VisMass");
+   runPoint(h_VisMass, "MuTauProducer_MuTauVisMass");
 
-   TH1D * h_nTau = new TH1D("h_nTau", ";# of #tau_{h};events / 1", 5, -0.5, 4.5);
-   runPoint(h_nTau, "MuTauProducer_nGoodTau");
+   TH1D * h_tauMass = new TH1D("h_tauMass", ";#tau_{h} mass [GeV];events / 0.1 GeV", 40, 0., 4.);
+   runPoint(h_tauMass, "Tau_mass[MuTauProducer_TauIdx]");
 
-   TH1D * h_nMuon = new TH1D("h_nMuon", ";# of #mu;events / 1", 5, -0.5, 4.5);
-   runPoint(h_nMuon, "MuTauProducer_nGoodMuon");
+   //TH1D * h_nTau = new TH1D("h_nTau", ";# of #tau_{h};events / 1", 5, -0.5, 4.5);
+   //runPoint(h_nTau, "MuTauProducer_nGoodTau");
 
-   TH1D * h_HavePair = new TH1D("h_HavePair", ";# of #mu+#tau_{h} pairs;events / 1", 5, -0.5, 4.5);
-   runPoint(h_HavePair, "MuTauProducer_HavePair");
+   //TH1D * h_nMuon = new TH1D("h_nMuon", ";# of #mu;events / 1", 5, -0.5, 4.5);
+   //runPoint(h_nMuon, "MuTauProducer_nGoodMuon");
 
-   TH1D * h_DeltaPhi = new TH1D("h_DeltaPhi", ";#Delta#phi(#mu, #tau_{h});events / .4", 8, 0., 3.2);
-   runPoint(h_DeltaPhi, "MuTauProducer_DeltaPhi");
+   //TH1D * h_HavePair = new TH1D("h_HavePair", ";# of #mu+#tau_{h} pairs;events / 1", 5, -0.5, 4.5);
+   //runPoint(h_HavePair, "MuTauProducer_HavePair");
 
-   TH1D * h_qq = new TH1D("h_qq", ";q_{#mu} * q_{#tau_{h}};events / 1", 3, -1.5, 1.5);
-   runPoint(h_qq, "MuTauProducer_qq");*/
+   //TH1D * h_DeltaPhi = new TH1D("h_DeltaPhi", ";#Delta#phi(#mu, #tau_{h});events / .4", 8, 0., 3.2);
+   //runPoint(h_DeltaPhi, "MuTauProducer_DeltaPhi");
 
-  // TH1D * h_MET = new TH1D("h_MET", ";MET [GeV];events / 25 GeV", 10, 0., 250.);
-  // runPoint(h_MET, "MET_pt");
+  // TH1D * h_qq = new TH1D("h_qq", ";q_{#mu} * q_{#tau_{h}};events / 1", 3, -1.5, 1.5);
+  // runPoint(h_qq, "MuTauProducer_qq");
 
-//   TH1D * h_decayMode = new TH1D("h_decayMode", ";decayMode;events / 1", 12, -0.5, 11.5);
-  // runPoint(h_decayMode, "Tau_decayMode[MuTauProducer_TauIdx]");
+   //TH1D * h_MET = new TH1D("h_MET", ";MET [GeV];events / 25 GeV", 10, 0., 250.);
+   //runPoint(h_MET, "MET_pt");
+
+   TH1D * h_decayMode = new TH1D("h_decayMode", ";decayMode;events / 1", 12, -0.5, 11.5);
+   runPoint(h_decayMode, "Tau_decayMode[MuTauProducer_TauIdx]");
+
+   TH1D * h_MuTauColMass = new TH1D("h_MuTauColMass", ";collinear mass (#mu, #tau_{h}, MET) [GeV];events / 25 GeV", 10, 0., 250.);
+   runPoint(h_MuTauColMass, "MuTauProducer_MuTauColMass"); // only makes sense for mu+tau selection
+
+//   TH1D * h_eSum = new TH1D("h_eSum", ";;", 4, -0.5, 3.5);
+  // runPoint(h_eSum, "Sum$(Electron_genPartFlav==1)");
+
+  // TH1D * h_muSum = new TH1D("h_muSum", ";;", 4, -0.5, 3.5);
+  // runPoint(h_muSum, "Sum$(Muon_genPartFlav==1)");
 }
 

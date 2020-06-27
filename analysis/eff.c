@@ -138,7 +138,7 @@ void eff(const bool isSig=true)
    }
    for (int i = 1; i < 8; ++i) g_eta[i]->Draw("PE, SAME"); 
    //l->Draw();
-   isSig ? c1->SaveAs("./plots/eff.WJetsToLNu.pdf") : c1->SaveAs("./plots/eff.QCD_Pt_30to50.pdf");
+   isSig ? c1->SaveAs("./plots/eff.WJetsToLNu.pdf") : c1->SaveAs("./plots/eff.QCD_Pt_50to80.pdf");
 
    TCanvas *c2 = new TCanvas("c2", title, 800, 400);
    c2->Divide(2, 1);
@@ -149,6 +149,6 @@ void eff(const bool isSig=true)
    c2->cd(2);
    h_eta->Draw("HIST, E");
    h_eta->SetMinimum(0.);
-   isSig ? c2->SaveAs("./plots/dists.WJetsToLNu.pdf") : c2->SaveAs("./plots/dists.QCD_Pt_30to50.pdf");
+   isSig ? c2->SaveAs("./plots/dists.WJetsToLNu.pdf") : c2->SaveAs("./plots/dists.QCD_Pt_50to80.pdf");
 }
 

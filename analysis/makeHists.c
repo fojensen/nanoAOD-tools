@@ -13,7 +13,7 @@ TFile * makeHists(const TString tag, const double weight=0.)
    TFile * f_in = TFile::Open("./outputData/"+tag+".root");
    TTree * t = (TTree*)f_in->Get("Events");
 
-   TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1 && MuTauProducer_nGoodMuon==1 && MuTauProducer_nGoodTau==1";
+   TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1 && 128&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]";
    baseline = baseline && TCut("MuTauProducer_mT<40. && MuTauProducer_nBJetT==0");
 
    const TCut ss = "MuTauProducer_qq==1";
@@ -29,7 +29,7 @@ TFile * makeHists(const TString tag, const double weight=0.)
       sprintf(bufferos, "%s", TString(baseline && os).Data());
    }
 
-   const TString var = "MuTauProducer_VisMass";
+   const TString var = "MuTauProducer_MuTauVisMass";
    TH1D * h = new TH1D("h", ";#mu+#tau_{h} visible mass [GeV];events / 25 GeV", 10, 0., 250.);
    TH1D * h_ss = new TH1D("h_ss", ";#mu+#tau_{h} visible mass [GeV];events / 25 GeV", 10, 0., 250.);
 
@@ -41,11 +41,14 @@ TFile * makeHists(const TString tag, const double weight=0.)
    //TH1D * h = new TH1D("h", ";# of jets;events / 1", 10, -0.5, 9.5);
    //TH1D * h_ss = new TH1D("h_ss", ";# of jets;events / 1", 10, -0.5, 9.5);
 
-   std::cout << "   " << t->Project(h->GetName(), var, bufferos) << std::endl;
-   std::cout << "   h->Integral(): " << h->Integral() << std::endl;
-   std::cout << "   " << t->Project(h_ss->GetName(), var, bufferss) << std::endl;
-   std::cout << "   h_ss->Integral(): " << h_ss->Integral() << std::endl;
+   const int n_os = t->Project(h->GetName(), var, bufferos);
+   const int n_ss = t->Project(h_ss->GetName(), var, bufferss);
+   const double i_os = h->Integral();
+   const double i_ss = h_ss->Integral();
 
+   std::cout << "   os yield: " << i_os << "; " << n_os << " events in sample." << std::endl;
+   std::cout << "   ss yield: " << i_ss << "; " << n_ss << " events in sample." << std::endl;
+   
    TFile * f_out = new TFile("./outputHists/"+tag+".root", "RECREATE");
    h->Write();
    h_ss->Write();
@@ -58,7 +61,7 @@ TFile * makeQCDHists()
    std::cout << "QCD" << std::endl;
    TFile * f_data = TFile::Open("./outputHists/SingleMuon_2018D.root");
    TH1D * h_data = (TH1D*)f_data->Get("h_ss");
-   std::cout << "   h_data->Integral(): " << h_data->Integral() << std::endl;
+   std::cout << "   data events in ss region: " << h_data->Integral() << std::endl;
    
    TFile * f_WJetsToLNu = TFile::Open("./outputHists/WJetsToLNu.root");
    TH1D * h_WJetsToLNu = (TH1D*)f_WJetsToLNu->Get("h_ss");
@@ -76,8 +79,8 @@ TFile * makeQCDHists()
    h_data->Add(h_DYJetsToEEMuMu, -1.);
    h_data->Add(h_DYJetsToTauTau, -1.);
    h_data->Add(h_WJetsToLNu, -1.);
-   //h_data->Scale(1.06);
-   std::cout << "   h_data->Integral(): " << h_data->Integral() << std::endl;
+   h_data->Scale(1.06); // TRANSFER FACTOR, DERIVED FROM CONTROL REGION
+   std::cout << "   expected background in os region: " << h_data->Integral() << std::endl;
 
    TFile * f_qcd = new TFile("./outputHists/QCD.root", "RECREATE");
    h_data->Write("h");
@@ -92,8 +95,8 @@ void makeHists()
    const double lumi = 31742.979;
    double xsweight[4];
    xsweight[0] = lumi * 831.76 / 10244307.;
-   xsweight[1] = lumi * 6025.2 / 100194597.;
-   xsweight[2] = lumi * 6025.2 / 100194597.;
+   xsweight[1] = lumi * 6025.2 / (100194597.*(51./58.));
+   xsweight[2] = lumi * 6025.2 / (100194597.*(51./58.));
    xsweight[3] = lumi * 61334.9 / 70454125.;
 
    double mcsum = 0.;
@@ -143,11 +146,12 @@ void makeHists()
    h_DYJetsToTauTau_ss->SetFillColor(4);
    mcsum += h_DYJetsToTauTau->Integral();
 
-   std::cout << "TTJets: " << h_TTJets->Integral()/mcsum << std::endl;
-   std::cout << "QCD: " << h_QCD->Integral()/mcsum << std::endl;
-   std::cout << "WJetsToLNu: " << h_WJetsToLNu->Integral()/mcsum << std::endl;
-   std::cout << "DYJetsToEEMuMu: " << h_DYJetsToEEMuMu->Integral()/mcsum << std::endl;
-   std::cout << "DYJetsToTauTau: " << h_DYJetsToTauTau->Integral()/mcsum << std::endl;
+   std::cout << "fractions of expected background: " << std::endl;
+   std::cout << "   TTJets: " << h_TTJets->Integral()/mcsum << std::endl;
+   std::cout << "   QCD: " << h_QCD->Integral()/mcsum << std::endl;
+   std::cout << "   WJetsToLNu: " << h_WJetsToLNu->Integral()/mcsum << std::endl;
+   std::cout << "   DYJetsToEEMuMu: " << h_DYJetsToEEMuMu->Integral()/mcsum << std::endl;
+   std::cout << "   DYJetsToTauTau: " << h_DYJetsToTauTau->Integral()/mcsum << std::endl;
  
    TCanvas * c = new TCanvas("c", "", 400, 400);
    h_SingleMuon_2018D->Draw("P, E");

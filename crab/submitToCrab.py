@@ -17,7 +17,7 @@ with open(infile) as json_file:
       f.write("\n")
       
       f.write("config.section_('General')\n")
-      f.write("config.General.requestName = 'tauHats_"+p['name']+"'\n")
+      f.write("config.General.requestName = 'tauHats_DY2nd_"+p['name']+"'\n")
       f.write("config.General.workArea = 'crab_projects'\n")
       f.write("config.General.transferOutputs = True\n")
       f.write("config.General.transferLogs = True\n")
@@ -39,7 +39,7 @@ with open(infile) as json_file:
       #f.write("config.Data.splitting='Automatic'\n")
       f.write("config.Data.splitting = 'FileBased'\n")
       f.write("config.Data.unitsPerJob = 1\n")
-      f.write("config.Data.outLFNDirBase = '/store/user/fjensen/tauHats_22062020/'\n")
+      f.write("config.Data.outLFNDirBase = '/store/user/fjensen/tauHats_23062020/'\n")
       f.write("config.Data.publication = False\n")
       f.write("\n")
 
@@ -50,5 +50,5 @@ with open(infile) as json_file:
       f.close()
 
       # actually submit jobs or not
-      os.system("crab submit -c " + f.name)
+#      os.system("crab submit -c " + f.name)
 

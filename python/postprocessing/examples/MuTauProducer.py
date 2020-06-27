@@ -26,6 +26,7 @@ class MuTauProducer(Module):
         self.out.branch("MuTauProducer_mT", "F")
         self.out.branch("MuTauProducer_MuTauVisMass", "F")
         self.out.branch("MuTauProducer_MuTauColMass", "F")
+        self.out.branch("MuTauProducer_MuTauPt", "F")
         self.out.branch("MuTauProducer_MuTauDeltaPhi", "F")
         self.out.branch("MuTauProducer_MuMetDeltaPhi", "F")
         self.out.branch("MuTauProducer_nJet", "I")
@@ -45,6 +46,7 @@ class MuTauProducer(Module):
         TauIdx = -1
         mT = 0
         MuTauVisMass = 0
+        MuTauPt = 0
         MuTauColMass = 0
         MuTauDeltaPhi = 0
         MuMetDeltaPhi = 0
@@ -105,7 +107,8 @@ class MuTauProducer(Module):
                                 qq = mu.charge*tau.charge
                                 MuIdx = i
                                 TauIdx = j
-                                VisMass = (mu.p4()+tau.p4()).M()
+                                MuTauVisMass = (mu.p4()+tau.p4()).M()
+                                MuTauPt =  (mu.p4()+tau.p4()).Pt()
                                 mT = 2. * event.MET_pt * mu.pt * (1-math.cos(deltaPhi(event.MET_phi, mu.phi)))
                                 mT = math.sqrt(mT)
                                 ### collinear mass
@@ -124,14 +127,15 @@ class MuTauProducer(Module):
                             HavePair = HavePair + 1
 
         if not HavePair:
-            #print "ending MuTauProducer, return False"
             return False
+
         self.out.fillBranch("MuTauProducer_HavePair", HavePair)
         self.out.fillBranch("MuTauProducer_qq", qq)
         self.out.fillBranch("MuTauProducer_MuIdx", MuIdx)
         self.out.fillBranch("MuTauProducer_TauIdx", TauIdx)
         self.out.fillBranch("MuTauProducer_mT", mT)
         self.out.fillBranch("MuTauProducer_MuTauVisMass", MuTauVisMass)
+        self.out.fillBranch("MuTauProducer_MuTauPt", MuTauPt)
         self.out.fillBranch("MuTauProducer_MuTauColMass", MuTauColMass)
         self.out.fillBranch("MuTauProducer_MuTauDeltaPhi", MuTauDeltaPhi)
         self.out.fillBranch("MuTauProducer_MuMetDeltaPhi", MuMetDeltaPhi)
@@ -140,7 +144,6 @@ class MuTauProducer(Module):
         self.out.fillBranch("MuTauProducer_nJet", nJet)
         self.out.fillBranch("MuTauProducer_nBJetM", nBJetM)
         self.out.fillBranch("MuTauProducer_nBJetT", nBJetT)
-        #print "ending MuTauProducer, return True"
         return True
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed

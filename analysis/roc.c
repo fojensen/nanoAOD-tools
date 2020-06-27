@@ -21,7 +21,8 @@ void roc()
    TFile * f_bkg = TFile::Open(bkgfile);
    TTree * t_bkg = (TTree*)f_bkg->Get("Events");
 
-   const TCut taucut = "Tau_pt>=20. && Tau_pt<120. && TMath::Abs(Tau_eta)<2.3 && (8&Tau_idDeepTau2017v2p1VSmu) && (128&Tau_idDeepTau2017v2p1VSe) && !(Tau_decayMode==5||Tau_decayMode==6)";
+   TCut taucut = "Tau_pt>=20. && Tau_pt<120. && TMath::Abs(Tau_eta)<2.3";
+   taucut = taucut && TCut("(8&Tau_idDeepTau2017v2p1VSmu) && (128&Tau_idDeepTau2017v2p1VSe) && !(Tau_decayMode==5||Tau_decayMode==6)");
    const TCut sigcut = "Tau_genPartFlav==5";
    const TCut bkgcut = "Tau_genPartFlav==0";
    TCut wpcut[8];
@@ -57,7 +58,7 @@ void roc()
    TCanvas * c = new TCanvas("c", "", 400, 400);
    g->Draw("APE");
    g->SetMinimum(0.0001);
-   g->SetMaximum(10.);
+   g->SetMaximum(1.);
    c->SetLogy();
    TAxis * a = g->GetXaxis();
    a->SetLimits(0., 1.);

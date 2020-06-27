@@ -12,19 +12,19 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import inputF
 
 testfile = [
 #    "root://cmsxrootd.fnal.gov///store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019-v1/100000/76BEBA77-9DDB-8144-A183-5842729F006D.root"
- #   "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/E78C9017-BB6E-FE48-BA37-E059AEA79CD3.root"
+   "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/E78C9017-BB6E-FE48-BA37-E059AEA79CD3.root"
     #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/250000/8969BAAF-2D11-7449-A180-97850997CD0A.root",
-    "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root" 
+#    "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root" 
     #"file:E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root"
 ]
-print testfile
+#print testfile
 
 cut_Mu = "(Sum$(Muon_pt>=27. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)>0)"
 cut_Trigger = "(HLT_IsoMu24||HLT_IsoMu27)"
 cut_Electron = "(Sum$(Electron_pt>=20. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V1Iso_WPL)==0)"
 cut_Tau = "(Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && (8&Tau_idDeepTau2017v2p1VSmu) && (128&Tau_idDeepTau2017v2p1VSe) && !(Tau_decayMode==5||Tau_decayMode==6))>0)"
 cut_Flag = "(Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter)"
-cut_ = cut_Mu + " && " + cut_Trigger + " && " + cut_Tau + " && " + cut_Electron + " && " + cut_Flag
+cut_ = cut_Mu + " && " + cut_Trigger + " && " + cut_Electron + " && " + cut_Tau + " && " + cut_Flag
 print cut_
 
 from PhysicsTools.NanoAODTools.postprocessing.examples.MuTauProducer import MuTauProducerConstr
@@ -38,11 +38,11 @@ modules_ = [MuTauProducerConstr(), MuMuProducerConstr()]
 
 p=PostProcessor(
     outputDir = "./",
- #   inputFiles = inputFiles(),
+#    inputFiles = inputFiles(),
     inputFiles = testfile,
     cut = cut_,
     modules = modules_,
-    maxEntries = 100000,
+    #maxEntries = 100000,
     provenance = True,
     fwkJobReport = True,
     #haddFileName = "DYJetsToLL_M-50.root",
