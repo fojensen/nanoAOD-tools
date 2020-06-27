@@ -1,7 +1,7 @@
-#Tau HATS@LPC
+# Tau HATS@LPC
 https://indico.cern.ch/event/917686/
 
-##Install CMSSW and clone NanoAODTools
+## Install CMSSW and clone NanoAODTools
 ```
 cmsrel CMSSW_10_2_18  
 cd /CMSSW_10_2_18/src/  
@@ -10,9 +10,9 @@ git clone --single-branch --branch tauHats https://github.com/fojensen/nanoAOD-t
 scram build -j 4
 ```
 
-###tau ID efficiency and mistag rate in MC, using truth information
+### tau ID efficiency and mistag rate in MC, using truth information
 
-####calculate the signal efficiency in WJetsToLNu MC
+#### calculate the signal efficiency in WJetsToLNu MC
 ```
 cd /CMSSW_10_2_18/src/PhysicsTools/NanoAODTools/analysis/
 root
@@ -20,7 +20,7 @@ root
 eff(true)
 ```
 
-####calculate the signal efficiency in QCD MC
+#### calculate the signal efficiency in QCD MC
 ```
 cd /CMSSW_10_2_18/src/PhysicsTools/NanoAODTools/analysis/
 root
@@ -28,15 +28,15 @@ root
 eff(false)
 ```
 
-####calculate the roc curve
+#### calculate the roc curve
 ```
 cd /CMSSW_10_2_18/src/PhysicsTools/NanoAODTools/analysis/
 root roc.c+
 ```
 
-##tau ID mistag rate in data
+## tau ID mistag rate in data
 
-###submit jobs to crab
+### submit jobs to crab
 preselection is seen here: https://github.com/fojensen/nanoAOD-tools/blob/tauHats/crab/crab_script.py#L21-L27
 ```
 cd /CMSSW_10_2_18/src/PhysicsTools/NanoAODTools/crab/
@@ -45,30 +45,38 @@ python submitToCrab.py
 ```
 ... let jobs run ...
 
-####hadd the job output
+#### hadd the job output and splitDY
 you need to manually add the correct path from eos into haddSamples.sh
 ```
 cd /CMSSW_10_2_18/src/PhysicsTools/NanoAODTools/analysis/
 source haddSamples.sh
 ```
 
-###make stack plots
+### make stack plots
 ```
 cd /CMSSW_10_2_18/src/PhysicsTools/NanoAODTools/analysis/
 root makeStackPlots.c+
 ```
 
-###calculate the fake rate
+### calculate the fake rate
 ```
 cd /CMSSW_10_2_18/src/PhysicsTools/NanoAODTools/analysis/
 root jetFake.c+
 ```
 
-###split DYJetsToLL_M-50 into ee+mumu and TauTau
+# Z->tautau->tau_{mu}tau_{h} analysis
+
+### install Higgs Combine, follow recipe here:
+https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/
+
+### plot visible mass, extract (inclusive) expected yields
 ```
-root splitDY.c+
+root makeHists.c+
 ```
 
-###install Higgs Combine, follow recipe here:
-https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/
+### run combine to calculate significance
+first, update datacard.txt with expected yields
+```
+combine -d datacard.txt -M Significance
+```
 
