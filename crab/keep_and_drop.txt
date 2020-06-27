@@ -5,6 +5,7 @@ keep Muon*
 keep Tau*
 keep Jet*
 keep MET*
+keep Photon*
 keep GenPart*
 keep GenVisTau*
 keep event
