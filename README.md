@@ -53,19 +53,19 @@ python submitToCrab.py
 ### hadd the job output and splitDY
 you need to manually add the correct path from eos into haddSamples.sh
 ```
-cd /CMSSW_10_2_18/src/PhysicsTools/NanoAODTools/analysis/
+cd $CMSSW_BASE/src/PhysicsTools/NanoAODTools/analysis/
 source haddSamples.sh
 ```
 
 ### make stack plots
 ```
-cd /CMSSW_10_2_18/src/PhysicsTools/NanoAODTools/analysis/
+cd $CMSSW_BASE/src/PhysicsTools/NanoAODTools/analysis/
 root makeStackPlots.c+
 ```
 
 ### calculate the mistag rate
 ```
-cd /CMSSW_10_2_18/src/PhysicsTools/NanoAODTools/analysis/
+cd $CMSSW_BASE/src/PhysicsTools/NanoAODTools/analysis/
 root jetFake.c+
 ```
 
@@ -80,7 +80,7 @@ root makeHists.c+
 ```
 
 ## run combine to calculate significance
-first, update datacard.txt with expected yields
+first update datacard.txt with expected yields, then
 ```
 combine -d datacard.txt -M Significance
 ```

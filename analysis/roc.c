@@ -9,15 +9,13 @@
 
 void roc()
 {
-   //const TString sigfile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
-   const TString sigfile = "../../../E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
+   const TString sigfile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
+   //const TString sigfile = "../../../E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
    TFile * f_sig = TFile::Open(sigfile);
    TTree * t_sig = (TTree*)f_sig->Get("Events");
 
-   //const TString bkgfile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/QCD_Pt_30to50_TuneCP5_13TeV_pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/240000/2438666B-82C0-4545-8304-1DA4B7A4E46C.root";
-   //const TString bkgfile = "2438666B-82C0-4545-8304-1DA4B7A4E46C.root";
-   //const TString bkgfile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/60000/BAEC21E7-03AB-6C41-B1BD-646EEB265CCA.root";
-   const TString bkgfile = "../../../BAEC21E7-03AB-6C41-B1BD-646EEB265CCA.root";
+   const TString bkgfile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/60000/BAEC21E7-03AB-6C41-B1BD-646EEB265CCA.root";
+   //const TString bkgfile = "../../../BAEC21E7-03AB-6C41-B1BD-646EEB265CCA.root";
    TFile * f_bkg = TFile::Open(bkgfile);
    TTree * t_bkg = (TTree*)f_bkg->Get("Events");
 

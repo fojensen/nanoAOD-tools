@@ -95,8 +95,8 @@ void makeHists()
    const double lumi = 31742.979;
    double xsweight[4];
    xsweight[0] = lumi * 831.76 / 10244307.;
-   xsweight[1] = lumi * 6025.2 / (100194597.*(51./58.));
-   xsweight[2] = lumi * 6025.2 / (100194597.*(51./58.));
+   xsweight[1] = lumi * 6025.2 / 100194597.;
+   xsweight[2] = lumi * 6025.2 / 100194597.;
    xsweight[3] = lumi * 61334.9 / 70454125.;
 
    double mcsum = 0.;
