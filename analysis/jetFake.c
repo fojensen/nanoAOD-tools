@@ -15,8 +15,8 @@ TFile * runMCSum()
    const double lumi = 31742.979;
    double xsweight[nmc];
    xsweight[0] = lumi * 61334.9 / 70454125.;
-   xsweight[1] = lumi * 6025.2 / (100194597.*(51./58.));
-   xsweight[2] = lumi * 6025.2 / (100194597.*(51./58.));
+   xsweight[1] = lumi * 6025.2 / 100194597.;
+   xsweight[2] = lumi * 6025.2 / 100194597.;
    xsweight[3] = lumi * 831.76 / 10244307.;  
 
    TH1D *h_pt_sum = new TH1D("h_pt_sum", ";#tau_{h} p_{T} [GeV];events / 10 GeV", 10, 20., 120.);
@@ -86,7 +86,7 @@ TFile * runMCSum()
 TFile * runPoint(const TString tag)
 {
    std::cout << "running on " << tag << "..." << std::endl;
-   TFile *f = TFile::Open("outputData/"+tag+".root");
+   TFile *f = TFile::Open("./outputData/"+tag+".root");
    TTree *t = (TTree*)f->Get("Events");
 
    TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1 && MuTauProducer_nGoodMuon==1 && MuTauProducer_nGoodTau==1";
@@ -188,7 +188,7 @@ void makePlot()
       TPad * p = (TPad*)c->cd(i+1);
       g_pt_data[i]->Draw("APE");
       g_pt_data[i]->SetMaximum(1.);
-      g_pt_data[i]->SetMinimum(0.001);
+      g_pt_data[i]->SetMinimum(0.01);
       g_pt_data[i]->SetTitle(taglabels[i]);
       g_pt_mc[i]->Draw("PE, SAME");
       g_pt_data[i]->Draw("PE, SAME");
