@@ -115,10 +115,10 @@ void eff(const bool isSig=true)
    g_pt[0]->Draw("APE");
    if (isSig) {
       g_pt[0]->SetMinimum(0.);
-      g_pt[0]->SetMaximum(1.1);
+      g_pt[0]->SetMaximum(1.);
    } else {
       g_pt[0]->SetMinimum(0.001);
-      g_pt[0]->SetMaximum(10.);
+      g_pt[0]->SetMaximum(1.);
       p11->SetLogy();
    }
    for (int i = 1; i < 8; ++i) g_pt[i]->Draw("PE, SAME");
@@ -131,7 +131,7 @@ void eff(const bool isSig=true)
       g_eta[0]->SetMaximum(1.1);
    } else {
       g_eta[0]->SetMinimum(0.001);
-      g_eta[0]->SetMaximum(10.);
+      g_eta[0]->SetMaximum(1.1);
       p12->SetLogy();
    }
    for (int i = 1; i < 8; ++i) g_eta[i]->Draw("PE, SAME"); 

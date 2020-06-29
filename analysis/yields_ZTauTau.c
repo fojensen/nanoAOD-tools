@@ -7,14 +7,26 @@
 #include <TCanvas.h>
 #include <TLegend.h>
 
+double addOverflow(TH1D * h)
+{
+   const int n = h->GetNbinsX();
+   const double o = h->GetBinContent(n+1);
+   h->AddBinContent(n, o);
+   h->SetBinContent(n+1, 0.);
+   h->SetBinError(n+1, 0.);
+   return o;
+}
+
 TFile * makeHists(const TString tag, const double weight=0.)
 {
    std::cout << tag << std::endl;
    TFile * f_in = TFile::Open("./outputData/"+tag+".root");
    TTree * t = (TTree*)f_in->Get("Events");
 
-   TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1 && 128&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]";
-   baseline = baseline && TCut("MuTauProducer_mT<40. && MuTauProducer_nBJetT==0");
+   TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1";
+   baseline = baseline && TCut("128&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]");
+   baseline = baseline && TCut("MuTauProducer_mT<40.");
+   baseline = baseline && TCut("MuTauProducer_nBJetT==0");
 
    const TCut ss = "MuTauProducer_qq==1";
    const TCut os = "MuTauProducer_qq==-1";
@@ -30,8 +42,8 @@ TFile * makeHists(const TString tag, const double weight=0.)
    }
 
    const TString var = "MuTauProducer_MuTauVisMass";
-   TH1D * h = new TH1D("h", ";#mu+#tau_{h} visible mass [GeV];events / 25 GeV", 10, 0., 250.);
-   TH1D * h_ss = new TH1D("h_ss", ";#mu+#tau_{h} visible mass [GeV];events / 25 GeV", 10, 0., 250.);
+   TH1D * h = new TH1D("h", ";#mu+#tau_{h} visible mass [GeV];events / 25 GeV", 12, 0., 300.);
+   TH1D * h_ss = new TH1D("h_ss", ";#mu+#tau_{h} visible mass [GeV];events / 25 GeV", 12, 0., 300.);
 
    //const TString var = "MuTauProducer_nJet";
    //TH1D * h = new TH1D("h", ";# of jets;events / 1", 10, -0.5, 9.5);
@@ -43,11 +55,14 @@ TFile * makeHists(const TString tag, const double weight=0.)
 
    const int n_os = t->Project(h->GetName(), var, bufferos);
    const int n_ss = t->Project(h_ss->GetName(), var, bufferss);
+   addOverflow(h);
+   addOverflow(h_ss);
+
    const double i_os = h->Integral();
    const double i_ss = h_ss->Integral();
 
-   std::cout << "   os yield: " << i_os << "; " << n_os << " events in sample." << std::endl;
-   std::cout << "   ss yield: " << i_ss << "; " << n_ss << " events in sample." << std::endl;
+   std::cout << "   os yield: " << i_os << "; " << n_os << " events in sample." << ", errf: " << (1./sqrt(n_os)) << std::endl;
+   std::cout << "   ss yield: " << i_ss << "; " << n_ss << " events in sample." << ", errf: " << (1./sqrt(n_ss)) <<std::endl;
    
    TFile * f_out = new TFile("./outputHists/"+tag+".root", "RECREATE");
    h->Write();
@@ -79,7 +94,7 @@ TFile * makeQCDHists()
    h_data->Add(h_DYJetsToEEMuMu, -1.);
    h_data->Add(h_DYJetsToTauTau, -1.);
    h_data->Add(h_WJetsToLNu, -1.);
-   h_data->Scale(1.06); // TRANSFER FACTOR, DERIVED FROM CONTROL REGION
+   h_data->Scale(1.06); // TRANSFER FACTOR, DERIVE FROM SOME CONTROL REGION
    std::cout << "   expected background in os region: " << h_data->Integral() << std::endl;
 
    TFile * f_qcd = new TFile("./outputHists/QCD.root", "RECREATE");
@@ -88,7 +103,7 @@ TFile * makeQCDHists()
    return f_qcd;
 }
 
-void makeHists()
+void yields_ZTauTau()
 {
    makeHists("SingleMuon_2018D");
 
@@ -98,8 +113,6 @@ void makeHists()
    xsweight[1] = lumi * 6025.2 / 100194597.;
    xsweight[2] = lumi * 6025.2 / 100194597.;
    xsweight[3] = lumi * 61334.9 / 70454125.;
-
-   double mcsum = 0.;
 
    makeHists("TTJets", xsweight[0]);
    makeHists("WJetsToLNu", xsweight[3]);
@@ -112,6 +125,8 @@ void makeHists()
    h_SingleMuon_2018D->SetMarkerStyle(20);
    TH1D * h_SingleMuon_2018D_ss = (TH1D*)f_SingleMuon_2018D->Get("h_ss");
    h_SingleMuon_2018D_ss->SetMarkerStyle(20);
+
+   double mcsum = 0.;
 
    TFile * f_TTJets = TFile::Open("./outputHists/TTJets.root");
    TH1D * h_TTJets = (TH1D*)f_TTJets->Get("h");
@@ -166,7 +181,7 @@ void makeHists()
    h_SingleMuon_2018D->Draw("PE, SAME");
    c->SetLogy();
    h_SingleMuon_2018D->SetStats(0);
-   h_SingleMuon_2018D->SetMinimum(100.);
+   h_SingleMuon_2018D->SetMinimum(10.);
    h_SingleMuon_2018D->SetMaximum(1000000.);
 
    TLegend * l = new TLegend(0.5, 0.7, 0.875, 0.875);
@@ -179,5 +194,7 @@ void makeHists()
    l->AddEntry(h_DYJetsToTauTau, "Z#rightarrow #tau#tau", "F");
    l->AddEntry(h_SingleMuon_2018D, "data", "P");
    l->Draw();
+
+   c->SaveAs("./plots/ZMuTauVisibleMass.pdf");
 }
 

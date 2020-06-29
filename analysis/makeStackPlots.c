@@ -11,10 +11,17 @@ void runPoint(TH1D * h, const TString var)
 {
    std::cout << "plotting " << var << std::endl;
 
+   //loose cuts for W
    TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1";
 
-   //extra cuts for Z->mu+tau
-   baseline = baseline && TCut("MuTauProducer_qq==-1 && 128&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]");   
+   //loose cuts for Z->mu+tau
+   //baseline = baseline && TCut("MuTauProducer_qq==-1 && 128&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]");
+
+   //tight cuts for Z->mu+tau
+   //baseline = baseline && TCut("MuTauProducer_mT<40. && MuTauProducer_nBJetM==0 && MuTauProducer_MuTauVisMass<91.1876 && 128&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]");
+
+   //tight cuts for W
+   baseline = baseline && TCut("MuTauProducer_mT>=40. && MuTauProducer_nBJetM==0 && MuTauProducer_MuTauVisMass>=91.1876");
 
    TFile * f_data = TFile::Open("./outputData/SingleMuon_2018D.root");
    TTree * t_data = (TTree*)f_data->Get("Events"); 
@@ -58,8 +65,7 @@ void runPoint(TH1D * h, const TString var)
    h_data->SetMarkerStyle(20);
    h_data->Draw("PE, SAME");
    h_data->SetStats(0);
-   //h_data->SetMinimum(100.);
-   h_data->SetMinimum(10.);
+   h_data->SetMinimum(100.);
    h_data->SetMaximum(10000000.);
    c->SetLogy();
    s->Draw("HIST, SAME");
@@ -72,7 +78,7 @@ void runPoint(TH1D * h, const TString var)
    for (int i = 0; i < nmc; ++i) l->AddEntry(h_mc[i], samples[i], "F");
    l->Draw();
 
-   c->SaveAs("./plots/"+TString(h->GetName())+".W.pdf");
+   c->SaveAs("./plots/"+TString(h->GetName())+".tightW.pdf");
 
 }
 
@@ -81,8 +87,8 @@ void makeStackPlots()
    //TH1D * h_DeltaPhi = new TH1D("h_DeltaPhi", ";#Delta#phi;events / 0.4", 9, 0., 3.6);
    //runPoint(h_DeltaPhi, "MuTauProducer_DeltaPhi");
 
-//   TH1D * h_tauPt = new TH1D("h_tauPt", ";#tau_{h} p_{T} [GeV];events / 25 GeV", 10, 0., 250.);
-  // runPoint(h_tauPt, "Tau_pt[MuTauProducer_TauIdx]");
+   //TH1D * h_tauPt = new TH1D("h_tauPt", ";#tau_{h} p_{T} [GeV];events / 25 GeV", 10, 0., 250.);
+   //runPoint(h_tauPt, "Tau_pt[MuTauProducer_TauIdx]");
 
   // TH1D * h_muPt = new TH1D("h_muPt", ";#mu p_{T} [GeV];events / 25 GeV", 10, 0., 250.);
   // runPoint(h_muPt, "Muon_pt[MuTauProducer_MuIdx]");
@@ -90,8 +96,8 @@ void makeStackPlots()
    TH1D * h_mT = new TH1D("h_mT", ";m_{T} [GeV];events / 25 GeV", 10, 0., 250.);
    runPoint(h_mT, "MuTauProducer_mT");
 
-   TH1D * h_nBJetT = new TH1D("h_nBJetT", ";# of b-tagged jets (tight);events / 1", 5, -0.5, 4.5);
-   runPoint(h_nBJetT, "MuTauProducer_nBJetT");
+  // TH1D * h_nBJetT = new TH1D("h_nBJetT", ";# of b-tagged jets (tight);events / 1", 5, -0.5, 4.5);
+  // runPoint(h_nBJetT, "MuTauProducer_nBJetT");
 
    TH1D * h_nBJetM = new TH1D("h_nBJetM", ";# of b-tagged jets (medium);events / 1", 5, -0.5, 4.5);
    runPoint(h_nBJetM, "MuTauProducer_nBJetM");
@@ -126,11 +132,11 @@ void makeStackPlots()
    TH1D * h_decayMode = new TH1D("h_decayMode", ";decayMode;events / 1", 12, -0.5, 11.5);
    runPoint(h_decayMode, "Tau_decayMode[MuTauProducer_TauIdx]");
 
-   TH1D * h_MuTauColMass = new TH1D("h_MuTauColMass", ";collinear mass (#mu, #tau_{h}, MET) [GeV];events / 25 GeV", 10, 0., 250.);
-   runPoint(h_MuTauColMass, "MuTauProducer_MuTauColMass"); // only makes sense for mu+tau selection
+ //  TH1D * h_MuTauColMass = new TH1D("h_MuTauColMass", ";collinear mass (#mu, #tau_{h}, MET) [GeV];events / 25 GeV", 10, 0., 250.);
+ //  runPoint(h_MuTauColMass, "MuTauProducer_MuTauColMass"); // only makes sense for mu+tau selection
 
-   TH1D * h_nPhoton = new TH1D("h_nPhoton", ";# of photons;events / 1", 4, -0.5, 3.5);
-   runPoint(h_nPhoton, "Sum$(Photon_pt>=100. && TMath::Abs(Photon_eta)<2.5 && Photon_electronVeto && Photon_mvaID_WP80)");
+//   TH1D * h_nPhoton = new TH1D("h_nPhoton", ";# of photons;events / 1", 4, -0.5, 3.5);
+//   runPoint(h_nPhoton, "Sum$(Photon_pt>=100. && TMath::Abs(Photon_eta)<2.5 && Photon_electronVeto && Photon_mvaID_WP80)");
 
 //   TH1D * h_eSum = new TH1D("h_eSum", ";;", 4, -0.5, 3.5);
   // runPoint(h_eSum, "Sum$(Electron_genPartFlav==1)");

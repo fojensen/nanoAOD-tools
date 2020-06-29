@@ -55,7 +55,7 @@ void roc()
 
    TCanvas * c = new TCanvas("c", "", 400, 400);
    g->Draw("APE");
-   g->SetMinimum(0.0001);
+   g->SetMinimum(0.001);
    g->SetMaximum(1.);
    c->SetLogy();
    TAxis * a = g->GetXaxis();
