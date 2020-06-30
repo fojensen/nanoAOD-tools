@@ -25,7 +25,7 @@ root
 eff(true)
 ```
 
-### mistag rate in QCD MC
+### mistag rate in WJetsToLNu MC
 ```
 cd $CMSSW_BASE/src/PhysicsTools/NanoAODTools/analysis/
 root

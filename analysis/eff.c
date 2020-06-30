@@ -7,9 +7,8 @@
 #include <iostream>
 //#include <TLegend.h>
 
-void eff()
+void eff(const bool isSig=true)
 {
-   const bool isSig = true;
    const TString tag = "WJetsToLNu";
 
    TString infile;
