@@ -76,12 +76,14 @@ https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/
 
 ## plot visible mass, extract (inclusive) expected yields
 ```
-root makeHists.c+
+cd $CMSSW_BASE/src/PhysicsTools/NanoAODTools/analysis/
+root yields_ZTauTau.c+
 ```
 
 ## run combine to calculate significance
 first update datacard.txt with expected yields, then
 ```
+cd $CMSSW_BASE/src/PhysicsTools/NanoAODTools/analysis/
 combine -d datacard.txt -M Significance
 ```
 

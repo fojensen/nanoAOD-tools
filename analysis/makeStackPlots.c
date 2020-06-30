@@ -16,21 +16,20 @@ void runPoint(TH1D * h, const TString var)
 
    //loose cuts for Z->mu+tau
    //baseline = baseline && TCut("MuTauProducer_qq==-1 && 128&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]");
-
    //tight cuts for Z->mu+tau
-   //baseline = baseline && TCut("MuTauProducer_mT<40. && MuTauProducer_nBJetM==0 && MuTauProducer_MuTauVisMass<91.1876 && 128&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]");
-
+   //baseline = baseline && TCut("MuTauProducer_mT<40. && MuTauProducer_nBJetT==0 && MuTauProducer_MuTauVisMass<91.1876");
+   //baseline = baseline && TCut("MuTauProducer_nBJetT==0");
    //tight cuts for W
-   baseline = baseline && TCut("MuTauProducer_mT>=40. && MuTauProducer_nBJetM==0 && MuTauProducer_MuTauVisMass>=91.1876");
+   //baseline = baseline && TCut("MuTauProducer_mT>=40. && MuTauProducer_nBJetM==0 && MuTauProducer_MuTauVisMass>=91.1876");
 
-   TFile * f_data = TFile::Open("./outputData/SingleMuon_2018D.root");
+   TFile * f_data = TFile::Open("root://cmseos.fnal.gov//store/user/hats/2020/Tau/SingleMuon_2018D.root");
+   //TFile * f_data = TFile::Open("./outputData/SingleMuon_2018D.root");
    TTree * t_data = (TTree*)f_data->Get("Events"); 
    TH1D * h_data = (TH1D*)h->Clone("h_data_"+TString(h->GetName()));
-   std::cout << t_data->Project(h_data->GetName(), var, baseline) << std::endl;
+   t_data->Project(h_data->GetName(), var, baseline);
 
    const int nmc = 4;
-   //https://twiki.cern.ch/CMS/RA2b13TeVProduction
-   const double lumi = 31742.979;
+   const double lumi = 31742.979; //https://twiki.cern.ch/CMS/RA2b13TeVProduction
    TString samples[nmc] = {"TTJets", "DYJetsToEEMuMu_M-50", "DYJetsToTauTau_M-50", "WJetsToLNu"};
    double xsweight[nmc];
    xsweight[0] = lumi * 831.76 / 10244307.;
@@ -43,19 +42,21 @@ void runPoint(TH1D * h, const TString var)
    TH1D * h_mc[nmc];
    double sum = 0.;
    for (int i = 0; i < nmc; ++i) {
-      std::cout << samples[i] << std::endl;
-      TFile * f = TFile::Open("./outputData/"+samples[i]+".root");
+      char infile[1000];
+      sprintf(infile, "root://cmseos.fnal.gov//store/user/hats/2020/Tau/%s.root", samples[i].Data());
+      TFile * f = TFile::Open(infile);
       TTree * t = (TTree*)f->Get("Events");
       const TString hname = "h_mc_"+TString(h->GetName())+"_"+TString::Itoa(i, 10);
       h_mc[i] = (TH1D*)h->Clone(hname);
       h_mc[i]->SetFillColor(2+i);
       char buffer[1000];
       sprintf(buffer, "%f * (%s)", xsweight[i], TString(baseline).Data());
-      std::cout << t->Project(h_mc[i]->GetName(), var, buffer) << std::endl;
+      t->Project(h_mc[i]->GetName(), var, buffer);
       sum += h_mc[i]->Integral();
       s->Add(h_mc[i]);
    }
 
+   std::cout << "expected background composition: " << std::endl;
    for (int i = 0; i < nmc; ++i) {
       const double h_integral = h_mc[i]->Integral();
       std::cout << samples[i] << " " << h_integral << " " << h_integral/sum << std::endl;
@@ -78,70 +79,24 @@ void runPoint(TH1D * h, const TString var)
    for (int i = 0; i < nmc; ++i) l->AddEntry(h_mc[i], samples[i], "F");
    l->Draw();
 
-   c->SaveAs("./plots/"+TString(h->GetName())+".tightW.pdf");
-
+   c->SaveAs("./plots/"+TString(h->GetName())+".pdf");
 }
 
 void makeStackPlots()
 {
-   //TH1D * h_DeltaPhi = new TH1D("h_DeltaPhi", ";#Delta#phi;events / 0.4", 9, 0., 3.6);
-   //runPoint(h_DeltaPhi, "MuTauProducer_DeltaPhi");
-
-   //TH1D * h_tauPt = new TH1D("h_tauPt", ";#tau_{h} p_{T} [GeV];events / 25 GeV", 10, 0., 250.);
-   //runPoint(h_tauPt, "Tau_pt[MuTauProducer_TauIdx]");
-
-  // TH1D * h_muPt = new TH1D("h_muPt", ";#mu p_{T} [GeV];events / 25 GeV", 10, 0., 250.);
-  // runPoint(h_muPt, "Muon_pt[MuTauProducer_MuIdx]");
-
    TH1D * h_mT = new TH1D("h_mT", ";m_{T} [GeV];events / 25 GeV", 10, 0., 250.);
    runPoint(h_mT, "MuTauProducer_mT");
 
-  // TH1D * h_nBJetT = new TH1D("h_nBJetT", ";# of b-tagged jets (tight);events / 1", 5, -0.5, 4.5);
-  // runPoint(h_nBJetT, "MuTauProducer_nBJetT");
-
-   TH1D * h_nBJetM = new TH1D("h_nBJetM", ";# of b-tagged jets (medium);events / 1", 5, -0.5, 4.5);
-   runPoint(h_nBJetM, "MuTauProducer_nBJetM");
-
-   //TH1D * h_nJet = new TH1D("h_nJet", ";# of jets;events / 1", 7, -0.5, 6.5);
-   //runPoint(h_nJet, "MuTauProducer_nJet");
-
+   TH1D * h_nBJetT = new TH1D("h_nBJetT", ";# of b-tagged jets (tight);events / 1", 5, -0.5, 4.5);
+   runPoint(h_nBJetT, "MuTauProducer_nBJetT");
+   
    TH1D * h_VisMass = new TH1D("h_VisMass", ";#mu+#tau_{h} visible mass [GeV];events / 25 GeV", 10, 0., 250.);
    runPoint(h_VisMass, "MuTauProducer_MuTauVisMass");
 
    TH1D * h_tauMass = new TH1D("h_tauMass", ";#tau_{h} mass [GeV];events / 0.1 GeV", 20, 0., 2.);
    runPoint(h_tauMass, "Tau_mass[MuTauProducer_TauIdx]");
 
-   //TH1D * h_nTau = new TH1D("h_nTau", ";# of #tau_{h};events / 1", 5, -0.5, 4.5);
-   //runPoint(h_nTau, "MuTauProducer_nGoodTau");
-
-   //TH1D * h_nMuon = new TH1D("h_nMuon", ";# of #mu;events / 1", 5, -0.5, 4.5);
-   //runPoint(h_nMuon, "MuTauProducer_nGoodMuon");
-
-   //TH1D * h_HavePair = new TH1D("h_HavePair", ";# of #mu+#tau_{h} pairs;events / 1", 5, -0.5, 4.5);
-   //runPoint(h_HavePair, "MuTauProducer_HavePair");
-
-   //TH1D * h_DeltaPhi = new TH1D("h_DeltaPhi", ";#Delta#phi(#mu, #tau_{h});events / .4", 8, 0., 3.2);
-   //runPoint(h_DeltaPhi, "MuTauProducer_DeltaPhi");
-
-  // TH1D * h_qq = new TH1D("h_qq", ";q_{#mu} * q_{#tau_{h}};events / 1", 3, -1.5, 1.5);
-  // runPoint(h_qq, "MuTauProducer_qq");
-
-   //TH1D * h_MET = new TH1D("h_MET", ";MET [GeV];events / 25 GeV", 10, 0., 250.);
-   //runPoint(h_MET, "MET_pt");
-
    TH1D * h_decayMode = new TH1D("h_decayMode", ";decayMode;events / 1", 12, -0.5, 11.5);
    runPoint(h_decayMode, "Tau_decayMode[MuTauProducer_TauIdx]");
-
- //  TH1D * h_MuTauColMass = new TH1D("h_MuTauColMass", ";collinear mass (#mu, #tau_{h}, MET) [GeV];events / 25 GeV", 10, 0., 250.);
- //  runPoint(h_MuTauColMass, "MuTauProducer_MuTauColMass"); // only makes sense for mu+tau selection
-
-//   TH1D * h_nPhoton = new TH1D("h_nPhoton", ";# of photons;events / 1", 4, -0.5, 3.5);
-//   runPoint(h_nPhoton, "Sum$(Photon_pt>=100. && TMath::Abs(Photon_eta)<2.5 && Photon_electronVeto && Photon_mvaID_WP80)");
-
-//   TH1D * h_eSum = new TH1D("h_eSum", ";;", 4, -0.5, 3.5);
-  // runPoint(h_eSum, "Sum$(Electron_genPartFlav==1)");
-
-  // TH1D * h_muSum = new TH1D("h_muSum", ";;", 4, -0.5, 3.5);
-  // runPoint(h_muSum, "Sum$(Muon_genPartFlav==1)");
 }
 

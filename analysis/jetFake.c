@@ -10,15 +10,17 @@
 
 TFile * runPoint(const TString tag, const double xsweight=1.)
 {
-   std::cout << "running on " << tag << "..." << std::endl;
-   TFile *f = TFile::Open("./outputData/"+tag+".root");
+   std::cout << "filling histograms from: " << tag << std::endl;
+   char infile[1000];
+   sprintf(infile, "root://cmseos.fnal.gov//store/user/hats/2020/Tau/%s.root", tag.Data());
+   TFile *f = TFile::Open(infile);
+   //TFile *f = TFile::Open("./outputData/"+tag+".root");
    TTree *t = (TTree*)f->Get("Events");
 
    TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1";
    baseline = baseline && TCut("MuTauProducer_mT>=40.");
    baseline = baseline && TCut("MuTauProducer_nBJetT==0");
    //baseline = baseline && TCut("MuTauProducer_MuTauVisMass>=91.1876");
-   baseline = baseline && TCut("Tau_pt[MuTauProducer_TauIdx]<120.");
 
    char buffer_denom[1000];
    sprintf(buffer_denom, "%f * (%s)", xsweight, TString(baseline).Data());
@@ -29,11 +31,9 @@ TFile * runPoint(const TString tag, const double xsweight=1.)
       h_pt_num[i] = (TH1D*)h_pt->Clone("h_pt_num_"+TString::Itoa(i, 10));
    }
 
-   std::cout << "projecting denominator..." << std::endl;
-   std::cout << t->Project(h_pt->GetName(), "Tau_pt[MuTauProducer_TauIdx]", buffer_denom) << std::endl;
+   t->Project(h_pt->GetName(), "Tau_pt[MuTauProducer_TauIdx]", buffer_denom);
 
    for (int i = 0; i < 8; ++i) {
-      std::cout << "projecting numerator " << i << "..." << std::endl;
       char buffer[100];
       const int mask = 1<<i;
       sprintf(buffer, "%i&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]", mask);
@@ -41,7 +41,6 @@ TFile * runPoint(const TString tag, const double xsweight=1.)
       char buffer_num[1000];
       sprintf(buffer_num, "%f * (%s)", xsweight, TString(baseline&&cutTag).Data());
       const int n = t->Project(h_pt_num[i]->GetName(), "Tau_pt[MuTauProducer_TauIdx]", buffer_num);
-      std::cout << n << std::endl;
       if (n==0) break;
    }
 
@@ -49,7 +48,7 @@ TFile * runPoint(const TString tag, const double xsweight=1.)
    for (int i = 0; i < 8; ++i) {    
       g_pt[i] = new TGraphAsymmErrors();
       g_pt[i]->SetName("g_pt_"+TString::Itoa(i, 10));
-      g_pt[i]->Divide(h_pt_num[i], h_pt);
+      g_pt[i]->Divide(h_pt_num[i], h_pt, "N");
       g_pt[i]->SetLineColor(i+2);
       g_pt[i]->SetMarkerColor(i+2);
       g_pt[i]->SetMarkerStyle(7);
@@ -178,7 +177,7 @@ TFile * bkgSubtractedData()
    for (int i = 0; i < 8; ++i) {    
       g_pt[i] = new TGraphAsymmErrors();
       g_pt[i]->SetName("g_pt_"+TString::Itoa(i, 10));
-      g_pt[i]->Divide(h_pt_num[i], h_pt);
+      g_pt[i]->Divide(h_pt_num[i], h_pt, "N");
       g_pt[i]->SetLineColor(i+2);
       g_pt[i]->SetMarkerColor(i+2);
       g_pt[i]->SetMarkerStyle(7);
@@ -226,8 +225,10 @@ void makeStackPlot()
    for (int i = 0; i < nmc; ++i) l->AddEntry(h_mc[i], samples[i], "F");
    l->Draw();
 
-   for (int i = 0; i < nmc; ++i) {  
-      std::cout << samples[i] << " " << h_mc[i]->Integral() / mcsum << std::endl;
+   std::cout << "expected background composition: " << std::endl;
+   for (int i = 0; i < nmc; ++i) {
+      const double h_integral = h_mc[i]->Integral();
+      std::cout << samples[i] << " " << h_integral << " " << h_integral/mcsum << std::endl;
    }
    c->SaveAs("./plots/fakerate_tauptdenom.pdf");
 }

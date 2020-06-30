@@ -9,14 +9,15 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import *
 #this takes care of converting the input files from CRAB
 from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import inputFiles,runsAndLumis
 
-#testfile = [
+testfile = [
     #"root://cmsxrootd.fnal.gov///store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019-v1/100000/76BEBA77-9DDB-8144-A183-5842729F006D.root"
     #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/C00024AD-3D0D-DE45-949F-E56A81BDDCA7.root" # small DY file
     #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/109AFD23-2019-E447-8070-8FA4B9203018.root" # large DY file
     #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/9E6A9BA6-C187-0F4E-8A45-01B2F2F33E11.root", #small W file
     #"root://cmsxrootd.fnal.gov///store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root" #large W file
-#]
-#print testfile
+    "root://cmsxrootd.fnal.gov//store/user/fojensen/EmbeddedSamples_08052020/Embedded_2018D.root"
+]
+print testfile
 
 cut_Mu = "(Sum$(Muon_pt>=27. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)>0)"
 cut_Trigger = "(HLT_IsoMu24||HLT_IsoMu27)"
@@ -38,14 +39,14 @@ modules_ = [MuTauProducerConstr(), MuMuProducerConstr()]
 
 p=PostProcessor(
     outputDir = "./",
-    inputFiles = inputFiles(),
-    #inputFiles = testfile,
+    #inputFiles = inputFiles(),
+    inputFiles = testfile,
     cut = cut_,
     modules = modules_,
     #maxEntries = 100000,
     provenance = True,
     fwkJobReport = True,
-    #haddFileName = "test.root",
+    haddFileName = "EmbeddedD.root",
     jsonInput = runsAndLumis(),
     outputbranchsel = "keep_and_drop.txt"
 )

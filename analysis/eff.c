@@ -7,15 +7,33 @@
 #include <iostream>
 //#include <TLegend.h>
 
-void eff(const bool isSig=true)
+void eff()
 {
+   const bool isSig = true;
+   const TString tag = "WJetsToLNu";
+
    TString infile;
-   if (isSig) {
+   if (tag=="WJetsToLNu") {   
       //infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
-      infile = "/uscms_data/d3/fojensen/tauHATS/CMSSW_10_2_18/src/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
+      //infile = "/uscms_data/d3/fojensen/tauHATS/CMSSW_10_2_18/src/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
+      infile = "root://cmseos.fnal.gov//store/user/hats/2020/Tau/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
+   }
+   if (tag=="DYJetsToLL") {
+      //infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/E78C9017-BB6E-FE48-BA37-E059AEA79CD3.root";
+      //infile = "/uscms_data/d3/fojensen/tauHATS/CMSSW_10_2_18/src/E78C9017-BB6E-FE48-BA37-E059AEA79CD3.root";
+      infile = "root://cmseos.fnal.gov//store/user/hats/2020/Tau/E78C9017-BB6E-FE48-BA37-E059AEA79CD3.root";
+   }
+   if (tag=="TTJets") {
+      //infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/250000/8969BAAF-2D11-7449-A180-97850997CD0A.root";
+      //infile = "/uscms_data/d3/fojensen/tauHATS/CMSSW_10_2_18/src/8969BAAF-2D11-7449-A180-97850997CD0A.root";
+      infile = "root://cmseos.fnal.gov//store/user/hats/2020/Tau/8969BAAF-2D11-7449-A180-97850997CD0A.root";
+   }
+
+   std::cout << "producing efficiency curves: " << tag << std::endl;
+   if (isSig) {
+      std::cout << "treated as signal" << std::endl;
    } else {
-      //infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/QCD_Pt_50to80_TuneCP5_13TeV_pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/60000/BAEC21E7-03AB-6C41-B1BD-646EEB265CCA.root";
-      infile = "/uscms_data/d3/fojensen/tauHATS/CMSSW_10_2_18/src/BAEC21E7-03AB-6C41-B1BD-646EEB265CCA.root";
+      std::cout << "treated as background (i.e. mistag)" << std::endl;
    }
 
    TFile * f = TFile::Open(infile);
@@ -58,10 +76,9 @@ void eff(const bool isSig=true)
       if (i%100000==0) std::cout << "beginning event: " << i << std::endl;
       t->GetEntry(i);
       for (unsigned int j = 0; j < nTau; ++j) {
-         const bool tauID = (8&Tau_idDeepTau2017v2p1VSmu[j]) && (128&Tau_idDeepTau2017v2p1VSe[j]) && !(Tau_decayMode[j]==5||Tau_decayMode[j]==6);
-         if (Tau_pt[j]>=20. && Tau_pt[j]<120. && TMath::Abs(Tau_eta[j])<2.3 && tauID) {
-            if (Tau_genPartFlav[j]==tauMatch) {
-               //if (Tau_jetIdx[j]==-1) std::cout << "no matching jet?" << std::endl;
+         if (Tau_genPartFlav[j]==tauMatch) {
+            const bool tauID = (8&Tau_idDeepTau2017v2p1VSmu[j]) && (128&Tau_idDeepTau2017v2p1VSe[j]) && !(Tau_decayMode[j]==5||Tau_decayMode[j]==6);
+            if (Tau_pt[j]>=20. && TMath::Abs(Tau_eta[j])<2.3 && tauID) {
                h_pt->Fill(Tau_pt[j]);
                h_eta->Fill(TMath::Abs(Tau_eta[j]));
                for (int k = 0; k < 8; ++k) {
@@ -69,6 +86,7 @@ void eff(const bool isSig=true)
                   const bool passid = mask&Tau_idDeepTau2017v2p1VSjet[j];
                   //std::cout << mask << std::endl;
                   if (passid) {
+                     const bool tauID = (8&Tau_idDeepTau2017v2p1VSmu[j]) && (128&Tau_idDeepTau2017v2p1VSe[j]) && !(Tau_decayMode[j]==5||Tau_decayMode[j]==6);
                      h_pt_num[k]->Fill(Tau_pt[j]);
                      h_eta_num[k]->Fill(TMath::Abs(Tau_eta[j]));
                   } else {
@@ -105,10 +123,7 @@ void eff(const bool isSig=true)
       g_eta[i]->SetTitle(buffer_eta);
    }
 
-   TString title;
-   isSig ? title = "signal" : title = "background";
- 
-   TCanvas * c1 = new TCanvas("c1", title, 800, 400);
+   TCanvas * c1 = new TCanvas("c1", tag, 800, 400);
    c1->Divide(2, 1);
 
    TPad * p11 = (TPad*)c1->cd(1);
@@ -134,11 +149,16 @@ void eff(const bool isSig=true)
       g_eta[0]->SetMaximum(1.1);
       p12->SetLogy();
    }
-   for (int i = 1; i < 8; ++i) g_eta[i]->Draw("PE, SAME"); 
+   for (int i = 1; i < 8; ++i) g_eta[i]->Draw("PE, SAME");  
    //l->Draw();
-   isSig ? c1->SaveAs("./plots/eff.WJetsToLNu.pdf") : c1->SaveAs("./plots/eff.QCD_Pt_50to80.pdf");
 
-   TCanvas *c2 = new TCanvas("c2", title, 800, 400);
+   if (isSig) {
+      c1->SaveAs("./plots/sig."+tag+".pdf");
+   } else {
+      c1->SaveAs("./plots/bkg."+tag+".pdf");
+   }
+
+   /*TCanvas *c2 = new TCanvas("c2", tag, 800, 400);
    c2->Divide(2, 1);
    TPad * p21 = (TPad*)c2->cd(1);
    h_pt->Draw("HIST, E");
@@ -147,6 +167,10 @@ void eff(const bool isSig=true)
    c2->cd(2);
    h_eta->Draw("HIST, E");
    h_eta->SetMinimum(0.);
-   isSig ? c2->SaveAs("./plots/dists.WJetsToLNu.pdf") : c2->SaveAs("./plots/dists.QCD_Pt_50to80.pdf");
+   if (isSig) {
+      c2->SaveAs("./plots/eff."+tag+".dists.pdf");
+   } else {
+      c2->SaveAs("./plots/mis."+tag+".dists.pdf");
+   }*/
 }
 
