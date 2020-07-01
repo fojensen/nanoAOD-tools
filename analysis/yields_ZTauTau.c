@@ -20,7 +20,10 @@ double addOverflow(TH1D * h)
 TFile * makeHists(const TString tag, const double weight=0.)
 {
    std::cout << tag << std::endl;
-   TFile * f_in = TFile::Open("./outputData/"+tag+".root");
+   char infile[1000];
+   sprintf(infile, "root://cmseos.fnal.gov//store/user/hats/2020/Tau/%s.root", tag.Data());
+   TFile * f_in = TFile::Open(infile);
+   //TFile * f_in = TFile::Open("./outputData/"+tag+".root");
    TTree * t = (TTree*)f_in->Get("Events");
 
    TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1";
