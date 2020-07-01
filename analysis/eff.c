@@ -39,11 +39,9 @@ void eff(const bool isSig=true)
    TTree * t = (TTree*)f->Get("Events");
   
    TH1D *h_pt = new TH1D("h_pt", ";#tau_{h} p_{T} [GeV];#tau_{h} / 10 GeV", 10, 20., 120.);
-   TH1D *h_eta = new TH1D("h_eta", ";#tau_{h} |#eta|;#tau_{h} / 0.23", 10, 0., 2.3);
-   TH1D *h_pt_num[8], *h_eta_num[8];
+   TH1D *h_pt_num[8];
    for (int i = 0; i < 8; ++i) {
       h_pt_num[i] = (TH1D*)h_pt->Clone("h_pt_num_"+TString::Itoa(i, 10));
-      h_eta_num[i] = (TH1D*)h_eta->Clone("h_eta_num_"+TString::Itoa(i, 10));
    }
  
    UInt_t nTau = 0;
@@ -79,7 +77,6 @@ void eff(const bool isSig=true)
             const bool tauID = (8&Tau_idDeepTau2017v2p1VSmu[j]) && (128&Tau_idDeepTau2017v2p1VSe[j]) && !(Tau_decayMode[j]==5||Tau_decayMode[j]==6);
             if (Tau_pt[j]>=20. && TMath::Abs(Tau_eta[j])<2.3 && tauID) {
                h_pt->Fill(Tau_pt[j]);
-               h_eta->Fill(TMath::Abs(Tau_eta[j]));
                for (int k = 0; k < 8; ++k) {
                   const int mask = 1<<k;
                   const bool passid = mask&Tau_idDeepTau2017v2p1VSjet[j];
@@ -87,7 +84,6 @@ void eff(const bool isSig=true)
                   if (passid) {
                      const bool tauID = (8&Tau_idDeepTau2017v2p1VSmu[j]) && (128&Tau_idDeepTau2017v2p1VSe[j]) && !(Tau_decayMode[j]==5||Tau_decayMode[j]==6);
                      h_pt_num[k]->Fill(Tau_pt[j]);
-                     h_eta_num[k]->Fill(TMath::Abs(Tau_eta[j]));
                   } else {
                      break;
                   }
@@ -112,20 +108,9 @@ void eff(const bool isSig=true)
       sprintf(buffer_pt, ";%s;tagging efficiency", h_pt->GetXaxis()->GetTitle());
       g_pt[i]->SetTitle(buffer_pt);
       //l->AddEntry(g_pt[i], labels[i], "P");
-      g_eta[i] = new TGraphAsymmErrors();
-      g_eta[i]->Divide(h_eta_num[i], h_eta);
-      g_eta[i]->SetLineColor(i+2);
-      g_eta[i]->SetMarkerColor(i+2);
-      g_eta[i]->SetMarkerStyle(7);
-      char buffer_eta[100];
-      sprintf(buffer_eta, ";%s;tagging efficiency", h_eta->GetXaxis()->GetTitle());
-      g_eta[i]->SetTitle(buffer_eta);
    }
 
-   TCanvas * c1 = new TCanvas("c1", tag, 800, 400);
-   c1->Divide(2, 1);
-
-   TPad * p11 = (TPad*)c1->cd(1);
+   TCanvas * c = new TCanvas("c", tag, 400, 400);
    g_pt[0]->Draw("APE");
    if (isSig) {
       g_pt[0]->SetMinimum(0.);
@@ -133,43 +118,9 @@ void eff(const bool isSig=true)
    } else {
       g_pt[0]->SetMinimum(0.001);
       g_pt[0]->SetMaximum(1.);
-      p11->SetLogy();
+      c->SetLogy();
    }
    for (int i = 1; i < 8; ++i) g_pt[i]->Draw("PE, SAME");
    //l->Draw();
-
-   TPad * p12 = (TPad*)c1->cd(2);
-   g_eta[0]->Draw("APE");
-   if (isSig) {
-      g_eta[0]->SetMinimum(0.);
-      g_eta[0]->SetMaximum(1.1);
-   } else {
-      g_eta[0]->SetMinimum(0.001);
-      g_eta[0]->SetMaximum(1.1);
-      p12->SetLogy();
-   }
-   for (int i = 1; i < 8; ++i) g_eta[i]->Draw("PE, SAME");  
-   //l->Draw();
-
-   if (isSig) {
-      c1->SaveAs("./plots/sig."+tag+".pdf");
-   } else {
-      c1->SaveAs("./plots/bkg."+tag+".pdf");
-   }
-
-   /*TCanvas *c2 = new TCanvas("c2", tag, 800, 400);
-   c2->Divide(2, 1);
-   TPad * p21 = (TPad*)c2->cd(1);
-   h_pt->Draw("HIST, E");
-   h_pt->SetMinimum(1.);
-   p21->SetLogy();
-   c2->cd(2);
-   h_eta->Draw("HIST, E");
-   h_eta->SetMinimum(0.);
-   if (isSig) {
-      c2->SaveAs("./plots/eff."+tag+".dists.pdf");
-   } else {
-      c2->SaveAs("./plots/mis."+tag+".dists.pdf");
-   }*/
 }
 

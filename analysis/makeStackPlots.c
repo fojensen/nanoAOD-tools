@@ -66,7 +66,7 @@ void runPoint(TH1D * h, const TString var)
    h_data->SetMarkerStyle(20);
    h_data->Draw("PE, SAME");
    h_data->SetStats(0);
-   h_data->SetMinimum(100.);
+   h_data->SetMinimum(0.1);
    h_data->SetMaximum(10000000.);
    c->SetLogy();
    s->Draw("HIST, SAME");
