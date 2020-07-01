@@ -18,9 +18,9 @@ TFile * runPoint(const TString tag, const double xsweight=1.)
    TTree *t = (TTree*)f->Get("Events");
 
    TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1";
-   baseline = baseline && TCut("MuTauProducer_mT>=40.");
-   baseline = baseline && TCut("MuTauProducer_nBJetT==0");
-   //baseline = baseline && TCut("MuTauProducer_MuTauVisMass>=91.1876");
+   //baseline = baseline && TCut("MuTauProducer_mT>=0.");
+   //baseline = baseline && TCut("MuTauProducer_nBJetT>=0");
+   //baseline = baseline && TCut("MuTauProducer_MuTauVisMass>=0.");
 
    char buffer_denom[1000];
    sprintf(buffer_denom, "%f * (%s)", xsweight, TString(baseline).Data());
