@@ -36,8 +36,8 @@ void roc()
    taucut = taucut && TCut("(8&Tau_idDeepTau2017v2p1VSmu) && (128&Tau_idDeepTau2017v2p1VSe) && !(Tau_decayMode==5||Tau_decayMode==6)");
    const TCut sigcut = "Tau_genPartFlav==5";
    const TCut bkgcut = "Tau_genPartFlav==0";
-   TCut wpcut[8];
-   for (int i = 0; i < 8; ++i) {
+   TCut wpcut[7];
+   for (int i = 0; i < 7; ++i) {
       char buffer[100];
       const int mask = 1<<i;
       sprintf(buffer, "%i&Tau_idDeepTau2017v2p1VSjet", mask);
@@ -46,16 +46,16 @@ void roc()
 
    double n_sig_tot = t_sig->GetEntries(taucut && sigcut);
    double n_bkg_tot = t_bkg->GetEntries(taucut && bkgcut);
-   double n_sig[8], n_bkg[8];
-   for (int i = 0; i < 8; ++i) {
+   double n_sig[7], n_bkg[7];
+   for (int i = 0; i < 7; ++i) {
       n_sig[i] = t_sig->GetEntries(taucut && sigcut && wpcut[i]);
       n_bkg[i] = t_sig->GetEntries(taucut && bkgcut && wpcut[i]);
    }
 
-   TGraphErrors * g = new TGraphErrors(8);
+   TGraphErrors * g = new TGraphErrors(7);
    g->SetTitle(";signal efficiency;background efficiency");
    g->SetMarkerStyle(20);
-   for (int i = 0; i < 8; ++i) {
+   for (int i = 0; i < 7; ++i) {
       const double eff_sig = n_sig[i]/n_sig_tot;
       const double eff_sig_err = eff_sig * sqrt((1./n_sig[i])+(1./n_sig_tot));
       const double eff_bkg = n_bkg[i]/n_bkg_tot;
@@ -65,7 +65,7 @@ void roc()
    }
 
    std::cout << "inclusive efficiencies (sig, bkg)" << std::endl;
-   for (int i = 0; i < 8; ++i) {
+   for (int i = 0; i < 7; ++i) {
       double x,y;
       g->GetPoint(i, x, y);
       std::cout << x << ", " << y << std::endl;
