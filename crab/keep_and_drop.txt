@@ -14,3 +14,14 @@ keep luminosityBlock
 keep puWeight*
 keep MuTauProducer*
 keep MuMuProducer*
+keep HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1*
+keep HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1*
+keep HLT_IsoMu20_eta2p1_MediumChargedIsoPFTauHPS27_eta2p1_CrossL1*
+keep HLT_IsoMu20_eta2p1_MediumChargedIsoPFTauHPS27_eta2p1_CrossL1*
+keep HLT_IsoMu20_eta2p1_TightChargedIsoPFTauHPS27_eta2p1_CrossL1*
+keep HLT_IsoMu20_eta2p1_TightChargedIsoPFTauHPS27_eta2p1_TightID_CrossL1*
+keep HLT_IsoMu24*
+keep HLT_IsoMu27*
+keep HLT_Mu50*
+keep HLT_OldMu100*
+keep HLT_TkMu100*

@@ -15,12 +15,14 @@ void runPoint(TH1D * h, const TString var)
    TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1";
 
    //loose cuts for Z->mu+tau
-   //baseline = baseline && TCut("MuTauProducer_qq==-1 && 128&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]");
+   baseline = baseline && TCut("MuTauProducer_qq==-1 && 128&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]");
    //tight cuts for Z->mu+tau
-   //baseline = baseline && TCut("MuTauProducer_mT<40. && MuTauProducer_nBJetT==0 && MuTauProducer_MuTauVisMass<91.1876");
+   baseline = baseline && TCut("MuTauProducer_mT<80.379 && MuTauProducer_nBJetM==0 && MuTauProducer_MuTauVisMass<91.1876");
    //baseline = baseline && TCut("MuTauProducer_nBJetT==0");
    //tight cuts for W
    //baseline = baseline && TCut("MuTauProducer_mT>=40. && MuTauProducer_nBJetM==0 && MuTauProducer_MuTauVisMass>=91.1876");
+   
+   baseline = baseline && TCut("Tau_decayMode[MuTauProducer_TauIdx]==10");
 
    TFile * f_data = TFile::Open("root://cmseos.fnal.gov//store/user/hats/2020/Tau/SingleMuon_2018D.root");
    //TFile * f_data = TFile::Open("./outputData/SingleMuon_2018D.root");
@@ -79,24 +81,24 @@ void runPoint(TH1D * h, const TString var)
    for (int i = 0; i < nmc; ++i) l->AddEntry(h_mc[i], samples[i], "F");
    l->Draw();
 
-   c->SaveAs("./plots/"+TString(h->GetName())+".pdf");
+   c->SaveAs("./plots/"+TString(h->GetName())+".tightZ.dm10.pdf");
 }
 
 void makeStackPlots()
 {
-   TH1D * h_mT = new TH1D("h_mT", ";m_{T} [GeV];events / 25 GeV", 10, 0., 250.);
-   runPoint(h_mT, "MuTauProducer_mT");
+  // TH1D * h_mT = new TH1D("h_mT", ";m_{T} [GeV];events / 25 GeV", 10, 0., 250.);
+  // runPoint(h_mT, "MuTauProducer_mT");
 
-   TH1D * h_nBJetT = new TH1D("h_nBJetT", ";# of b-tagged jets (tight);events / 1", 5, -0.5, 4.5);
-   runPoint(h_nBJetT, "MuTauProducer_nBJetT");
+  // TH1D * h_nBJetT = new TH1D("h_nBJetT", ";# of b-tagged jets (tight);events / 1", 5, -0.5, 4.5);
+  // runPoint(h_nBJetT, "MuTauProducer_nBJetT");
    
-   TH1D * h_VisMass = new TH1D("h_VisMass", ";#mu+#tau_{h} visible mass [GeV];events / 25 GeV", 10, 0., 250.);
-   runPoint(h_VisMass, "MuTauProducer_MuTauVisMass");
+ //  TH1D * h_VisMass = new TH1D("h_VisMass", ";#mu+#tau_{h} visible mass [GeV];events / 25 GeV", 10, 0., 250.);
+ //  runPoint(h_VisMass, "MuTauProducer_MuTauVisMass");
 
-   TH1D * h_tauMass = new TH1D("h_tauMass", ";#tau_{h} mass [GeV];events / 0.1 GeV", 20, 0., 2.);
+   TH1D * h_tauMass = new TH1D("h_tauMass", ";#tau_{h} mass [GeV];events / 0.2 GeV", 21, 0., 4.2);
    runPoint(h_tauMass, "Tau_mass[MuTauProducer_TauIdx]");
 
-   TH1D * h_decayMode = new TH1D("h_decayMode", ";decayMode;events / 1", 12, -0.5, 11.5);
-   runPoint(h_decayMode, "Tau_decayMode[MuTauProducer_TauIdx]");
+ //  TH1D * h_decayMode = new TH1D("h_decayMode", ";decayMode;events / 1", 12, -0.5, 11.5);
+   //runPoint(h_decayMode, "Tau_decayMode[MuTauProducer_TauIdx]");
 }
 

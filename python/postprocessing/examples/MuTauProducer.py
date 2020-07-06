@@ -25,7 +25,7 @@ class MuTauProducer(Module):
         self.out.branch("MuTauProducer_TauIdx", "I")
         self.out.branch("MuTauProducer_mT", "F")
         self.out.branch("MuTauProducer_MuTauVisMass", "F")
-        self.out.branch("MuTauProducer_MuTauColMass", "F")
+        #self.out.branch("MuTauProducer_MuTauColMass", "F")
         self.out.branch("MuTauProducer_MuTauPt", "F")
         self.out.branch("MuTauProducer_MuTauDeltaPhi", "F")
         self.out.branch("MuTauProducer_MuMetDeltaPhi", "F")
@@ -47,7 +47,7 @@ class MuTauProducer(Module):
         mT = 0
         MuTauVisMass = 0
         MuTauPt = 0
-        MuTauColMass = 0
+        #MuTauColMass = 0
         MuTauDeltaPhi = 0
         MuMetDeltaPhi = 0
         nJet = 0
@@ -112,17 +112,17 @@ class MuTauProducer(Module):
                                 mT = 2. * event.MET_pt * mu.pt * (1-math.cos(deltaPhi(event.MET_phi, mu.phi)))
                                 mT = math.sqrt(mT)
                                 ### collinear mass
-                                if tau.phi != mu.phi:
-                                    cos0M = math.cos(deltaPhi(tau.phi, event.MET_phi));
-                                    cos1M = math.cos(deltaPhi(mu.phi, event.MET_phi));
-                                    cos01 = math.cos(deltaPhi(tau.phi, mu.phi));
-                                    nu0mag = event.MET_pt * (cos0M-cos1M*cos01) / (1.-cos01*cos01);
-                                    nu1mag = (event.MET_pt*cos1M) - (nu0mag*cos01);
-                                    nu0 = TLorentzVector()
-                                    nu1 = TLorentzVector()
-                                    nu0.SetPtEtaPhiM(nu0mag, tau.eta, tau.phi, 0.)
-                                    nu1.SetPtEtaPhiM(nu1mag, mu.eta, mu.phi, 0.)
-                                    MuTauColMass = (mu.p4()+nu0+tau.p4()+nu1).M()
+                                #if tau.phi != mu.phi:
+                                #    cos0M = math.cos(deltaPhi(tau.phi, event.MET_phi));
+                                #    cos1M = math.cos(deltaPhi(mu.phi, event.MET_phi));
+                                #    cos01 = math.cos(deltaPhi(tau.phi, mu.phi));
+                                #    nu0mag = event.MET_pt * (cos0M-cos1M*cos01) / (1.-cos01*cos01);
+                                #    nu1mag = (event.MET_pt*cos1M) - (nu0mag*cos01);
+                                #    nu0 = TLorentzVector()
+                                #    nu1 = TLorentzVector()
+                                #    nu0.SetPtEtaPhiM(nu0mag, tau.eta, tau.phi, 0.)
+                                #    nu1.SetPtEtaPhiM(nu1mag, mu.eta, mu.phi, 0.)
+                                #    MuTauColMass = (mu.p4()+nu0+tau.p4()+nu1).M()
  
                             HavePair = HavePair + 1
 
@@ -136,7 +136,7 @@ class MuTauProducer(Module):
         self.out.fillBranch("MuTauProducer_mT", mT)
         self.out.fillBranch("MuTauProducer_MuTauVisMass", MuTauVisMass)
         self.out.fillBranch("MuTauProducer_MuTauPt", MuTauPt)
-        self.out.fillBranch("MuTauProducer_MuTauColMass", MuTauColMass)
+        #self.out.fillBranch("MuTauProducer_MuTauColMass", MuTauColMass)
         self.out.fillBranch("MuTauProducer_MuTauDeltaPhi", MuTauDeltaPhi)
         self.out.fillBranch("MuTauProducer_MuMetDeltaPhi", MuMetDeltaPhi)
         self.out.fillBranch("MuTauProducer_nGoodMuon", nGoodMuon)

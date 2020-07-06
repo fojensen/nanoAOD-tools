@@ -52,7 +52,6 @@ void eff(const bool isSig=true)
    UChar_t Tau_idDeepTau2017v2p1VSe[50];
    UChar_t Tau_idDeepTau2017v2p1VSmu[50];
    UChar_t Tau_idDeepTau2017v2p1VSjet[50];
-   //Int_t Tau_jetIdx[50];
 
    t->SetBranchAddress("nTau", &nTau);
    t->SetBranchAddress("Tau_pt", Tau_pt);
@@ -62,7 +61,6 @@ void eff(const bool isSig=true)
    t->SetBranchAddress("Tau_idDeepTau2017v2p1VSe", Tau_idDeepTau2017v2p1VSe);
    t->SetBranchAddress("Tau_idDeepTau2017v2p1VSmu", Tau_idDeepTau2017v2p1VSmu);
    t->SetBranchAddress("Tau_idDeepTau2017v2p1VSjet", Tau_idDeepTau2017v2p1VSjet);
-   //t->SetBranchAddress("Tau_jetIdx", Tau_jetIdx);
 
    int tauMatch;
    isSig ? tauMatch=5 : tauMatch=0;
@@ -79,8 +77,8 @@ void eff(const bool isSig=true)
                h_pt->Fill(Tau_pt[j]);
                for (int k = 0; k < 8; ++k) {
                   const int mask = 1<<k;
-                  const bool passid = mask&Tau_idDeepTau2017v2p1VSjet[j];
                   //std::cout << mask << std::endl;
+                  const bool passid = mask&Tau_idDeepTau2017v2p1VSjet[j];
                   if (passid) {
                      const bool tauID = (8&Tau_idDeepTau2017v2p1VSmu[j]) && (128&Tau_idDeepTau2017v2p1VSe[j]) && !(Tau_decayMode[j]==5||Tau_decayMode[j]==6);
                      h_pt_num[k]->Fill(Tau_pt[j]);
@@ -93,7 +91,7 @@ void eff(const bool isSig=true)
       }
    }
 
-   TGraphAsymmErrors *g_pt[8], *g_eta[8];
+   TGraphAsymmErrors *g_pt[8];
    //TLegend * l = new TLegend(0.25, 0.7, 0.875, 0.875);
    //l->SetNColumns(4);
    //l->SetBorderSize(0);
@@ -122,5 +120,10 @@ void eff(const bool isSig=true)
    }
    for (int i = 1; i < 8; ++i) g_pt[i]->Draw("PE, SAME");
    //l->Draw();
+   if (isSig) {
+      c->SaveAs("./plots/eff."+tag+".sig.pdf");
+   } else {
+      c->SaveAs("./plots/eff."+tag+".bkg.pdf");
+   }
 }
 
