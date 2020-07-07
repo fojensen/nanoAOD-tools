@@ -62,7 +62,7 @@ class MuTauProducer(Module):
         #https://twiki.cern.ch/CMS/SWGuideMuonIdRun2 
         goodMuonIdx = []
         for i, mu in enumerate(muons):
-            muonID = mu.tightId and mu.pfIsoId>=4
+            muonID = mu.tightId and mu.pfIsoId>=2
             if mu.pt>=27. and abs(mu.eta)<2.4 and muonID:
                 goodMuonIdx.append(i)
         nGoodMuon = len(goodMuonIdx)
@@ -112,17 +112,17 @@ class MuTauProducer(Module):
                                 mT = 2. * event.MET_pt * mu.pt * (1-math.cos(deltaPhi(event.MET_phi, mu.phi)))
                                 mT = math.sqrt(mT)
                                 ### collinear mass
-                                #if tau.phi != mu.phi:
-                                #    cos0M = math.cos(deltaPhi(tau.phi, event.MET_phi));
-                                #    cos1M = math.cos(deltaPhi(mu.phi, event.MET_phi));
-                                #    cos01 = math.cos(deltaPhi(tau.phi, mu.phi));
-                                #    nu0mag = event.MET_pt * (cos0M-cos1M*cos01) / (1.-cos01*cos01);
-                                #    nu1mag = (event.MET_pt*cos1M) - (nu0mag*cos01);
-                                #    nu0 = TLorentzVector()
-                                #    nu1 = TLorentzVector()
-                                #    nu0.SetPtEtaPhiM(nu0mag, tau.eta, tau.phi, 0.)
-                                #    nu1.SetPtEtaPhiM(nu1mag, mu.eta, mu.phi, 0.)
-                                #    MuTauColMass = (mu.p4()+nu0+tau.p4()+nu1).M()
+                                if tau.phi != mu.phi:
+                                    cos0M = math.cos(deltaPhi(tau.phi, event.MET_phi));
+                                    cos1M = math.cos(deltaPhi(mu.phi, event.MET_phi));
+                                    cos01 = math.cos(deltaPhi(tau.phi, mu.phi));
+                                    nu0mag = event.MET_pt * (cos0M-cos1M*cos01) / (1.-cos01*cos01);
+                                    nu1mag = (event.MET_pt*cos1M) - (nu0mag*cos01);
+                                    nu0 = TLorentzVector()
+                                    nu1 = TLorentzVector()
+                                    nu0.SetPtEtaPhiM(nu0mag, tau.eta, tau.phi, 0.)
+                                    nu1.SetPtEtaPhiM(nu1mag, mu.eta, mu.phi, 0.)
+                                    MuTauColMass = (mu.p4()+nu0+tau.p4()+nu1).M()
  
                             HavePair = HavePair + 1
 
