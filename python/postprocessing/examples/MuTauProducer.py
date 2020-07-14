@@ -27,6 +27,8 @@ class MuTauProducer(Module):
         self.out.branch("MuTauProducer_MuTauVisMass", "F")
         #self.out.branch("MuTauProducer_MuTauColMass", "F")
         self.out.branch("MuTauProducer_MuTauPt", "F")
+        self.out.branch("MuTauProducer_MuTauEta", "F")
+        self.out.branch("MuTauProducer_MuTauPhi", "F")
         self.out.branch("MuTauProducer_MuTauDeltaPhi", "F")
         self.out.branch("MuTauProducer_MuMetDeltaPhi", "F")
         self.out.branch("MuTauProducer_nJet", "I")
@@ -46,7 +48,7 @@ class MuTauProducer(Module):
         TauIdx = -1
         mT = 0
         MuTauVisMass = 0
-        MuTauPt = 0
+        MuTauPt = MuTauEta = MuTauPhi = 0
         #MuTauColMass = 0
         MuTauDeltaPhi = 0
         MuMetDeltaPhi = 0
@@ -109,6 +111,7 @@ class MuTauProducer(Module):
                                 TauIdx = j
                                 MuTauVisMass = (mu.p4()+tau.p4()).M()
                                 MuTauPt =  (mu.p4()+tau.p4()).Pt()
+                                MuTauEta =  (mu.p4()+tau.p4()).Eta()
                                 mT = 2. * event.MET_pt * mu.pt * (1-math.cos(deltaPhi(event.MET_phi, mu.phi)))
                                 mT = math.sqrt(mT)
                                 ### collinear mass
