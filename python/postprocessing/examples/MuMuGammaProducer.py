@@ -8,12 +8,12 @@ from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR, deltaPhi
 from ROOT import TLorentzVector
 #import math
 
-from MuonPOG.MuonSFs.MuonSFTool import MuonSFTool
-muonSFTool = MuonSFTool()
-
 class MuMuGammaProducer(Module):
     def __init__(self, isMC_):
         self.isMC__ = isMC_
+        #if isMC:
+        #    from MuonPOG.MuonSFs.MuonSFTool import MuonSFTool
+        #    muonSFTool = MuonSFTool() 
         pass
     def beginJob(self):
         pass

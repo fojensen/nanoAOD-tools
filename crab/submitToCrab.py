@@ -39,7 +39,7 @@ with open(infile) as json_file:
       f.write("config.Data.inputDBS='global'\n")
       f.write("config.Data.splitting='FileBased'\n")
       f.write("config.Data.unitsPerJob=1\n")
-      f.write("config.Data.outLFNDirBase='/store/user/fjensen/taustar_20072020'\n")
+      f.write("config.Data.outLFNDirBase='/store/user/fjensen/taustar_26072020'\n")
       f.write("config.Data.publication=False\n")
       f.write("\n")
 
@@ -47,5 +47,5 @@ with open(infile) as json_file:
       f.write("config.Site.storageSite='T3_US_FNALLPC'\n")
       f.close()
       
-#      os.system("crab submit -c " + f.name)
+      #os.system("crab submit -c " + f.name)
 
