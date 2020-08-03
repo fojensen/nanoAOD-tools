@@ -24,13 +24,16 @@ def zeroFill(tree,brName,brObj,allowNonBool=False) :
 		b.ResetAddress()
 fileHandles=[]
 goFast=True
+nfiles = 0
 for fn in files :
     print "Adding file",fn
     fileHandles.append(ROOT.TFile.Open(fn))
+    nfiles = nfiles+1
     if fileHandles[-1].GetCompressionSettings() != fileHandles[0].GetCompressionSettings() :
 	goFast=False
 	print "Disabling fast merging as inputs have different compressions"
 of=ROOT.TFile(ofname,"recreate")
+print "nfiles: ", nfiles
 if goFast :
 	of.SetCompressionSettings(fileHandles[0].GetCompressionSettings())
 of.cd()

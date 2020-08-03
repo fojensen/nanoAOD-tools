@@ -36,13 +36,6 @@ keep Photon_pt
 keep Photon_isScEtaEB
 keep Photon_isScEtaEE
 keep nPhoton
-keep HLT_IsoMu24
-keep HLT_IsoMu27
-keep HLT_Mu50
-keep HLT_OldMu100
-keep HLT_TkMu100
-keep HLT_Photon200
-keep HLT_Photon175
 keep PV_npvs
 keep PV_npvsGood
 keep MET_phi
@@ -83,3 +76,12 @@ keep Jet_jetId
 keep Jet_btagDeepB
 keep PhotonOverlap*
 keep *Weight
+keep HLT_IsoMu24
+keep HLT_IsoMu27
+keep HLT_Mu50
+keep HLT_OldMu100
+keep HLT_TkMu100
+keep HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1
+keep HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1
+keep HLT_Photon200
+keep HLT_Photon175

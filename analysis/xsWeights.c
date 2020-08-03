@@ -39,24 +39,24 @@ void runPoint(const TString tag, const double n, const double xs)
 //https://github.com/TreeMaker/TreeMaker/blob/Run2_2017/WeightProducer/python/MCSampleValues.py
 void xsWeights()
 {
-   runPoint("WJetsToLNu", 71026861., 61526.7);//ra2b
+   //runPoint("WJetsToLNu", 71026861., 61526.7);//ra2b
    //runPoint("W1JetsToLNu", 51082776., 9299.1671);
    //runPoint("W2JetsToLNu", 23290710., 3171.68357);
    //runPoint("W3JetsToLNu", 14508481., 1112.59086);
    //runPoint("W4JetsToLNu", 10082747., 627.274341);
    //runPoint("WGToLNuG", 6012425., 405.271);
   
-   //runPoint("DYJetsToLL_M-10to50", 46976952.+39392062., 18610.);
-   runPoint("DYJetsToLL_M-50", 100194597., 6077.22);//ra2b
-   //runPoint("DY1JetsToLL_M-50", 68898175., 998.95199);
-   //runPoint("DY2JetsToLL_M-50", 20456037., 341.388862);
-   //runPoint("DY3JetsToLL_M-50", 5652357., 124.195209);
-   //runPoint("DY4JetsToLL_M-50", 2817812., 70.5905277);
+   runPoint("DYJetsToLL_M-10to50", 46976952.+39392062., 18610.);
+   runPoint("DY01234JetsToLL_M-50", 100194597., 6077.22);//ra2b
+   runPoint("DY1JetsToLL_M-50", 68898175., 998.95199);
+   runPoint("DY2JetsToLL_M-50", 20456037., 341.388862);
+   runPoint("DY3JetsToLL_M-50", 5652357., 124.195209);
+   runPoint("DY4JetsToLL_M-50", 2809978., 70.5905277);
    //runPoint("ZGToLLG_01J_5f", 13946364., 55.53);
 
-   runPoint("TTJets", 10244307, 831.76); //ra2b 
+   //runPoint("TTJets", 10244307, 831.76); //ra2b 
    //runPoint("TTToHadronic", 131024000.+199524000., 377.96);//ra2b
-   runPoint("TTToSemiLeptonic", 100790000.+199829998., 365.34);//ra2b
+   //runPoint("TTToSemiLeptonic", 100790000.+199829998., 365.34);//ra2b
    runPoint("TTTo2L2Nu", 64310000., 88.29);//ra2b
   
    //runPoint("TTGJets", 4691915., 3.697); //ra2b

@@ -17,10 +17,12 @@ class JetProducer(Module):
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.out = wrappedOutputTree
         self.out.branch("JetProducer_nJet", "I")
+        self.out.branch("JetProducer_nJet_dr", "I")
         self.out.branch("JetProducer_nBJetL", "I")
         self.out.branch("JetProducer_nBJetM", "I")
         self.out.branch("JetProducer_nBJetT", "I")
         self.out.branch("JetProducer_HT", "F")
+        self.out.branch("JetProducer_HT_dr", "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -33,13 +35,15 @@ class JetProducer(Module):
         photons = Collection(event, "Photon")
         jets = Collection(event, "Jet")
 
-        JetProducer_nJet = 0
+        JetProducer_nJet = JetProducer_nJet_dr = 0
         #https://twiki.cern.ch/CMS/BtagRecommendation102X
         JetProducer_nBJetL = JetProducer_nBJetM = JetProducer_nBJetT = 0
-        JetProducer_HT = 0
+        JetProducer_HT = JetProducer_HT_dr = 0
 
         for jet in jets:
             if jet.pt>=20. and abs(jet.eta)<2.5 and (4&jet.jetId):
+                JetProducer_nJet_dr = JetProducer_nJet_dr+1
+                JetProducer_HT_dr += jet.pt
                 mindr_t = 9.
                 for tau in taus:
                     tauID = (8&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu)
@@ -50,7 +54,7 @@ class JetProducer(Module):
                            mindr_t = mindr_t_
                 mindr_m = 9.
                 for muon in muons:
-                    muonID = muon.mediumId and muon.pfIsoId>=2
+                    muonID = muon.mediumId and muon.pfIsoId>=4
                     muonID = muon.pt>=27. and abs(muon.eta)<2.4 and muonID
                     if muonID:
                         mindr_m_ = deltaR(jet, muon)
@@ -65,7 +69,7 @@ class JetProducer(Module):
                            mindr_g = mindr_g_
                 mindr_e = 9.
                 for electron in electrons:
-                    electronID = electron.mvaFall17V2Iso_WP90
+                    electronID = electron.mvaFall17V2Iso_WP80
                     if electron.pt>=32. and abs(electron.eta)<2.5 and electronID:
                         mindr_e_ = deltaR(electron, jet)
                         if mindr_e_ < mindr_e:
@@ -85,7 +89,8 @@ class JetProducer(Module):
         self.out.fillBranch("JetProducer_nBJetM", JetProducer_nBJetM)
         self.out.fillBranch("JetProducer_nBJetT", JetProducer_nBJetT)
         self.out.fillBranch("JetProducer_nJet", JetProducer_nJet)
-        self.out.fillBranch("JetProducer_HT", JetProducer_HT)
+        self.out.fillBranch("JetProducer_nJet_dr", JetProducer_nJet_dr)
+        self.out.fillBranch("JetProducer_HT_dr", JetProducer_HT_dr)
         return True
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed

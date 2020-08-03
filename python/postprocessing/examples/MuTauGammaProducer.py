@@ -59,21 +59,26 @@ class MuTauGammaProducer(Module):
         self.out.branch("MuTauGamma_nGoodMuon", "I")
         self.out.branch("MuTauGamma_nGoodTau", "I")
         self.out.branch("MuTauGamma_nGoodPhoton", "I")
-        #if self.isMC__:
-        #    self.out.branch("MuTauGamma_TauSFjet", "F")
+        if self.isMC__:
+            self.out.branch("MuTauGamma_TauSFjet", "F")
             #self.out.branch("MuTauGammaProducer_TauSFele", "F")
-        #    self.out.branch("MuTauGamma_TauSFmuo", "F")
-        #    self.out.branch("MuTauGamma_TauESjet", "F")
+            self.out.branch("MuTauGamma_TauSFmuo", "F")
+            self.out.branch("MuTauGamma_TauESjet", "F")
             #self.out.branch("MuTauGammaProducer_TauESele", "F")
-        #    self.out.branch("MuTauGamma_MuSFId", "F")
-        #    self.out.branch("MuTauGamma_MuSFIso", "F")
-        #    self.out.branch("MuTauGamma_MuSFTrigger", "F")
+            self.out.branch("MuTauGamma_MuSFId", "F")
+            self.out.branch("MuTauGamma_MuSFIso", "F")
+            self.out.branch("MuTauGamma_MuSFTrigger", "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
    
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
+
+        if self.isMC__:
+            TauSFjet = TauSFmuo = 0
+            TauESjet = 0
+            MuSFId = MuSFIso = MuSFTrigger = 0
 
         havePair = 0
         qq = 0
@@ -111,7 +116,7 @@ class MuTauGammaProducer(Module):
   
         goodMuonIdx = []
         for i, mu in enumerate(muons):
-            muonID = mu.mediumId and mu.pfIsoId>=2
+            muonID = mu.mediumId and mu.pfIsoId>=4
             if mu.pt>=27. and abs(mu.eta)<2.4 and muonID:
                 goodMuonIdx.append(i)
         nGoodMuon = len(goodMuonIdx)
@@ -233,15 +238,15 @@ class MuTauGammaProducer(Module):
         self.out.fillBranch("MuTauGamma_nGoodPhoton", nGoodPhoton)
         self.out.fillBranch("MuTauGamma_transversemass", transversemass)
  
-        #if self.isMC__:
-         #   self.out.fillBranch("MuTauGamma_TauSFjet", TauSFjet)
+        if self.isMC__:
+            self.out.fillBranch("MuTauGamma_TauSFjet", TauSFjet)
             #self.out.fillBranch("MuTauGammaProducer_TauSFele", TauSFele)
-         #   self.out.fillBranch("MuTauGamma_TauSFmuo", TauSFmuo)
-         #   self.out.fillBranch("MuTauGamma_TauESjet", TauESjet)
+            self.out.fillBranch("MuTauGamma_TauSFmuo", TauSFmuo)
+            self.out.fillBranch("MuTauGamma_TauESjet", TauESjet)
             #self.out.fillBranch("MuTauGammaProducer_TauESele", TauESele)
-          ##  self.out.fillBranch("MuTauGamma_MuSFId", MuSFId)
-          #  self.out.fillBranch("MuTauGamma_MuSFIso", MuSFIso)
-          #  self.out.fillBranch("MuTauGamma_MuSFTrigger", MuSFTrigger)   
+            self.out.fillBranch("MuTauGamma_MuSFId", MuSFId)
+            self.out.fillBranch("MuTauGamma_MuSFIso", MuSFIso)
+            self.out.fillBranch("MuTauGamma_MuSFTrigger", MuSFTrigger)   
    
         return True
 

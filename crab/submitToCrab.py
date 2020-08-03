@@ -30,6 +30,7 @@ with open(infile) as json_file:
       f.write("config.JobType.scriptExe='crab_script.sh'\n")
       f.write("config.JobType.inputFiles=['keep_and_drop.txt', 'crab_script.py', '../scripts/haddnano.py']\n")
       f.write("config.JobType.sendPythonFolder=True\n")
+      f.write("config.JobType.allowUndistributedCMSSW=True\n")
       f.write("\n")
    
       f.write("config.section_('Data')\n")
@@ -39,7 +40,7 @@ with open(infile) as json_file:
       f.write("config.Data.inputDBS='global'\n")
       f.write("config.Data.splitting='FileBased'\n")
       f.write("config.Data.unitsPerJob=1\n")
-      f.write("config.Data.outLFNDirBase='/store/user/fjensen/taustar_26072020'\n")
+      f.write("config.Data.outLFNDirBase='/store/user/fjensen/taustar_01082020'\n")
       f.write("config.Data.publication=False\n")
       f.write("\n")
 
@@ -48,4 +49,3 @@ with open(infile) as json_file:
       f.close()
       
       #os.system("crab submit -c " + f.name)
-
