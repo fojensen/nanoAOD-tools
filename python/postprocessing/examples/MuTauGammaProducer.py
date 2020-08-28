@@ -8,21 +8,18 @@ from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR, deltaPhi
 from ROOT import TLorentzVector, TVector2
 import math
 
-#from TauPOG.TauIDSFs.TauIDSFTool import TauIDSFTool
-#tauSFTool_jet = TauIDSFTool('2018ReReco','DeepTau2017v2p1VSjet','VVTight')
-#tauSFTool_ele = TauIDSFTool('2018ReReco','DeepTau2017v2p1VSe','VVTight')
-#tauSFTool_muo = TauIDSFTool('2018ReReco','DeepTau2017v2p1VSmu','Tight')
-#from TauPOG.TauIDSFs.TauIDSFTool import TauESTool
-#testool_jet = TauESTool('2018ReReco','DeepTau2017v2p1VSjet')
-#from TauPOG.TauIDSFs.TauIDSFTool import TauFESTool
-#testool_ele = TauFESTool('2018ReReco','DeepTau2017v2p1VSe')
-
-#from MuonPOG.MuonSFs.MuonSFTool import MuonSFTool
-#muonSFTool = MuonSFTool()
+from TauPOG.TauIDSFs.TauIDSFTool import TauIDSFTool
+tauSFTool_jet = TauIDSFTool('2018ReReco','DeepTau2017v2p1VSjet','VTight')
+tauSFTool_muo = TauIDSFTool('2018ReReco','DeepTau2017v2p1VSmu','Tight')
+from TauPOG.TauIDSFs.TauIDSFTool import TauESTool
+testool_jet = TauESTool('2018ReReco','DeepTau2017v2p1VSjet')
+from MuonPOG.MuonSFs.MuonSFTool import MuonSFTool
+muonSFTool = MuonSFTool()
 
 class MuTauGammaProducer(Module):
-    def __init__(self, isMC_):
+    def __init__(self, isMC_, isEmb_):
         self.isMC__ = isMC_
+        self.isEmb__ = isEmb_
         pass
     def beginJob(self):
         pass
@@ -59,26 +56,26 @@ class MuTauGammaProducer(Module):
         self.out.branch("MuTauGamma_nGoodMuon", "I")
         self.out.branch("MuTauGamma_nGoodTau", "I")
         self.out.branch("MuTauGamma_nGoodPhoton", "I")
-        if self.isMC__:
+        if self.isMC__ or self.isEmb__:
+            self.out.branch("MuTauGamma_gt1_pt", "F")
+            self.out.branch("MuTauGamma_gt1_eta", "F")
+            self.out.branch("MuTauGamma_gt2_pt", "F")
+            self.out.branch("MuTauGamma_gt2_eta", "F")
+            self.out.branch("MuTauGamma_nGenTau", "I")
+            self.out.branch("MuTauGamma_nGenTau62324", "I")
             self.out.branch("MuTauGamma_TauSFjet", "F")
-            #self.out.branch("MuTauGammaProducer_TauSFele", "F")
             self.out.branch("MuTauGamma_TauSFmuo", "F")
-            self.out.branch("MuTauGamma_TauESjet", "F")
-            #self.out.branch("MuTauGammaProducer_TauESele", "F")
             self.out.branch("MuTauGamma_MuSFId", "F")
             self.out.branch("MuTauGamma_MuSFIso", "F")
             self.out.branch("MuTauGamma_MuSFTrigger", "F")
+            self.out.branch("MuTauGamma_TauESjet", "F")
+            self.out.branch("MuTauGamma_trkEff", "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
    
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
-
-        if self.isMC__:
-            TauSFjet = TauSFmuo = 0
-            TauESjet = 0
-            MuSFId = MuSFIso = MuSFTrigger = 0
 
         havePair = 0
         qq = 0
@@ -109,11 +106,39 @@ class MuTauGammaProducer(Module):
         nGoodTau = 0
         nGoodPhoton = 0
         transversemass = 0
-
+   
         photons = Collection(event, "Photon")
         muons = Collection(event, "Muon")
-        taus = Collection(event, "Tau") 
-  
+        taus = Collection(event, "Tau")
+
+        if self.isMC__ or self.isEmb__:
+            MuSFId = MuSFIso = MuSFTrigger = 0
+            TauESjet = 0
+            TauSFjet = TauSFmuo = 0
+            nGenTau62324 = 0
+            trkEff = 0
+
+            nGenTau = 0
+            gt1_pt = gt1_eta = gt2_pt = gt2_eta = 0
+            gens = Collection(event, "GenPart")
+            for gen in gens:
+               if abs(gen.pdgId)==15 and (8192&gen.statusFlags):
+                   if nGenTau==0:
+                       gt1_pt = gen.pt
+                       gt1_eta = gen.eta
+                   if nGenTau==1:
+                       gt2_pt = gen.pt
+                       gt2_eta = gen.eta
+                   nGenTau = nGenTau + 1
+
+            for gen in gens:
+                if abs(gen.pdgId)==15 and (1&gen.statusFlags) and ((4096&gen.statusFlags)):
+                    midx = gen.genPartIdxMother
+                    if midx>=0:
+                        mid = abs(gens[midx].pdgId)
+                        if mid==6 or mid==23 or mid==24:
+                            ++nGenTau62324
+
         goodMuonIdx = []
         for i, mu in enumerate(muons):
             muonID = mu.mediumId and mu.pfIsoId>=4
@@ -123,7 +148,7 @@ class MuTauGammaProducer(Module):
 
         goodTauIdx = []
         for i, tau in enumerate(taus):
-            tauID = (8&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu)
+            tauID = (16&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu)
             tauID = tauID and not (tau.decayMode==5 or tau.decayMode==6)
             if tau.pt>=20. and abs(tau.eta)<2.3 and tauID:
                 goodTauIdx.append(i)
@@ -167,6 +192,22 @@ class MuTauGammaProducer(Module):
                                     nu0.SetPtEtaPhiM(nu0mag, tau.eta, tau.phi, 0.)
                                     nu1.SetPtEtaPhiM(nu1mag, mu.eta, mu.phi, 0.)
                                     MuTauCollinearMass = (mu.p4()+nu0+tau.p4()+nu1).M()
+                     
+                                    if self.isMC__ or self.isEmb__:
+                                        MuSFIso = muonSFTool.getSF_ISO_MediumID(mu.pt, mu.eta, 4)
+                                        MuSFId = muonSFTool.getSF_MediumID(mu.pt, mu.eta)
+                                        MuSFTrigger = muonSFTool.getSF_Trigger(mu.pt, mu.eta)
+                                        TauESjet = testool_jet.getTES(tau.pt, tau.decayMode, tau.genPartFlav)
+                                        TauSFmuo = tauSFTool_muo.getSFvsEta(tau.eta, tau.genPartFlav)
+                                        TauSFjet = tauSFTool_jet.getSFvsPT(tau.pt, tau.genPartFlav)
+                                        if tau.decayMode==0: trkEff = 0.975
+                                        if tau.decayMode==1: trkEff = 0.975*1.051
+                                        if tau.decayMode==2: trkEff = 0.975*1.051*1.051
+                                        if tau.decayMode==5: trkEff = 0.975*0.975
+                                        if tau.decayMode==6: trkEff = 0.975*0.975*1.051
+                                        if tau.decayMode==7: trkEff = 0.975*0.975*1.051*1.051
+                                        if tau.decayMode==10: trkEff = 0.975*0.975*0.975
+                                        if tau.decayMode==11: trkEff = 0.975*0.975*0.975*1.051
 
                                     maxphotonpt = 0
                                     for k, photon in enumerate(photons):
@@ -206,8 +247,9 @@ class MuTauGammaProducer(Module):
                                                     else :
                                                         ClosestCollinearMass = TauGammaCollinearMass
                                                         FurthestCollinearMass = MuGammaCollinearMass
+        #if not havePair:
+        #    return False
  
-        #print "haveTriplet: ", haveTriplet 
         self.out.fillBranch("MuTauGamma_havePair", havePair)
         self.out.fillBranch("MuTauGamma_qq", qq)
         self.out.fillBranch("MuTauGamma_MuIdx", MuIdx)
@@ -238,21 +280,27 @@ class MuTauGammaProducer(Module):
         self.out.fillBranch("MuTauGamma_nGoodPhoton", nGoodPhoton)
         self.out.fillBranch("MuTauGamma_transversemass", transversemass)
  
-        if self.isMC__:
+        if self.isMC__ or self.isEmb__:
+            self.out.fillBranch("MuTauGamma_gt1_pt", gt1_pt)
+            self.out.fillBranch("MuTauGamma_gt1_eta", gt1_eta)
+            self.out.fillBranch("MuTauGamma_gt2_pt", gt2_pt)
+            self.out.fillBranch("MuTauGamma_gt2_eta", gt2_eta)
+            self.out.fillBranch("MuTauGamma_nGenTau", nGenTau)
+            self.out.fillBranch("MuTauGamma_nGenTau62324", nGenTau62324)
             self.out.fillBranch("MuTauGamma_TauSFjet", TauSFjet)
-            #self.out.fillBranch("MuTauGammaProducer_TauSFele", TauSFele)
             self.out.fillBranch("MuTauGamma_TauSFmuo", TauSFmuo)
             self.out.fillBranch("MuTauGamma_TauESjet", TauESjet)
-            #self.out.fillBranch("MuTauGammaProducer_TauESele", TauESele)
             self.out.fillBranch("MuTauGamma_MuSFId", MuSFId)
             self.out.fillBranch("MuTauGamma_MuSFIso", MuSFIso)
-            self.out.fillBranch("MuTauGamma_MuSFTrigger", MuSFTrigger)   
+            self.out.fillBranch("MuTauGamma_MuSFTrigger", MuSFTrigger)
+            self.out.fillBranch("MuTauGamma_trkEff", trkEff); 
    
         return True
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-MuTauGammaProducerConstr = lambda isMC : MuTauGammaProducer(
-    isMC_ = isMC
+MuTauGammaProducerConstr = lambda isMC, isEmb : MuTauGammaProducer(
+    isMC_ = isMC,
+    isEmb_ = isEmb,
 )
 

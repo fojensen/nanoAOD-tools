@@ -6,20 +6,20 @@
 #include <TCanvas.h>
 #include <TLegend.h>
 
-/*void getXS()
+void getXS()
 {
    // WJetsToLNu
-   const double xs_inc = 61334.9;
-   const double n_inc_tot_ = 70454125.;
-   const TString infile = "root://cmsxrootd.fnal.gov//store/user/fojensen/W01234JetsToLNu_nocuts.root";
-   const double n[5] = {0., 51082776., 23290710., 14508481., 10082747.};
+   //const double xs_inc = 61334.9;
+   //const double n_inc_tot_ = 70454125.;
+   //const TString infile = "root://cmsxrootd.fnal.gov//store/user/fojensen/W01234JetsToLNu_nocuts.root";
+   //const double n[5] = {0., 51082776., 23290710., 14508481., 10082747.};
 
-   // DYJetsToLL_M-50
-//   const float xs_inc = 6025.2;
-  // const int n_inc_tot_ = 100194597;
-   //const TString infile = "root://cmsxrootd.fnal.gov//store/user/fojensen/DY01234JetsToLL_nocuts.root";
-    //                 const TString infile = "/eos/uscms/store/user/fojensen/DY01234JetsToLL_nocuts.root";
-  // const float n[5] = {0., 68898175., 20456037., 5652357., 2817812.};
+   //DYJetsToLL_M-50
+   const float xs_inc = 6025.2;
+   const int n_inc_tot_ = 100194597;
+   const TString infile = "root://cmsxrootd.fnal.gov//store/user/fojensen/DY01234JetsToLL_nocuts.root";
+   //const TString infile = "/eos/uscms/store/user/fojensen/DY01234JetsToLL_nocuts.root";
+   const float n[5] = {0., 68898175., 20456037., 5652357., 2809978.};
 
    TChain c("Events");
    c.Add(infile);
@@ -53,7 +53,7 @@
       std::cout << "LHE_Njets: " << i << "; xs_weight: " << xs_weight[i] << std::endl;
    }
 
-}*/
+}
 
 void stitch_jetbinnedsamples()
 {
@@ -144,8 +144,8 @@ void validate()
    h_stitch->SetLineWidth(2);
    h_stitch->SetLineColor(7);
    h_stitch->Draw("HIST, E, SAME");
-   h_inc->SetMinimum(1.);
-   h_inc->SetMaximum(1e6);
+   h_inc->SetMinimum(1000.);
+   h_inc->SetMaximum(1e7);
    p1->SetLogy();
 
    TLegend * l = new TLegend(0.6, 0.7, 0.875, 0.875);

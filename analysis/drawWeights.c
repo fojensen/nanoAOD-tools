@@ -15,10 +15,11 @@ void drawWeights()
    addOverflow(h);
 
    TCanvas * c = new TCanvas("c", "", 400, 400);
+   h->SetStats(0);
    h->SetLineWidth(2);
    h->Draw("HIST, E");
-   c->SaveAs("./plots/embeddedweights.pdf");
    c->SetLogy();
    h->SetMinimum(1.);
    h->SetMaximum(100000000.);
+   c->SaveAs("./plots/embeddedweights.pdf");
 }

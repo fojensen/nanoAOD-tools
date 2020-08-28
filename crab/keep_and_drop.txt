@@ -5,12 +5,14 @@ keep Muon_eta
 keep Muon_fsrPhotonIdx
 keep Muon_genPartFlav
 keep Muon_mass
+keep Muon_looseId
 keep Muon_mediumId
 keep Muon_pfIsoId
 keep Muon_phi
 keep Muon_pt
 keep Muon_tightId
 keep Muon_tkIsoId
+keep Muon_pfRelIso04_all
 keep nMuon
 keep Tau_charge
 keep Tau_decayMode
@@ -68,6 +70,8 @@ keep nPrompt
 keep GenIsolatedPhoton*
 keep Electron_genPartFlav
 keep Electron_pt
+keep Electron_eta
+keep Electron_phi
 keep nElectron
 keep Jet_pt
 keep Jet_eta
@@ -85,3 +89,4 @@ keep HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1
 keep HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1
 keep HLT_Photon200
 keep HLT_Photon175
+keep DYStudy_*

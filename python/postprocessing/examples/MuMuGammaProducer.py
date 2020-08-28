@@ -101,6 +101,8 @@ class MuMuGammaProducer(Module):
                                             MuMuGammaDeltaR = deltaR(Z.Eta(), Z.Phi(), photon.eta, photon.phi)
                                             MuMuGammaDeltaPhi = deltaPhi(Z.Phi(), photon.phi)
                                             MuMuGammaMass = (mu0.p4()+mu1.p4()+photon.p4()).M()
+        #if havePair:
+        #    return False
 
         self.out.fillBranch("MuMuGamma_havePair", havePair)
         self.out.fillBranch("MuMuGamma_Mu0Idx", Mu0Idx)

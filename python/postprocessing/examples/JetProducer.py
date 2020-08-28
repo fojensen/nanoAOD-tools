@@ -46,7 +46,7 @@ class JetProducer(Module):
                 JetProducer_HT_dr += jet.pt
                 mindr_t = 9.
                 for tau in taus:
-                    tauID = (8&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu)
+                    tauID = (16&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu)
                     tauID = tauID and not (tau.decayMode==5 or tau.decayMode==6)
                     if tau.pt>=20. and abs(tau.eta)<2.3 and tauID:
                         mindr_t_ = deltaR(jet, tau)
@@ -62,7 +62,7 @@ class JetProducer(Module):
                            mindr_m = mindr_m_
                 mindr_g = 9.
                 for photon in photons:
-                    photonID =  photon.mvaID_WP90 and photon.electronVeto
+                    photonID =  photon.mvaID_WP80 and photon.electronVeto
                     if photon.pt>=32. and abs(photon.eta)<2.5 and photonID:
                         mindr_g_ = deltaR(jet, photon)
                         if mindr_g_ < mindr_g:
