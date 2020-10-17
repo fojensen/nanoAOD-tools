@@ -55,24 +55,20 @@ void getXS()
 
 }
 
-void stitch_jetbinnedsamples()
+void stitch_jetbinnedsamples(const TString year)
 {
-   // WJetsToLNu
-   //const TString files[5] = {"WJetsToLNu", "W1JetsToLNu", "W2JetsToLNu", "W3JetsToLNu", "W4JetsToLNu"};
-   //const double w[5] = {0.000870565066, 0.000150558358, 0.000117757802, 7.04774012e-05, 5.8063302e-05};
-   //const TString outputFile = "../outputData/WJetsToLNu_stitch.root";
-
    //DYJetsToLL
    const TString files[5] = {"DY01234JetsToLL_M-50", "DY1JetsToLL_M-50", "DY2JetsToLL_M-50", "DY3JetsToLL_M-50", "DY4JetsToLL_M-50"};
+   
    //const double w[5] = {6.01349791e-05, 1.16822821e-05, 1.3063476e-05, 1.60924005e-05, 1.76844155e-05};
    //const double w[5] = {6.01349791e-05, 1.16822821e-05, 1.3063476e-05, 1.60924005e-05, 1.77191909e-05};
    const double w[5] = {6.06541688e-05, 1.17831439e-05, 1.31762626e-05, 1.62313381e-05, 1.78721737e-05};
-   const TString outputFile = "../outputData/DYJetsToLL_M-50.root";
+   const TString outputFile = "../outputData_"+year+"/DYJetsToLL_M-50.root";
 
    TChain * c = new TChain("Events");
    for (int i = 0; i < 5; ++i) {
       char buffer[100];
-      sprintf(buffer, "../outputData/%s.root", files[i].Data());
+      sprintf(buffer, "../outputData_%s/%s.root", year.Data(), files[i].Data());
       c->Add(buffer);
       std::cout << c->GetEntries() << std::endl;
    }
@@ -103,7 +99,7 @@ void validate()
    //const TString files[2] = {"../outputData/W01234JetsToLNu.root", "../outputData/WJetsToLNu.root"};
 
    //DYJetsToLL
-   const TString files[2] = {"../outputData/DY01234JetsToLL_M-50.root", "../outputData/DYJetsToLL_M-50.root"};
+   const TString files[2] = {"../outputData_2018/DY01234JetsToLL_M-50.root", "../outputData_2018/DYJetsToLL_M-50.root"};
 
    TChain c_inc("Events");
    std::cout << "Adding " << files[0] << std::endl;
@@ -157,7 +153,7 @@ void validate()
    c->cd(2);
    r->SetMarkerStyle(20);
    r->Draw("PE");
-   r->SetMinimum(0.75);
+   r->SetMinimum(0.85);
    r->SetLineColor(602);
    r->SetMaximum(1.25);
    r->SetStats(0);

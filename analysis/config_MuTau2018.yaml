@@ -1,0 +1,36 @@
+rooworkspace:
+    m_sel_trg_ratio:
+        function: m_sel_trg_ratio
+        argSet: [gt1_pt, gt1_eta, gt2_pt, gt2_eta]
+        variables: ["MuTauGamma_gt1_pt", "MuTauGamma_gt1_eta", "MuTauGamma_gt2_pt", "MuTauGamma_gt2_eta"]
+    m_sel_idEmb_ratio_1:
+        function: m_sel_idEmb_ratio
+        argSet: [gt_pt, gt_eta]
+        variables: ["MuTauGamma_gt1_pt", "MuTauGamma_gt1_eta"]
+    m_sel_idEmb_ratio_2:
+        function: m_sel_idEmb_ratio
+        argSet: [gt_pt, gt_eta]
+        variables: ["MuTauGamma_gt2_pt", "MuTauGamma_gt2_eta"]
+    m_iso_binned_embed_kit_ratio:
+        function: m_iso_binned_embed_kit_ratio
+        argSet: [m_pt, m_eta, m_iso]
+        variables: ["Muon_pt[event.MuTauGamma_MuIdx]", "Muon_eta[event.MuTauGamma_MuIdx]", "Muon_pfRelIso04_all[event.MuTauGamma_MuIdx]"]
+    m_id_embed_kit_ratio:
+        function: m_id_embed_kit_ratio
+        argSet: [m_pt, m_eta]
+        variables: ["Muon_pt[event.MuTauGamma_MuIdx]", "Muon_eta[event.MuTauGamma_MuIdx]"]
+    m_trg24_27_embed_kit_ratio:
+        function: m_trg24_27_embed_kit_ratio
+        argSet: [m_pt, m_eta]
+        variables: ["Muon_pt[event.MuTauGamma_MuIdx]", "Muon_eta[event.MuTauGamma_MuIdx]"]
+    #m_trg_MuTau_Mu20Leg_kit_ratio_embed: 
+    #    function: m_trg_MuTau_Mu20Leg_kit_ratio_embed
+    #    argSet: [m_pt]
+    #    variables: ["Muon_pt[event.MuTauGamma_MuIdx]"]
+    #mt_emb_LooseChargedIsoPFTau27_tight_kit_ratio:
+    #    function: mt_emb_LooseChargedIsoPFTau27_tight_kit_ratio
+    #    argSet: [t_pt]
+    #    variables: ["Tau_pt[event.MuTauGamma_TauIdx]"]
+
+hist:
+  Null
