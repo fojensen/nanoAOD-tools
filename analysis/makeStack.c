@@ -8,7 +8,7 @@
 
 void makeStack(const TString hname="h_vismass_0", const bool addJet=false, const bool sr=true)
 {
-   const int nmc = 10;
+   const int nmc = 9;
    TString mctags[nmc], labels[nmc];
    int col[nmc];
    mctags[0] = "ZZ";                   col[0] = 52;  labels[0] = "ZZ";
@@ -20,20 +20,12 @@ void makeStack(const TString hname="h_vismass_0", const bool addJet=false, const
    mctags[6] = "EWKZ2Jets_ZToLL_M-50"; col[6] = 96;  labels[6] = "EWKZ50";
    mctags[7] = "DYJetsToLL_M-10to50";  col[7] = 97;  labels[7] = "DY10to50";
    mctags[8] = "DYJetsToLL_M-50";      col[8] = 98; labels[8] = "DY50";
-   mctags[9] = "WGToLNuG";             col[9] = 1; labels[9] = "WGToLNuG";
+   //mctags[9] = "WGToLNuG";             col[9] = 1; labels[9] = "WGToLNuG";
  
    THStack * stack = new THStack();
    TLegend * l = new TLegend(0.25, 0.7, 0.875, 0.875);
    l->SetNColumns(3);
    l->SetBorderSize(0);
-
-   TH1D * h_jet;
-   if (addJet) {
-      TFile * f_jet = TFile::Open("./outputHists_2018/QCD.root");
-      h_jet = (TH1D*)f_jet->Get(hname);
-      h_jet->SetFillColor(2);
-      stack->Add(h_jet);
-   }
 
    TH1D * h_mc[nmc];
    for (int i = 0; i < nmc; ++i) {
@@ -46,7 +38,18 @@ void makeStack(const TString hname="h_vismass_0", const bool addJet=false, const
       stack->Add(h_mc[i]);
       l->AddEntry(h_mc[i], labels[i], "F");
    }
-  
+ 
+   
+   TH1D * h_jet;
+   if (addJet) {
+      //TFile * f_jet = TFile::Open("./outputHists_2018/QCD.root");
+      TFile * f_jet = TFile::Open("./outputHists_2018/QCD.h_minmass200.root");
+      h_jet = (TH1D*)f_jet->Get(hname);
+      std::cout << h_jet->Integral() << std::endl;
+      h_jet->SetFillColor(223);
+      stack->Add(h_jet);
+   }
+ 
    char axistitle[100];
    sprintf(axistitle, "%s;%s;%s", h_mc[0]->GetTitle(), h_mc[0]->GetXaxis()->GetTitle(), h_mc[0]->GetYaxis()->GetTitle());
    stack->SetTitle(axistitle); 
@@ -90,16 +93,15 @@ void makeStack(const TString hname="h_vismass_0", const bool addJet=false, const
       l->AddEntry(h_data, "data", "P");
    }
 
-   TH1D * r;
-   if (!sr) {
-      r = (TH1D*)h_data->Clone("r");
-      r->Divide(h_sum);
-      r->GetYaxis()->SetTitle("observed / predicted");
-   }
+   //TH1D * r;
+   //if (!sr) {
+   //   r = (TH1D*)h_data->Clone("r");
+   //   r->Divide(h_sum);
+   //   r->GetYaxis()->SetTitle("observed / predicted");
+   //}
 
-   
-   TCanvas * c = new TCanvas("c_"+hname, hname, 800, 400);
-   c->Divide(2, 1);
+   TCanvas * c = new TCanvas("c_"+hname, hname, 400, 400);
+   //c->Divide(2, 1);
 
    TPad * p1 = (TPad*)c->cd(1);
    stack->Draw("HIST");
@@ -116,7 +118,7 @@ void makeStack(const TString hname="h_vismass_0", const bool addJet=false, const
       h_data->SetStats(0);
    }
 
-   if (!sr) {
+   /*if (!sr) {
       c->cd(2);
       r->Draw("PE");
       r->SetStats(0);
@@ -126,7 +128,7 @@ void makeStack(const TString hname="h_vismass_0", const bool addJet=false, const
       TLine * line = new TLine(h_data->GetBinLowEdge(1), 1., h_data->GetBinLowEdge(h_data->GetNbinsX()+1), 1.);
       line->SetLineStyle(2);
       line->Draw();
-   }
+   }*/
 
    c->SaveAs("./plots/stack."+hname+".pdf");
 }

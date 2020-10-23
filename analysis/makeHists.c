@@ -10,20 +10,13 @@ void runPoint(const TString intag, const TString weights, const TCut extraCuts, 
 {
    std::cout << outtag << std::endl;
 
-   TCut baseline = "MuTauGamma_havePair>0 && MuTauGamma_trigger";
-   //const TCut mumuVeto = "Sum$(Muon_pt>=10. && TMath::Abs(Muon_eta)<2.4 && Muon_mediumId && Muon_pfIsoId>=2)<2";
-   const TCut mumuVeto = "1>0";
-   const TCut eVeto = "(Sum$(Electron_pt>=20. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0)";
-   //const TCut WVeto = "MuTauGamma_mt<40.";
-   const TCut W = "1>0";
-   //const TCut topVeto = "JetProducer_nBJetT==0";
-   const TCut topVeto = "1>0";
-   //const TCut Z = "MuTauGamma_MuTauMass>=91.1876";
-   const TCut Z = "1>0";
-   //const TCut photonVeto = "MuTauGamma_haveTriplet==0 || (MuTauGamma_haveTriplet>0 && Photon_pt[MuTauGamma_PhotonIdx]<50.)";
-   const TCut photon = "MuTauGamma_haveTriplet==1";
-   //const TCut photon = "1>0";
-   baseline = baseline && eVeto && mumuVeto && W && Z && topVeto && photon && extraCuts;
+   TCut baseline = "MuTauGamma_havePair>0 && MuTauGamma_trigger && Muon_pfIsoId[MuTauGamma_MuIdx]>=4 && (16&Tau_idDeepTau2017v2p1VSjet[MuTauGamma_TauIdx])";
+   const TCut mumuVeto = "MuMuGamma_havePair==0";
+   const TCut topVeto = "JetProducer_nBJetT==0";
+   const TCut Zveto = "MuTauGamma_MuTauMass>=91.1876";
+   //const TCut photon = "MuTauGamma_haveTriplet>0 && Photon_pt[MuTauGamma_PhotonIdx]>=100.";
+   const TCut photon = "MuTauGamma_haveTriplet==0 || (MuTauGamma_haveTriplet>0 && Photon_pt[MuTauGamma_PhotonIdx]<100.";
+   baseline = baseline && mumuVeto && topVeto && Zveto && photon && extraCuts;
 
    TFile * fin = TFile::Open("./outputData_2018/"+intag+".root");
    TTree * tin = (TTree*)fin->Get("Events");
@@ -54,17 +47,25 @@ void runPoint(const TString intag, const TString weights, const TCut extraCuts, 
    TFile * fout = new TFile("./outputHists_2018/"+outtag+".root", "RECREATE");
    TH1D *h_unit[4], *h_mt[4], *h_njets[4], *h_nbjetsM[4], *h_nbjetsT[4], *h_npv[4], *h_decayMode[4];
    TH1D *h_vispt[4], *h_vismass[4], *h_mutaudr[4];
-   TH1D *h_minmass[4], *h_maxmass[4], *h_met[4];
+   TH1D *h_minmass[4], *h_maxmass[4], *h_met[4], *h_minmass200[4];
    TH1D *h_musum[4], *h_esum[4];
-   TH1D *h_photonpt[4];
+   TH1D *h_photonpt[4], *h_lowphotonpt[4];
 
    for (int i = 0; i < 4; ++i) {
-      if (intag=="SingleMuon" && i==0) continue;
+//      if (intag=="SingleMuon" && i==0) continue;
       std::cout << "   " << titles[i] << std::endl;
       const TString tag = TString::Itoa(i, 10);
       char buffer[3000];
-      sprintf(buffer, "%s * ( %s )", weights.Data(), TString(cuts[i]).Data());
-      //std::cout << buffer << std::endl;
+
+      if (intag!="SingleMuon") {
+         if (i==0 || i==1) {
+            sprintf(buffer, "%s * MuTauGamma_TauSFjet[6] * ( %s )", weights.Data(), TString(cuts[i]).Data());
+         } else {
+            sprintf(buffer, "%s * ( %s )", weights.Data(), TString(cuts[i]).Data());
+         }
+      } else {
+         sprintf(buffer, TString(cuts[i]).Data());
+      }
 
       h_unit[i] = new TH1D("h_unit_"+tag, ";the unit bin;events", 1, 0.5, 1.5);
       const int n = t->Project(h_unit[i]->GetName(), "1.", buffer);
@@ -108,9 +109,13 @@ void runPoint(const TString intag, const TString weights, const TCut extraCuts, 
       addOverflow(h_met[i]);
 
       //const double minx[11] = {0., 1., 100., 200., 300., 400., 500., 600., 700., 800., 1000.};
-      h_minmass[i] = new TH1D("h_minmass_"+tag, titles[i]+";min collinear mass [GeV];events / 200 GeV", 5, 0., 1000.);
+      h_minmass[i] = new TH1D("h_minmass_"+tag, titles[i]+";min collinear mass [GeV];events / 100 GeV", 10, 0., 1000.);
       t->Project(h_minmass[i]->GetName(), "TMath::Min(MuTauGamma_MuGammaCollinearMass, MuTauGamma_TauGammaCollinearMass)", buffer);
       addOverflow(h_minmass[i]);
+
+      h_minmass200[i] = new TH1D("h_minmass200_"+tag, titles[i]+";min collinear mass [GeV];events / 200 GeV", 5, 0., 1000.);
+      t->Project(h_minmass200[i]->GetName(), "TMath::Min(MuTauGamma_MuGammaCollinearMass, MuTauGamma_TauGammaCollinearMass)", buffer);
+      addOverflow(h_minmass200[i]);
 
       //const double maxx[11] = {0., 1., 200., 400., 600., 800., 1000., 1200., 1400., 1600., 1000.};
       h_maxmass[i] = new TH1D("h_maxmass_"+tag, titles[i]+";max collinear mass [GeV];events / 200 GeV", 10, 0., 2000.);
@@ -129,21 +134,29 @@ void runPoint(const TString intag, const TString weights, const TCut extraCuts, 
       t->Project(h_esum[i]->GetName(), "Sum$(Electron_genPartFlav==1)", buffer);
       addOverflow(h_esum[i]);
 
-      //h_photonpt[i] = new TH1D("h_photonpt_"+tag, titles[i]+";photon p_{T} [GeV];events / 100 GeV", 10, 0., 1000.);
-      //t->Project(h_photonpt[i]->GetName(), "Photon_pt[MuTauGamma_PhotonIdx]", buffer);
-      //addOverflow(h_photonpt[i]);
+      h_photonpt[i] = new TH1D("h_photonpt_"+tag, titles[i]+";photon p_{T} [GeV];events / 100 GeV", 10, 0., 1000.);
+      t->Project(h_photonpt[i]->GetName(), "Photon_pt[MuTauGamma_PhotonIdx]", buffer);
+      addOverflow(h_photonpt[i]);
+
+      h_lowphotonpt[i] = new TH1D("h_lowphotonpt_"+tag, titles[i]+";photon p_{T} [GeV];events / 10 GeV", 10, 0., 100.);
+      t->Project(h_lowphotonpt[i]->GetName(), "Photon_pt[MuTauGamma_PhotonIdx]", buffer);
+      addOverflow(h_lowphotonpt[i]);
    }
  
-
    fout->Write();
    fout->Close();
 }
 
 void makeHists()
 {
-   const TString sf_mc = "59725.419 * xsWeight * puWeight * MuTauGamma_TauSFjet * MuTauGamma_TauSFmuo * MuTauGamma_TauSFele * MuTauGamma_MuSFId * MuTauGamma_MuSFIso * MuTauGamma_MuSFTrigger";
+   runPoint("SingleMuon", "1.", "1>0", "SingleMuon");
+
+   const TString sf_emb = "genWeight * m_sel_trg_ratio * m_sel_idEmb_ratio_1 * m_sel_idEmb_ratio_2 * m_iso_binned_embed_kit_ratio * m_id_embed_kit_ratio * m_trg24_27_embed_kit_ratio * MuTauGamma_trkEff";
+   runPoint("Embedded", sf_emb, "1>0", "Embedded", true);
+ 
+   const TString sf_mc = "59725.419 * xsWeight * puWeight * MuTauGamma_TauSFmuo * MuTauGamma_TauSFele * MuTauGamma_MuSFId * MuTauGamma_MuSFIso[1] * MuTauGamma_MuSFTrigger * MuTauGamma_TauSFjet[6]";
    const TCut cut_sig = "Sum$(Tau_genPartFlav==5)==1 && Sum$(Muon_genPartFlav==15)==1";
- /*  runPoint("TTTo2L2Nu", sf_mc, cut_sig, "TTTo2L2Nu_emb");                       runPoint("TTTo2L2Nu", sf_mc, !cut_sig, "TTTo2L2Nu_bkg");
+   runPoint("TTTo2L2Nu", sf_mc, cut_sig, "TTTo2L2Nu_emb");                       runPoint("TTTo2L2Nu", sf_mc, !cut_sig, "TTTo2L2Nu_bkg");
    runPoint("TTToSemiLeptonic", sf_mc, cut_sig, "TTToSemiLeptonic_emb");         runPoint("TTToSemiLeptonic", sf_mc, !cut_sig, "TTToSemiLeptonic_bkg");
    runPoint("ST_tW", sf_mc, cut_sig, "ST_tW_emb");                               runPoint("ST_tW", sf_mc, !cut_sig, "ST_tW_bkg");
    runPoint("DYJetsToLL_M-50", sf_mc, cut_sig, "DYJetsToLL_M-50_emb");           runPoint("DYJetsToLL_M-50", sf_mc, !cut_sig, "DYJetsToLL_M-50_bkg");
@@ -153,18 +166,10 @@ void makeHists()
    runPoint("WZ", sf_mc, cut_sig, "WZ_emb");                                     runPoint("WZ", sf_mc, !cut_sig, "WZ_bkg");
    runPoint("ZZ", sf_mc, cut_sig, "ZZ_emb");                                     runPoint("ZZ", sf_mc, !cut_sig, "ZZ_bkg");
 
-   runPoint("WGToLNuG", sf_mc, cut_sig, "WGToLNuG_emb");  runPoint("WGToLNuG", sf_mc, !cut_sig, "WGToLNuG_bkg");
-   runPoint("QCD_Pt-20toInf_MuEnrichedPt15", sf_mc, cut_sig, "QCD_Pt-20toInf_MuEnrichedPt15_emb");  runPoint("QCD_Pt-20toInf_MuEnrichedPt15", sf_mc, !cut_sig, "QCD_Pt-20toInf_MuEnrichedPt15_bkg");*/
-
    runPoint("Taustar_m250", sf_mc, "1>0", "Taustar_m250");
    runPoint("Taustar_m375", sf_mc, "1>0", "Taustar_m375");
    runPoint("Taustar_m500", sf_mc, "1>0", "Taustar_m500");
    runPoint("Taustar_m625", sf_mc, "1>0", "Taustar_m625");
    runPoint("Taustar_m750", sf_mc, "1>0", "Taustar_m750");
-/*
-   runPoint("SingleMuon", "1.", "1>0", "SingleMuon");
-
-   const TString sf_emb = "genWeight * m_sel_trg_ratio * m_sel_idEmb_ratio_1 * m_sel_idEmb_ratio_2 * m_iso_binned_embed_kit_ratio * m_id_embed_kit_ratio * m_trg24_27_embed_kit_ratio * MuTauGamma_trkEff * MuTauGamma_TauSFjet";
-   runPoint("Embedded", sf_emb, "1>0", "Embedded", true);*/
 }
 

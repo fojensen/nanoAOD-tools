@@ -1,3 +1,4 @@
+#include <TLine.h>
 #include <TCanvas.h>
 #include <TLegend.h>
 #include <iostream>
@@ -49,7 +50,7 @@ TFile * makeHists_QCD(const TString histname="h_vismass")
       }
    }
 
-   TFile * fout = new TFile("./outputHists_2018/QCD.root", "RECREATE");
+   TFile * fout = new TFile("./outputHists_2018/QCD."+histname+".root", "RECREATE");
    TH1D * h_bkgsub[4];
    for (int i = 0; i < 4; ++i) {
       if (i==0) continue;
@@ -76,8 +77,14 @@ TFile * makeHists_QCD(const TString histname="h_vismass")
    }
    
    TH1D * h_CoD = (TH1D*)h_bkgsub[2]->Clone("h_CoD");
-   h_CoD->GetYaxis()->SetTitle("C / D");
    h_CoD->Divide(h_bkgsub[3]);
+   h_CoD->GetYaxis()->SetTitle("C / D");
+
+   //for (int i = 1; i < h_CoD->GetNbinsX()+1; ++i) {
+   //   h_CoD->SetBinContent(i, 1.9806932);
+   //   h_CoD->SetBinError(i, 0.67699531);
+   //}
+
    for (int i = 1; i < h_CoD->GetNbinsX()+1; ++i) {
       if (h_CoD->GetBinContent(i)<0.) {
          std::cout << "negative ratio!" << std::endl;
@@ -114,23 +121,30 @@ TFile * makeHists_QCD(const TString histname="h_vismass")
       l->Draw();
       p->SetLogy();
    }
-
- //  h_bkgsub[1]->Write(histname+"_1");
- //  h_bkgsub[2]->Write(histname+"_2");
- //  h_bkgsub[3]->Write(histname+"_3");
- //  h_CoD->Write();
- //  h_BCoD->Write(histname+"_0");
- //  fout->Close();
- //  return fout;
+   c->SaveAs("./plots/abcdregions."+histname+".pdf");
 
    TCanvas * c2 = new TCanvas("c2", "", 800, 400);
    c2->Divide(2, 1);
    c2->cd(1);
    h_CoD->Draw("PE");
    h_CoD->SetStats(0);
+   
+   //TLine * l_cd_inc = new TLine(h_data[0]->GetBinLowEdge(1), 1.9806932, h_data[0]->GetBinLowEdge(h_data[0]->GetNbinsX()+1), 1.9806932);
+   TLine * l_cd_inc = new TLine(0., 1.9806932, 1000., 1.9806932); 
+   l_cd_inc->SetLineStyle(2);
+   l_cd_inc->Draw();
+
    c2->cd(2);
    h_BCoD->Draw("PE");
-   h_BCoD->SetStats(0);  
-   return 0;
+   h_BCoD->SetStats(0);
+   c2->SaveAs("./plots/abcdpred."+histname+".pdf");
+
+   h_bkgsub[1]->Write(histname+"_1");
+   h_bkgsub[2]->Write(histname+"_2");
+   h_bkgsub[3]->Write(histname+"_3");
+   h_CoD->Write();
+   h_BCoD->Write(histname+"_0");
+   fout->Close();
+   return fout;
 }
 

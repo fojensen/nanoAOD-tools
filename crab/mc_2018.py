@@ -179,7 +179,7 @@ data['people'].append({
     'nEvents': '50000',
     'nFiles': '1',
     'isMC': isMC_,
-    'xs': '1.',
+    'xs': '0.02135',
     'year': year_,
 })
 
@@ -189,7 +189,7 @@ data['people'].append({
     'nEvents': '50000',
     'nFiles': '7',
     'isMC': isMC_,
-    'xs': '1.',
+    'xs': '0.01546',
     'year': year_,
 })
 
@@ -199,7 +199,7 @@ data['people'].append({
     'nEvents': '50000',
     'nFiles': '8',
     'isMC': isMC_,
-    'xs': '1.',
+    'xs': '0.01177',
     'year': year_,
 })
 
@@ -209,7 +209,7 @@ data['people'].append({
     'nEvents': '50000',
     'nFiles': '2',
     'isMC': isMC_,
-    'xs': '1.',
+    'xs': '0.009072',
     'year': year_,
 })
 

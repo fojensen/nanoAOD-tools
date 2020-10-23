@@ -1,219 +1,156 @@
-#include <THStack.h>
-#include <TLine.h>
-#include <TFile.h>
-#include <TTree.h>
-#include <TCanvas.h>
-#include <TCut.h>
 #include <iostream>
-#include <TH1D.h>
+#include <TCanvas.h>
 #include <TLegend.h>
-#include "addOverflow.h"
+#include <THStack.h>
+#include <TH1D.h>
+#include <TFile.h>
+#include <TLine.h>
 
-void runPoint(TH1D * h, const TString var)
+void runPoint(const TString histname)
 {
-   TCut baseline = "MuTauGamma_havePair==1 && MuMuGamma_havePair==0 && (HLT_IsoMu24||HLT_IsoMu27||HLT_IsoMu20_eta2p1_LooseChargedIsoPFTauHPS27_eta2p1_CrossL1)";
-   const TCut ss = "MuTauGamma_qq==+1";
-   const TCut os = "MuTauGamma_qq==-1";
-   const TCut isotau = "(64&Tau_idDeepTau2017v2p1VSjet[MuTauGamma_TauIdx])";
-   TCut antiisotau = "(8&Tau_idDeepTau2017v2p1VSjet[MuTauGamma_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTauGamma_TauIdx])";
-   //baseline = baseline && TCut("MuTauGamma_haveTriplet==1");
+   const int nmc = 9;
+   TString mctags[nmc];
+   int col[nmc];
+   TString labels[nmc];
+   mctags[0] = "ZZ";                   col[0] = 52;  labels[0] = "ZZ";
+   mctags[1] = "WZ";                   col[1] = 53;  labels[1] = "WZ";
+   mctags[2] = "WW";                   col[2] = 54;  labels[2] = "WW";
+   mctags[3] = "ST_tW";                col[3] = 209;  labels[3] = "tW";
+   mctags[4] = "TTToSemiLeptonic";     col[4] = 210;  labels[4] = "t#bar{t} #rightarrow l#nu2q";
+   mctags[5] = "TTTo2L2Nu";            col[5] = 211;  labels[5] = "t#bar{t} #rightarrow 2l2#nu";
+   mctags[6] = "EWKZ2Jets_ZToLL_M-50"; col[6] = 96;  labels[6] = "EWKZ50";
+   mctags[7] = "DYJetsToLL_M-10to50";  col[7] = 97;  labels[7] = "DY10to50";
+   mctags[8] = "DYJetsToLL_M-50";      col[8] = 98; labels[8] = "DY50";
 
-   const TCut regionA = os && isotau;
-   const TCut regionB = ss && isotau;
-   const TCut regionC = os && antiisotau;
-   const TCut regionD = ss && antiisotau;
-   const TCut cuts[4] = {regionA&&baseline, regionB&&baseline, regionC&&baseline, regionD&&baseline};
-   const TString titles[4] = {"A", "B", "C", "D"};
-
-   char cutsMC[4][1000];
-   for (int i = 0; i < 4; ++i) {
-      sprintf(cutsMC[i], "59725.419 * xsWeight * (%s && Sum$(TMath::Abs(GenPart_pdgId)==15 && (8192&GenPart_statusFlags))>=2)", TString(cuts[i]).Data());
+   TH1D * h_mc[4][nmc];
+   for (int i = 0; i < nmc; ++i) {
+      char fname[100];
+      sprintf(fname, "./outputHists_2018/%s_emb.root", mctags[i].Data());
+      TFile * f_mc = TFile::Open(fname);
+      for (int j = 0; j < 4; ++j) {
+         char hname[100];
+         sprintf(hname, "%s_%d", histname.Data(), j);
+         h_mc[j][i] = (TH1D*)f_mc->Get(hname);
+       }
    }
-   
-   char cutsEmbedded[4][1000];
+
+   TH1D * h_mcsum[4];
    for (int i = 0; i < 4; ++i) {
-      sprintf(cutsEmbedded[i], "genWeight * (%s)", TString(cuts[i]).Data());
+      char hname[100];
+      sprintf(hname, "h_mcsum_%d", i);
+      h_mcsum[i] = (TH1D*)h_mc[i][0]->Clone();
+   }
+   for (int i = 0; i < 4; ++i) {
+      for (int j = 1; j < nmc; ++j) {
+         h_mcsum[i]->Add(h_mc[i][j]);
+      }
    }
 
-   TH1D * h_sum[4];
-   for (int i = 0; i < 4; ++i) h_sum[i] = (TH1D*)h->Clone("h_sum");
    THStack * stack[4];
    for (int i = 0; i < 4; ++i) {
       stack[i] = new THStack();
-      char title[100];
-      sprintf(title, "%s;%s;%s", titles[i].Data(), h->GetXaxis()->GetTitle(), h->GetYaxis()->GetTitle());
-      stack[i]->SetTitle(title);
-   }
- 
-   TFile * f_ZZ = TFile::Open("./outputData/ZZ.root");
-   TTree * t_ZZ = (TTree*)f_ZZ->Get("Events");
-   TH1D * h_ZZ[4];
-   std::cout << "ZZ" << std::endl;
-   for (int i = 0; i < 4; ++i) {
-      h_ZZ[i] = (TH1D*)h->Clone("h_ZZ_"+TString::Itoa(i, 10));
-      std::cout << "   " << t_ZZ->Project(h_ZZ[i]->GetName(), var, cutsMC[i]) << " mc events." << std::endl;
-      addOverflow(h_ZZ[i]);
-      h_sum[i]->Add(h_ZZ[i]);
-      h_ZZ[i]->SetFillColor(9);
-      stack[i]->Add(h_ZZ[i]);
-      std::cout << "h_ZZ: " << h_ZZ[i]->Integral() << std::endl;
-   }
- 
-   TFile * f_WZ = TFile::Open("./outputData/WZ.root");
-   TTree * t_WZ = (TTree*)f_WZ->Get("Events");
-   TH1D * h_WZ[4];
-   std::cout << "WZ" << std::endl;
-   for (int i = 0; i < 4; ++i) {
-      h_WZ[i] = (TH1D*)h->Clone("h_WZ_"+TString::Itoa(i, 10));
-      std::cout << "   " << t_WZ->Project(h_WZ[i]->GetName(), var, cutsMC[i]) << " mc events." << std::endl;
-      addOverflow(h_WZ[i]);
-      h_sum[i]->Add(h_WZ[i]);
-      h_WZ[i]->SetFillColor(8);
-      stack[i]->Add(h_WZ[i]);
-      std::cout << "   h_WZ: " << h_WZ[i]->Integral() << std::endl;
-   }
-
-   TFile * f_WW = TFile::Open("./outputData/WW.root");
-   TTree * t_WW = (TTree*)f_WW->Get("Events");
-   TH1D * h_WW[4];
-   std::cout << "WW" << std::endl;
-   for (int i = 0; i < 4; ++i) {
-      h_WW[i] = (TH1D*)h->Clone("h_WW_"+TString::Itoa(i, 10));
-      std::cout << "   " << t_WW->Project(h_WW[i]->GetName(), var, cutsMC[i]) << " mc events." << std::endl;
-      addOverflow(h_WW[i]);
-      h_sum[i]->Add(h_WW[i]);
-      h_WW[i]->SetFillColor(7);
-      stack[i]->Add(h_WW[i]);
-      std::cout << "   h_WW: " << h_WW[i]->Integral() << std::endl;
-   }
-
-   TFile * f_TTTo2L2Nu = TFile::Open("./outputData/TTTo2L2Nu.root");
-   TTree * t_TTTo2L2Nu = (TTree*)f_TTTo2L2Nu->Get("Events");
-   TH1D * h_TTTo2L2Nu[4];
-   std::cout << "TTTo2L2Nu" << std::endl;
-   for (int i = 0; i < 4; ++i) {
-      h_TTTo2L2Nu[i] = (TH1D*)h->Clone("h_TTTo2L2Nu_"+TString::Itoa(i, 10));
-      std::cout << "   " << t_TTTo2L2Nu->Project(h_TTTo2L2Nu[i]->GetName(), var, cutsMC[i]) << " mc events." << std::endl;
-      addOverflow(h_TTTo2L2Nu[i]);
-      h_sum[i]->Add(h_TTTo2L2Nu[i]);
-      h_TTTo2L2Nu[i]->SetFillColor(6);
-      stack[i]->Add(h_TTTo2L2Nu[i]);
-      std::cout << "   h_TTTo2L2Nu: " << h_TTTo2L2Nu[i]->Integral() << std::endl;
+      char stacktitle[100];
+      sprintf(stacktitle, "%s;%s;%s", h_mc[i][0]->GetTitle(), h_mc[i][0]->GetXaxis()->GetTitle(), h_mc[i][0]->GetYaxis()->GetTitle());
+      stack[i]->SetTitle(stacktitle);
+      for (int j = 0; j < nmc; ++j) {
+         h_mc[i][j]->SetFillColor(col[j]);
+         stack[i]->Add(h_mc[i][j]);
+      }  
    }  
 
-   TFile * f_DYJetsToLL_M10 = TFile::Open("./outputData/DYJetsToLL_M-10to50.root");
-   TTree * t_DYJetsToLL_M10 = (TTree*)f_DYJetsToLL_M10->Get("Events");
-   TH1D * h_DYJetsToLL_M10[4];
-   std::cout << "DYJetsToLL_M-50_M10" << std::endl;
+   TH1D * h_emb[4];
+   TFile * f_emb = TFile::Open("./outputHists_2018/Embedded.root");
    for (int i = 0; i < 4; ++i) {
-      h_DYJetsToLL_M10[i] = (TH1D*)h->Clone("h_DYJetsToLL_M10_"+TString::Itoa(i, 10));
-      std::cout << "   " << t_DYJetsToLL_M10->Project(h_DYJetsToLL_M10[i]->GetName(), var, cutsMC[i]) << " mc events." << std::endl;
-      addOverflow(h_DYJetsToLL_M10[i]);
-      h_sum[i]->Add(h_DYJetsToLL_M10[i]);
-      h_DYJetsToLL_M10[i]->SetFillColor(97);
-      stack[i]->Add(h_DYJetsToLL_M10[i]);
-      std::cout << "   h_DYJetsToLL_M10: " << h_DYJetsToLL_M10[i]->Integral() << std::endl;
-   }
- 
-   TFile * f_DYJetsToLL = TFile::Open("./outputData/DYJetsToLL_M-50.root");
-   TTree * t_DYJetsToLL = (TTree*)f_DYJetsToLL->Get("Events");
-   TH1D * h_DYJetsToLL[4];
-   std::cout << "DYJetsToLL_M-50" << std::endl;
-   for (int i = 0; i < 4; ++i) {
-      h_DYJetsToLL[i] = (TH1D*)h->Clone("h_DYJetsToLL_"+TString::Itoa(i, 10));
-      std::cout << "   " << t_DYJetsToLL->Project(h_DYJetsToLL[i]->GetName(), var, cutsMC[i]) << " mc events." << std::endl;
-      addOverflow(h_DYJetsToLL[i]);
-      h_sum[i]->Add(h_DYJetsToLL[i]);
-      h_DYJetsToLL[i]->SetFillColor(96);
-      stack[i]->Add(h_DYJetsToLL[i]);
-      std::cout << "   h_DYJetsToLL: " << h_DYJetsToLL[i]->Integral() << std::endl;
+      char hname[100]; 
+      sprintf(hname, "%s_%d", histname.Data(), i);
+      h_emb[i] = (TH1D*)f_emb->Get(hname);
    }
 
-   TFile * f_Embedded = TFile::Open("./outputData/Embedded_2018.root");
-   TTree * t_Embedded = (TTree*)f_Embedded->Get("Events");
-   TH1D * h_Embedded[4];
-   std::cout << "Embedded" << std::endl;
+   TH1D * h_sig250[4];
+   TFile * f_sig250 = TFile::Open("./outputHists_2018/Taustar_m250.root");
    for (int i = 0; i < 4; ++i) {
-      h_Embedded[i] = (TH1D*)h->Clone("h_Embedded_"+TString::Itoa(i, 10));
-      std::cout << "   " << t_Embedded->Project(h_Embedded[i]->GetName(), var, cutsEmbedded[i]) << " Embedded events." << std::endl;
-      addOverflow(h_Embedded[i]);
-      std::cout << "   h_Embedded: " << h_Embedded[i]->Integral() << std::endl;
-      char buffer[1000];
-      sprintf(buffer, "%s;%s;%s", titles[i].Data(), h->GetXaxis()->GetTitle(), h->GetYaxis()->GetTitle());
-      h_Embedded[i]->SetTitle(buffer);
+      char hname[100];
+      sprintf(hname, "%s_%d", histname.Data(), i);
+      h_sig250[i] = (TH1D*)f_sig250->Get(hname); 
+      h_sig250[i]->SetLineStyle(2);
+      h_sig250[i]->SetLineColor(81);
+   }
+
+   TH1D * h_sig500[4];
+   TFile * f_sig500 = TFile::Open("./outputHists_2018/Taustar_m500.root");
+   for (int i = 0; i < 4; ++i) {
+      char hname[100];
+      sprintf(hname, "%s_%d", histname.Data(), i);
+      h_sig500[i] = (TH1D*)f_sig500->Get(hname);
+      h_sig500[i]->SetLineStyle(2);
+      h_sig500[i]->SetLineColor(86);
    }
 
    TH1D * r[4];
    for (int i = 0; i < 4; ++i) {
-      r[i] = (TH1D*)h_Embedded[i]->Clone("r_"+TString::Itoa(i, 10));
-      r[i]->Divide(h_sum[i]);
-      char buffer[1000];
-      sprintf(buffer, "%s;%s;embedded / mc", titles[i].Data(), h->GetXaxis()->GetTitle());
-      r[i]->SetTitle(buffer);
+      char hname[100];
+      sprintf(hname, "r_%d", i);
+      r[i] = (TH1D*)h_emb[i]->Clone(hname);
+      r[i]->Divide(h_mcsum[i]);
+      r[i]->GetYaxis()->SetTitle("embedded / mc");
+      r[i]->SetMarkerColor(602);
    }
 
-   TCanvas * c = new TCanvas("c_"+TString(h->GetName()), var, 1600, 800);
-   c->Divide(4, 2);
-
-   TLegend * leg = new TLegend(0.25, 0.75, 0.875, 0.875);
+   TLegend * leg = new TLegend(0.25, 0.7, 0.875, 0.875);
    leg->SetBorderSize(0);
-   leg->SetNColumns(2);
-   leg->AddEntry(h_ZZ[0], "ZZ", "F");
-   leg->AddEntry(h_WZ[0], "WZ", "F");
-   leg->AddEntry(h_WW[0], "WW", "F");
-   leg->AddEntry(h_TTTo2L2Nu[0], "TTTo2L2Nu", "F");
-   leg->AddEntry(h_DYJetsToLL_M10[0], "DYJetsToLL_M-10to50", "F");
-   leg->AddEntry(h_DYJetsToLL[0], "DYJetsToLL_M-50", "F");
-   leg->AddEntry(h_Embedded[0], "Embedded", "P");
+   leg->SetNColumns(3);
+   for (int i = 0; i < nmc; ++i) {
+      leg->AddEntry(h_mc[0][i], labels[i], "F");
+   }
+   leg->AddEntry(h_emb[0], "embedded", "P");
+   leg->AddEntry(h_sig250[0], "#tau* m250", "L");
+   leg->AddEntry(h_sig500[0], "#tau* m500", "L");
 
+   TCanvas * c = new TCanvas("c_"+histname, histname, 1600, 800);
+   c->Divide(4, 2);
+   
    for (int i = 0; i < 4; ++i) {
       TPad * p = (TPad*)c->cd(1+i);
-      h_Embedded[i]->SetMarkerStyle(20);
-      h_Embedded[i]->Draw("PE");
-      stack[i]->SetMinimum(1.);
-      stack[i]->SetMaximum(10000000.);
+      h_emb[i]->SetMarkerStyle(20);
+      h_emb[i]->Draw("PE");
+      stack[i]->SetMinimum(1);
+      stack[i]->SetMaximum(1e7);
       stack[i]->Draw("HIST");
-      h_Embedded[i]->Draw("PE, SAME");
+      h_emb[i]->Draw("PE, SAME");
+      h_sig250[i]->Draw("HIST, SAME");
+      h_sig500[i]->Draw("HIST, SAME");
       leg->Draw();
       p->SetLogy();
    }
 
-   TLine * lin = new TLine(h->GetBinLowEdge(1), 1., h->GetBinLowEdge(h->GetNbinsX()+1), 1.);
-   lin->SetLineStyle(2); 
+   TLine * lin = new TLine(h_emb[0]->GetBinLowEdge(1),  1., h_emb[0]->GetBinLowEdge(h_emb[0]->GetNbinsX()+1), 1.);
+   lin->SetLineStyle(2);
    for (int i = 0; i < 4; ++i) {
       c->cd(5+i);
-      r[i]->Draw("PE");
-      r[i]->SetMarkerStyle(20);
-      r[i]->SetTitle(titles[i]);
+      //r[i]->Draw("PE, TEXT"); r[i]->SetMarkerSize(3); 
+      r[i]->Draw("PE"); r[i]->SetMarkerStyle(20);
+      //r[i]->SetTitle(titles[i]);
       r[i]->SetStats(0);
-      r[i]->SetMinimum(0.);
-      r[i]->SetMaximum(2.);
+      r[i]->SetMinimum(0.5);
+      r[i]->SetMaximum(1.5);
       lin->Draw();
    }
-
-   c->SaveAs("./plots/embedded."+TString(h->GetName())+".pdf");
+   c->SaveAs("./plots/emb."+histname+".pdf"); 
 }
 
 void embeddedStudy()
 {
-   TH1D h_nBJetT("h_nBJetT", ";# of b-jets (tight);events / 1", 4, -0.5, 3.5);
-   runPoint(&h_nBJetT, "JetProducer_nBJetT");
-
-   TH1D h_VisibleMass("h_VisibleMass", ";visible mass (#mu+#tau_{h}) [GeV];events / 25 GeV", 10, 0., 250.); 
-   runPoint(&h_VisibleMass, "MuTauGamma_MuTauMass");
-
-   TH1D h_mt("h_mt", ";m_{T} (#mu, MET) [GeV];events / 20 GeV", 10, 0., 200.);
-   runPoint(&h_mt, "MuTauGamma_mt");
-
-   TH1D h_unitbin("h_unitbin", ";the unit bin;events", 1, -0.5, 0.5);
-   runPoint(&h_unitbin, "0.");
-
-   //TH1D h_photonpt("h_photonPt", ";p_{T} [GeV];events / 25 GeV", 8, 32., 232.);
-   //runPoint(&h_photonpt, "Photon_pt[MuTauGamma_PhotonIdx]");
- 
-   //const int n = 4;
-   //const double x[n+1] = {0., 100., 200., 300., 500.}; 
-   //TH1D h_mincolmass("h_mincolmass", ";min collinear mass [GeV];events / bin", n, x);
-   //runPoint(&h_mincolmass, "TMath::Min(MuTauGamma_MuGammaCollinearMass, MuTauGamma_TauGammaCollinearMass)"); 
+   //runPoint("h_vismass");
+   //runPoint("h_vispt");
+   //runPoint("h_unit");
+   //runPoint("h_mt");
+   //runPoint("h_met");
+   //runPoint("h_njets");
+   //runPoint("h_nbjetsM");
+   //runPoint("h_nbjetsT");
+   //runPoint("h_npv");
+   //runPoint("h_decayMode");
+   runPoint("h_minmass200");
+   //runPoint("h_maxmass");
 }
 

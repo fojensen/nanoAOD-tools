@@ -37,6 +37,7 @@ keep Photon_pixelSeed
 keep Photon_pt
 keep Photon_isScEtaEB
 keep Photon_isScEtaEE
+keep Photon_mass
 keep nPhoton
 keep PV_npvs
 keep PV_npvsGood
@@ -72,16 +73,19 @@ keep Electron_genPartFlav
 keep Electron_pt
 keep Electron_eta
 keep Electron_phi
+keep Electron_mass
+keep Electron_mvaFall17V2Iso_WP90
 keep nElectron
 keep Jet_pt
 keep Jet_eta
 keep Jet_phi
+keep Jet_mass
 keep Jet_jetId
 keep Jet_btagDeepB
-keep PhotonOverlap*
 keep *Weight
 keep HLT_IsoMu24
 keep HLT_IsoMu27
+keep HLT_IsoTkMu24
 keep HLT_Mu50
 keep HLT_OldMu100
 keep HLT_TkMu100
@@ -90,3 +94,5 @@ keep HLT_MediumChargedIsoPFTau180HighPtRelaxedIso_Trk50_eta2p1
 keep HLT_Photon200
 keep HLT_Photon175
 keep DYStudy_*
+keep genTtbarId
+keep GenTau*
