@@ -9,7 +9,7 @@ double addOverflow(TH1D * h)
       h->AddBinContent(n, o);
       h->SetBinContent(n+1, 0.);
       h->SetBinError(n+1, 0.);
-      std::cout << "overflow: " << h->GetName() << " " << o << std::endl;
+      //std::cout << "overflow: " << h->GetName() << " " << o << std::endl;
    }
    return o;
 }

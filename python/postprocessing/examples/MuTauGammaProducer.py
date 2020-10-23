@@ -7,8 +7,7 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR, deltaPhi
 from ROOT import TLorentzVector, TVector2
 import math
-#import numpy as np
-from TauPOG.TauIDSFs.TauIDSFTool import TauIDSFTool, TauESTool, TauFESTool
+from TauPOG.TauIDSFs.TauIDSFTool import TauIDSFTool
 from MuonPOG.MuonSFs.MuonSFTool import MuonSFTool
 
 class MuTauGammaProducer(Module):
@@ -30,18 +29,16 @@ class MuTauGammaProducer(Module):
             else :
                 print "Funny year is chosen!"
             #(self, year, id, wp='Tight', dm=False, emb=False, otherVSlepWP=False, path=datapath, verbose=False)
-            self.tauIDSFTool_jet_VVVLoose = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','VVVLoose', isEmb_, False)
-            self.tauIDSFTool_jet_VVLoose = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','VVLoose', isEmb_, False)
-            self.tauIDSFTool_jet_VLoose = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','VLoose', isEmb_, False)
-            self.tauIDSFTool_jet_Loose = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','Loose', isEmb_, False)
-            self.tauIDSFTool_jet_Medium = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','Medium', isEmb_, False)
-            self.tauIDSFTool_jet_Tight = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','Tight', isEmb_, False)
-            self.tauIDSFTool_jet_VTight = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','VTight', isEmb_, False)
-            self.tauIDSFTool_jet_VVTight = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','VVTight', isEmb_, False)
-            self.tauIDSFTool_muo = TauIDSFTool(tauTag,'DeepTau2017v2p1VSmu','Tight', False, False)
-            self.tauIDSFTool_ele = TauIDSFTool(tauTag,'DeepTau2017v2p1VSe','VLoose', False, False)
-            self.tauESTool = TauESTool(tauTag,'DeepTau2017v2p1VSjet')
-            self.tauFESTool = TauFESTool(tauTag,'DeepTau2017v2p1VSe')
+            self.tauIDSFTool_jet_VVVLoose = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','VVVLoose', False,  isEmb_)
+            self.tauIDSFTool_jet_VVLoose = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','VVLoose', False, isEmb_)
+            self.tauIDSFTool_jet_VLoose = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','VLoose', False, isEmb_)
+            self.tauIDSFTool_jet_Loose = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','Loose', False, isEmb_)
+            self.tauIDSFTool_jet_Medium = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','Medium', False, isEmb_)
+            self.tauIDSFTool_jet_Tight = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','Tight', False, isEmb_)
+            self.tauIDSFTool_jet_VTight = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','VTight', False, isEmb_)
+            self.tauIDSFTool_jet_VVTight = TauIDSFTool(tauTag,'DeepTau2017v2p1VSjet','VVTight', False, isEmb_)
+            self.tauIDSFTool_muo = TauIDSFTool(tauTag,'DeepTau2017v2p1VSmu','Tight')
+            self.tauIDSFTool_ele = TauIDSFTool(tauTag,'DeepTau2017v2p1VSe','VLoose')
     def beginJob(self):
         pass
     def endJob(self):

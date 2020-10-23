@@ -25,7 +25,6 @@ class MuMuGammaProducer(Module):
         self.out.branch("MuMuGamma_MuMuPt", "F")
         self.out.branch("MuMuGamma_MuMuEta", "F")
         self.out.branch("MuMuGamma_MuMuPhi", "F")
-
         self.out.branch("MuMuGamma_haveTriplet", "I")
         self.out.branch("MuMuGamma_PhotonIdx", "I")
         self.out.branch("MuMuGamma_MuMuGammaMass", "F")
@@ -68,40 +67,36 @@ class MuMuGammaProducer(Module):
                 for j, mu1 in enumerate(muons):
                     mu1ID = mu1.mediumId and mu1.pfIsoId>=2
                     if mu1.pt>=10. and abs(mu1.eta)<2.4 and mu1ID:
-                        if mu0.charge*mu1.charge<0:
+                        if mu0.charge*mu1.charge<0 and mu0.pt>=mu1.pt:
+                            havePair = havePair + 1
                             MuMuDeltaPhi = deltaPhi(mu0, mu1)
-                            if abs(MuMuDeltaPhi)>=0.3:
-                                havePair = havePair + 1
-                                MuMuDeltaR = deltaR(mu0, mu1)
-                                MuMuMass = (mu0.p4()+mu1.p4()).M()
-                                MuMuPt =   (mu0.p4()+mu1.p4()).Pt()
-                                MuMuEta =  (mu0.p4()+mu1.p4()).Eta()
-                                MuMuPhi =  (mu0.p4()+mu1.p4()).Phi()
-                                Mu0Idx = i
-                                Mu1Idx = j
-                                if mu1.pt>mu0.pt:
-                                    Mu0Idx = j
-                                    Mu1Idx = i
-                                maxphotonpt = 0
-                                for k, photon in enumerate(photons):
-                                    if k in goodPhotonIdx:
-                                        isIso = abs(deltaPhi(mu0, photon))>=0.3 and abs(deltaPhi(mu1, photon))>=0.3
-                                        if isIso:
-                                            haveTriplet = haveTriplet + 1
-                                            if photon.pt>maxphotonpt:
-                                                PhotonIdx = k
-                                                maxphotonpt = photon.pt
-                                                Mu0GammaDeltaPhi = deltaPhi(mu0, photon)
-                                                Mu0GammaDeltaEta = mu0.eta-photon.eta
-                                                Mu1GammaDeltaPhi = deltaPhi(mu0, photon)
-                                                Mu1GammaDeltaEta = mu1.eta-photon.eta 
-                                                Mu0GammaDeltaR = deltaR(mu0, photon)
-                                                Mu1GammaDeltaR = deltaR(mu1, photon)
-                                                Z = mu0.p4()+mu1.p4()
-                                                MuMuGammaDeltaR = deltaR(Z.Eta(), Z.Phi(), photon.eta, photon.phi)
-                                                MuMuGammaDeltaPhi = deltaPhi(Z.Phi(), photon.phi)
-                                                MuMuGammaMass = (mu0.p4()+mu1.p4()+photon.p4()).M()
-
+                            MuMuDeltaR = deltaR(mu0, mu1)
+                            MuMuMass = (mu0.p4()+mu1.p4()).M()
+                            MuMuPt =   (mu0.p4()+mu1.p4()).Pt()
+                            MuMuEta =  (mu0.p4()+mu1.p4()).Eta()
+                            MuMuPhi =  (mu0.p4()+mu1.p4()).Phi()
+                            Mu0Idx = i
+                            Mu1Idx = j
+                            maxphotonpt = 0
+                            for k, photon in enumerate(photons):
+                                if k in goodPhotonIdx:
+                                    isIso = abs(deltaPhi(mu0, photon))>=0.3 and abs(deltaPhi(mu1, photon))>=0.3
+                                    if isIso:
+                                        haveTriplet = haveTriplet + 1
+                                        if photon.pt>maxphotonpt:
+                                            PhotonIdx = k
+                                            maxphotonpt = photon.pt
+                                            Mu0GammaDeltaPhi = deltaPhi(mu0, photon)
+                                            Mu0GammaDeltaEta = mu0.eta-photon.eta
+                                            Mu1GammaDeltaPhi = deltaPhi(mu0, photon)
+                                            Mu1GammaDeltaEta = mu1.eta-photon.eta 
+                                            Mu0GammaDeltaR = deltaR(mu0, photon)
+                                            Mu1GammaDeltaR = deltaR(mu1, photon)
+                                            Z = mu0.p4()+mu1.p4()
+                                            MuMuGammaDeltaR = deltaR(Z.Eta(), Z.Phi(), photon.eta, photon.phi)
+                                            MuMuGammaDeltaPhi = deltaPhi(Z.Phi(), photon.phi)
+                                            MuMuGammaMass = (mu0.p4()+mu1.p4()+photon.p4()).M()
+      
         self.out.fillBranch("MuMuGamma_havePair", havePair)
         self.out.fillBranch("MuMuGamma_Mu0Idx", Mu0Idx)
         self.out.fillBranch("MuMuGamma_Mu1Idx", Mu1Idx)

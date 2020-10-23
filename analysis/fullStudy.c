@@ -11,26 +11,36 @@ void fullStudy()
 {
    // *** INCLUSIVE *** //
    std::cout << "// *** INCLUSIVE *** //" << std::endl;
-   
-   TH1D * h = new TH1D("h", ";#mu+#tau_{h} visible mass [GeV];events / 20 GeV", 10, 0., 200.);
+
+   //TH1D * h = new TH1D("h", ";#mu+#tau_{h} visible mass [GeV];events / 20 GeV", 10, 0., 200.);
+   //const TString var = "MuTauGamma_MuTauMass";
+
+   //TH1D * h = new TH1D("h", ";# of b-tagged jets;events / 1", 4, -0.5, 3.5);
+   //const TString var = "JetProducer_nBJetT";
+
+   TH1D * h = new TH1D("h", ";m_{T} [GeV];events / 10 GeV", 10, 0., 100.);
+   const TString var = "MuTauGamma_mt";
+
    h->SetStats(0);
-   const TString var = "MuTauGamma_MuTauMass";
-   
+
    TCut baseline = "MuTauGamma_havePair>0 && MuTauGamma_trigger && Muon_pfIsoId[MuTauGamma_MuIdx]>=4 && (16&Tau_idDeepTau2017v2p1VSjet[MuTauGamma_TauIdx])";
-   const TCut mumuVeto = "MuMuGamma_havePair==0";
+   //const TCut mumuVeto = "MuMuGamma_havePair==0";
+   //const TCut Wveto = "MuTauGamma_mt<40.";
+   const TCut Wveto = "1>0";
+   const TCut mumuVeto = "Sum$(Muon_pt>=10. && TMath::Abs(Muon_eta)<2.4 && Muon_pfIsoId>=2 && Muon_mediumId)<2";
    const TCut photonVeto = "MuTauGamma_haveTriplet==0 || (MuTauGamma_haveTriplet>0 && Photon_pt[MuTauGamma_PhotonIdx]<50.)";
    const TCut filters = "Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter";
-   baseline = baseline && mumuVeto && photonVeto && filters;
+   baseline = baseline && mumuVeto && photonVeto && filters && Wveto;
 
    const TCut regionA = "MuTauGamma_qq==-1 &&  (64&Tau_idDeepTau2017v2p1VSjet[MuTauGamma_TauIdx])";
    const TCut regionB = "MuTauGamma_qq==+1 &&  (64&Tau_idDeepTau2017v2p1VSjet[MuTauGamma_TauIdx])";
    const TCut regionC = "MuTauGamma_qq==-1 && !(64&Tau_idDeepTau2017v2p1VSjet[MuTauGamma_TauIdx])";
    const TCut regionD = "MuTauGamma_qq==+1 && !(64&Tau_idDeepTau2017v2p1VSjet[MuTauGamma_TauIdx])";
    const TCut regionCuts[4] = {baseline&&regionA, baseline&&regionB, baseline&&regionC, baseline&&regionD};
- 
+
    // *** FILL MC HISTOGRAMS *** //
    std::cout << "// *** FILL MC HISTOGRAMS *** //" << std::endl;
-   
+
    const int nmc = 9;
    TH1D *h_mc[nmc][4][2];
    TH1D *h_mc_sum[4][2];
@@ -84,6 +94,7 @@ void fullStudy()
    // *** FILL SIGNAL HISTOGRAMS *** //
    const TString sigtags[2] = {"Taustar_m250", "Taustar_m500"};
    TH1D * h_sig[2][4];
+   const int col_sig[2] = {40, 45};
    for (int i = 0; i < 2; ++i) {
       char fname[100];
       sprintf(fname, "./outputData_2018/%s.root", sigtags[i].Data());
@@ -93,6 +104,8 @@ void fullStudy()
          char hname[100];
          sprintf(hname, "h_sig_%d_%d", i, j);
          h_sig[i][j] = (TH1D*)h->Clone(hname);
+         h_sig[i][j]->SetLineColor(col_sig[i]);
+         h_sig[i][j]->SetLineWidth(2);
          char cuts[1000];
          sprintf(cuts, "%s * ( %s )", mcWeights[j].Data(), TString(regionCuts[j]).Data());
          t->Project(h_sig[i][j]->GetName(), var, cuts);
@@ -113,6 +126,7 @@ void fullStudy()
    TFile * f_emb_sf = TFile::Open("./Embedded_2018/Embedded_2018_0_-1.root");
    TTree * t_emb_sf = (TTree*)f_emb_sf->Get("mt_nominal/ntuple");
    t_emb->AddFriend(t_emb_sf);
+   double embmax = 0.;
    for (int i = 0; i < 4; ++i) {
       h_emb[i] = (TH1D*)h->Clone("h_emb_"+TString::Itoa(i, 10));
       h_emb[i]->SetMarkerStyle(20);
@@ -120,6 +134,8 @@ void fullStudy()
       char cutString[1000];
       sprintf(cutString, "%s * ( %s )", embWeights[i].Data(), TString(regionCuts[i]).Data()); 
       t_emb->Project(h_emb[i]->GetName(), var, cutString);
+      const double y = h_emb[i]->Integral();
+      if (y>embmax) embmax = y;
    }
 
    // *** FILL DATA HISTOGRAMS *** //
@@ -127,9 +143,12 @@ void fullStudy()
    TH1D * h_data[4];
    TFile * f_data = TFile::Open("./outputData_2018/SingleMuon.root");
    TTree * t_data = (TTree*)f_data->Get("Events");
+   double datamax = 0.;
    for (int i = 0; i < 4; ++i) {
       h_data[i] = (TH1D*)h->Clone("h_data_"+TString::Itoa(i, 10));
-      t_data->Project(h_data[i]->GetName(), var);
+      h_data[i]->SetMarkerStyle(20);
+      const double y = t_data->Project(h_data[i]->GetName(), var, TString(regionCuts[i]).Data());
+      if (y>datamax) datamax = y;
    }
 
    // *** MC COMPOSITION OF EMBEDDED *** //
@@ -141,6 +160,7 @@ void fullStudy()
       sprintf(hname, "r_emb_%d", i);
       r_emb[i] = (TH1D*)h_emb[i]->Clone(hname);
       r_emb[i]->Divide(h_mc_sum[i][0]);
+      r_emb[i]->GetYaxis()->SetTitle("embedded / mc");
       s_emb[i] = new THStack();
       char title[100];
       sprintf(title, ";%s;%s", h->GetXaxis()->GetTitle(), h->GetYaxis()->GetTitle());
@@ -162,10 +182,15 @@ void fullStudy()
    c_emb->Divide(4, 2);
    for (int i = 0; i < 4; ++i) {
       TPad * p = (TPad*)c_emb->cd(i+1);
-      s_emb[i]->Draw("HIST");
-      h_emb[i]->Draw("PE, SAME");
+      h_emb[i]->Draw("PE");
+      s_emb[i]->Draw("HIST, SAME");
       leg->Draw();
+      embmax<100 ? h_emb[i]->SetMinimum(0.1) : h_emb[i]->SetMinimum(1.);
+      const double max = pow(10, ceil(log10(embmax)));
+      h_emb[i]->SetMaximum(max);
+      p->SetLogy();
    }
+
    for (int i = 0; i < 4; ++i) {
       TPad * p = (TPad*)c_emb->cd(i+5);
       r_emb[i]->Draw("PE");
@@ -176,25 +201,53 @@ void fullStudy()
    // *** EMBEDDED APPLIED TO DATA *** ///
 
    THStack * s_data[4];
+   TH1D * h_mcemb_sum[4];
    for (int i = 0; i < 4; ++i) {
       s_data[i] = new THStack();
       for (int j = 0; j < nmc; ++j) {
          s_data[i]->Add(h_mc[j][i][1]);
       }
       s_data[i]->Add(h_emb[i]);
+      h_mcemb_sum[i] = (TH1D*)h_mc_sum[i][1]->Clone("h_mcemb_sum_"+TString::Itoa(i, 10));
+      h_mcemb_sum[i]->Add(h_emb[i]);
    }
-   
-   TLegend * l2 = (TLegend*)l2->Clone();
-   l2->AddEntry(h_emb[0], "emb", "F");
-   
-   TCanvas * c_data = new TCanvas("c_data", "", 1600, 800);
-   c_data->Divide(4, 2);
+ 
+   TH1D * r_data[4];
    for (int i = 0; i < 4; ++i) {
-      TPad * p = (TPad*)c_data->cd(i+1);
-      s_data[i]->Draw("HIST");
-      h_data[i]->Draw("PE, SAME");
-      l2->Draw();
+      r_data[i] = (TH1D*)h_data[i]->Clone("r_data_"+TString::Itoa(i, 10));
+      r_data[i]->Divide(h_mcemb_sum[i]);
+      r_data[i]->GetYaxis()->SetTitle("data / expected bkg");
    }
 
+   TCanvas * c_data = new TCanvas("c_data", "", 1600, 800);
+   c_data->Divide(4, 2);
+
+   TLegend * leg2 = new TLegend(0.25, 0.7, 0.875, 0.875);
+   leg2->SetBorderSize(0);
+   leg2->SetNColumns(3);
+   for (int i = 0; i < nmc; ++i) leg2->AddEntry(h_mc[i][0][0], labels[i], "F");
+   leg2->AddEntry(h_emb[0], "embedded", "F");
+   leg2->AddEntry(h_sig[0][0], "#tau* 250", "L");
+   leg2->AddEntry(h_sig[1][0], "#tau* 500", "L");
+
+   for (int i = 0; i < 4; ++i) {
+      TPad * p = (TPad*)c_data->cd(i+1);
+      h_data[i]->Draw("PE");
+      s_data[i]->Draw("HIST, SAME");
+      h_sig[0][i]->Draw("HIST, E, SAME");
+      h_sig[1][i]->Draw("HIST, E, SAME");
+      leg2->Draw();
+
+      datamax<100 ? h_data[i]->SetMinimum(0.1) : h_data[i]->SetMinimum(1.);
+      const double max = pow(10, ceil(log10(datamax)));
+      h_data[i]->SetMaximum(max);
+      p->SetLogy();
+   }
+   for (int i = 0; i < 4; ++i) {
+      TPad * p = (TPad*)c_data->cd(i+5);
+      r_data[i]->Draw("PE");
+      r_data[i]->SetMinimum(0.);
+      r_data[i]->SetMaximum(2.);
+   }
 }
 

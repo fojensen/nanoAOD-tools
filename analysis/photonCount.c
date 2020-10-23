@@ -42,7 +42,7 @@ void photonCount()
       h_mutau->Add(&temp_mutau);
 
       ++nfiles;
-      //if (nfiles==2) break;
+      //if (nfiles==10) break;
    }
    std::cout << "# of input files: " << nfiles << std::endl;
 
