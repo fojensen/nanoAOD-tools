@@ -334,7 +334,7 @@ class MuTauGammaProducer(Module):
             self.out.fillBranch("MuTauGamma_TauSFmuo", TauSFmuo)
             self.out.fillBranch("MuTauGamma_TauSFele", TauSFele)
    
-        return True
+        return True, MuIdx, TauIdx, PhotonIdx
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
