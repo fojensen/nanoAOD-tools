@@ -65,6 +65,8 @@ class MuTauGammaProducer(Module):
         self.out.branch("MuTauGamma_TauGammaCollinearMass", "F")
         self.out.branch("MuTauGamma_ClosestCollinearMass", "F")
         self.out.branch("MuTauGamma_FurthestCollinearMass", "F")
+        self.out.branch("MuTauGamma_MinCollinearMass", "F")
+        self.out.branch("MuTauGamma_MaxCollinearMass", "F")
         self.out.branch("MuTauGamma_transversemass", "F")
         self.out.branch("MuTauGamma_MuGammaDeltaR", "F")
         self.out.branch("MuTauGamma_MuGammaDeltaPhi", "F")
@@ -114,12 +116,11 @@ class MuTauGammaProducer(Module):
         MuTauDeltaEta = 0
         haveTriplet = 0
         PhotonIdx = -1
-        MuGammaCollinearMass = 0
-        TauGammaCollinearMass = 0 
-        MuTauGammaCollinearMass = 0
+        MuGammaCollinearMass = TauGammaCollinearMass = 0 
+        MinGammaCollinearMass = MaxGammaCollinearMass = 0  
+        ClosestCollinearMass = FurthestCollinearMass = 0
+        MuTauGammaCollinearMass  = 0
         MuTauGammaMass = 0
-        ClosestCollinearMass = 0
-        FurthestCollinearMass = 0
         MuGammaDeltaR = 0
         MuGammaDeltaPhi = 0
         MuGammaDeltaEta = 0
@@ -176,7 +177,7 @@ class MuTauGammaProducer(Module):
         goodTauIdx = []
         for i, tau in enumerate(taus):
             tauID = (1&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu) and (4&tau.idDeepTau2017v2p1VSe)
-            tauID = tauID and not (tau.decayMode==5 or tau.decayMode==6)
+            #tauID = tauID and not (tau.decayMode==5 or tau.decayMode==6)
             if tau.pt>=20. and abs(tau.eta)<2.3 and tauID:
                 goodTauIdx.append(i)
         nGoodTau = len(goodTauIdx)
@@ -298,14 +299,16 @@ class MuTauGammaProducer(Module):
         self.out.fillBranch("MuTauGamma_MuTauDeltaEta", MuTauDeltaEta)
         self.out.fillBranch("MuTauGamma_haveTriplet", haveTriplet)
         self.out.fillBranch("MuTauGamma_PhotonIdx", PhotonIdx)
-        self.out.fillBranch("MuTauGamma_MuGammaCollinearMass", MuGammaCollinearMass)
-        self.out.fillBranch("MuTauGamma_TauGammaCollinearMass", TauGammaCollinearMass)
         self.out.fillBranch("MuTauGamma_MuTauGammaCollinearMass", MuTauGammaCollinearMass)
         self.out.fillBranch("MuTauGamma_MuTauGammaMass", MuTauGammaMass)
         self.out.fillBranch("MuTauGamma_MuGammaMass", MuGammaMass)
         self.out.fillBranch("MuTauGamma_TauGammaMass", TauGammaMass)
         self.out.fillBranch("MuTauGamma_ClosestCollinearMass", ClosestCollinearMass)
         self.out.fillBranch("MuTauGamma_FurthestCollinearMass", FurthestCollinearMass)
+        self.out.fillBranch("MuTauGamma_MuGammaCollinearMass", MuGammaCollinearMass)
+        self.out.fillBranch("MuTauGamma_TauGammaCollinearMass", TauGammaCollinearMass)
+        self.out.fillBranch("MuTauGamma_MinGammaCollinearMass", MuGammaCollinearMass)
+        self.out.fillBranch("MuTauGamma_MaxGammaCollinearMass", TauGammaCollinearMass)
         self.out.fillBranch("MuTauGamma_MuGammaDeltaR", MuGammaDeltaR)
         self.out.fillBranch("MuTauGamma_MuGammaDeltaPhi", MuGammaDeltaPhi)
         self.out.fillBranch("MuTauGamma_MuGammaDeltaEta", MuGammaDeltaEta)

@@ -15,7 +15,7 @@ void getXS()
    //const double n[5] = {0., 51082776., 23290710., 14508481., 10082747.};
 
    //DYJetsToLL_M-50
-   const float xs_inc = 6025.2;
+   const float xs_inc = 6077.22;
    const int n_inc_tot_ = 100194597;
    const TString infile = "root://cmsxrootd.fnal.gov//store/user/fojensen/DY01234JetsToLL_nocuts.root";
    //const TString infile = "/eos/uscms/store/user/fojensen/DY01234JetsToLL_nocuts.root";
@@ -60,9 +60,7 @@ void stitch_jetbinnedsamples(const TString year)
    //DYJetsToLL
    const TString files[5] = {"DY01234JetsToLL_M-50", "DY1JetsToLL_M-50", "DY2JetsToLL_M-50", "DY3JetsToLL_M-50", "DY4JetsToLL_M-50"};
    
-   //const double w[5] = {6.01349791e-05, 1.16822821e-05, 1.3063476e-05, 1.60924005e-05, 1.76844155e-05};
-   //const double w[5] = {6.01349791e-05, 1.16822821e-05, 1.3063476e-05, 1.60924005e-05, 1.77191909e-05};
-   const double w[5] = {6.06541688e-05, 1.17831439e-05, 1.31762626e-05, 1.62313381e-05, 1.78721737e-05};
+   const double w[5] = {6.06542e-05, 1.17831e-05, 1.31763e-05, 1.62313e-05, 1.78722e-05};
    const TString outputFile = "../outputData_"+year+"/DYJetsToLL_M-50.root";
 
    TChain * c = new TChain("Events");

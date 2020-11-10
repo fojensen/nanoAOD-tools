@@ -1,9 +1,25 @@
 #include <iostream>
 #include <TFile.h>
 #include <TTree.h>
+#include <TH1D.h>
+
+double getWeight(const int nPV, TH1D * h, TH1D *htemp)
+{
+   const int bin = htemp->Fill(nPV);
+   const double sf = h->GetBinContent(bin);  
+   return sf;
+}
 
 void runPoint(const TString tag, const double n, const double xs, const TString year)
 {
+   TFile * f_sf = TFile::Open("f_sf.root");
+   TH1D * h_sf_ = (TH1D*)f_sf->Get("h_sf");
+   TH1D * h_sf = (TH1D*)h_sf_->Clone("h_sf");
+   TH1D * h_sftemp = (TH1D*)h_sf_->Clone("h_sftemp");
+   //delete f_sf;
+
+   std::cout << h_sf->GetEntries() << std::endl;
+
    std::cout << "Adding xsWeight to " << tag << std::endl;
 
    char buffer[100];
@@ -17,7 +33,9 @@ void runPoint(const TString tag, const double n, const double xs, const TString 
       return;
    }
    
-   if (t->GetBranch("xsWeight")) {
+   if (t->GetBranch("xsWeight") || t->GetBranch("puWeight_emb")) {
+      std::cout << "   xsWeight or puWeight is already present!" << std::endl;
+   //if (t->GetBranch("xsWeight")) {
       std::cout << "   xsWeight is already present!" << std::endl;
       return;
    }
@@ -25,11 +43,18 @@ void runPoint(const TString tag, const double n, const double xs, const TString 
    std::cout << "   Total number entries in the (skimmed) input chain: " << t->GetEntries() << std::endl;
    std::cout << "   Input xs: " << xs << std::endl;
    double xsWeight = xs/n;
+   double puWeight_emb = -1.;
+   Int_t PV_npvsGood = 0;
+   t->SetBranchAddress("PV_npvsGood", &PV_npvsGood);
    std::cout << "   xsWeight: " << xsWeight << std::endl;
    std::cout << " @ 59725.419: " << 59725.419 * xsWeight << "; " <<  59725.419 * xsWeight * t->GetEntries() << std::endl;
    TBranch * b_xsWeight = t->Branch("xsWeight", &xsWeight, "xsWeight/D");
+   TBranch * b_puWeight_emb = t->Branch("puWeight_emb", &puWeight_emb, "puWeight_emb/D");
    for (int i = 0; i < t->GetEntries(); ++i) {
+      t->GetEntry(i);
       b_xsWeight->Fill();
+      puWeight_emb = getWeight(PV_npvsGood, h_sf, h_sftemp);
+      b_puWeight_emb->Fill();
    }
    std::cout << "   Total number of entries in the output tree: " << t->GetEntries() << std::endl;
    t->Write();
@@ -93,10 +118,10 @@ void xsWeights_2018()
    runPoint("DY01234JetsToLL_M-50", 100194597, 6077.22, year);
    runPoint("DY1JetsToLL_M-50", 68898175, 1007.58, year);
    runPoint("DY2JetsToLL_M-50", 20456037, 344.336, year);
-   runPoint("DY3JetsToLL_M-50", 5652357, 125.2678, year);
+   runPoint("DY3JetsToLL_M-50", 5652357, 125.267, year);
    runPoint("DY4JetsToLL_M-50", 2809978, 71.2, year);
    runPoint("TTTo2L2Nu", 64310000, 88.29, year);
-   runPoint("TTToSemiLeptonic", 199829998+100790000., 365.34, year);
+   runPoint("TTToSemiLeptonic", 199829998.+100790000., 365.34, year);
    runPoint("ST_tW_antitop", 1086487, 34.97*0.530775, year); 
    runPoint("ST_tW_top", 1085847., 34.91*0.530775, year);
    runPoint("WW", 7850000., 51.723, year);
@@ -107,11 +132,17 @@ void xsWeights_2018()
    runPoint("WGToLNuG", 6108186., 463.9, year); 
    runPoint("QCD_Pt-20toInf_MuEnrichedPt15", 22165320., 239400.0, year);
 
-   runPoint("Taustar_m250", 50000, 0.02135, year); //0.002145
-   runPoint("Taustar_m375", 50000, 0.01546, year); //0.001546
-   runPoint("Taustar_m500", 50000, 0.01177, year); //0.001171
-   runPoint("Taustar_m625", 50000, 0.009072, year); //0.009071
-   runPoint("Taustar_m750", 50000, 0.007024, year); //0.007017
+   runPoint("Taustar_m250", 50000, 0.02135, year);
+   runPoint("Taustar_m375", 50000, 0.01546, year);
+   runPoint("Taustar_m500", 50000, 0.01177, year);
+   runPoint("Taustar_m625", 50000, 0.009072, year);
+   runPoint("Taustar_m750", 50000, 0.007024, year);
+   runPoint("Taustar_m1000", 50000, 0.004236, year);
+   runPoint("Taustar_m1250", 50000, 0.002554, year);
+   runPoint("Taustar_m1500", 50000, 0.001522, year);
+   runPoint("Taustar_m1750", 50000, 0.0009048, year);
+   runPoint("Taustar_m2000", 50000, 0.0005328, year);
+   runPoint("Taustar_m5000", 50000, 1.178e-06, year);
 }
 
 void xsWeights()
