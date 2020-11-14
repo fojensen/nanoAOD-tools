@@ -219,6 +219,22 @@ void runPoint(TH1D * h, const TString var, const TCut baseline, const bool isSig
    h_BCoD_inc->SetLineColor(207);
    h_BCoD_inc->SetMarkerColor(207);
 
+   std::cout << "data B: " << h_data[1]->GetBinContent(3) << std::endl;
+   std::cout << "data C: " << h_data[2]->GetBinContent(3) << std::endl;
+   std::cout << "data D: " << h_data[3]->GetBinContent(3) << std::endl;
+
+   std::cout << "bkgsub B: " << h_bkgsub[1]->GetBinContent(3) << std::endl;
+   std::cout << "bkgsub C: " << h_bkgsub[2]->GetBinContent(3) << std::endl;
+   std::cout << "bkgsub D: " << h_bkgsub[3]->GetBinContent(3) << std::endl;
+
+   std::cout << "emb B: " << h_emb[1]->GetBinContent(3) << std::endl;
+   std::cout << "emb C: " << h_emb[2]->GetBinContent(3) << std::endl;
+   std::cout << "emb D: " << h_emb[3]->GetBinContent(3) << std::endl;
+
+   std::cout << "mc_sum B: " << h_mc_sum[1][1]->GetBinContent(3) << std::endl;
+   std::cout << "mc_sum C: " << h_mc_sum[2][1]->GetBinContent(3) << std::endl;
+   std::cout << "mc_sum D: " << h_mc_sum[3][1]->GetBinContent(3) << std::endl;
+
    h_BCoD->SetFillColor(6);
    h_BCoD->GetYaxis()->SetTitle("prediction");
    datamax<100 ? h_BCoD->SetMinimum(0.1) : h_BCoD->SetMinimum(10.);
@@ -353,7 +369,7 @@ void runPoint(TH1D * h, const TString var, const TCut baseline, const bool isSig
          s_data[i]->Add(h_mc[i][j][1]);
       }
       //s_data[i]->Add(h_emb[i]);
-      datamax<100 ? s_data[i]->SetMinimum(0.1) : s_data[i]->SetMinimum(1.);
+      datamax<100 ? s_data[i]->SetMinimum(0.1) : s_data[i]->SetMinimum(10.);
       const double max = pow(10, 1+ceil(log10(datamax)));
       s_data[i]->SetMaximum(max);
    }
@@ -501,7 +517,7 @@ void fullStudy()
    //baseline = baseline && TCut("MuMuGamma_havePair==0");
    baseline = baseline && TCut("Sum$(Muon_pt>=10. && TMath::Abs(Muon_eta)<2.4 && Muon_mediumId && Muon_pfIsoId>=2)<2");
    baseline = baseline && TCut("MuTauGamma_trigger");
-   baseline = baseline && TCut("(16&Tau_idDeepTau2017v2p1VSjet[MuTauGamma_TauIdx])");
+   baseline = baseline && TCut("(16&Tau_idDeepTau2017v2p1VSjet[MuTauGamma_TauIdx]) && Muon_pfIsoId[MuTauGamma_MuIdx]>=2");
    baseline = baseline && TCut("Tau_decayMode[MuTauGamma_TauIdx]!=5 && Tau_decayMode[MuTauGamma_TauIdx]!=6");
    //baseline = baseline && TCut("Tau_pt[MuTauGamma_TauIdx]>=30. && MuTauGamma_MuTauDeltaR>=0.5");
    
@@ -534,6 +550,11 @@ void fullStudy()
    //TH1D * h_nJet = new TH1D("h_nJet", ";# of jets;events / 1", 10, -0.5, 9.5);
    //runPoint(h_nJet, "JetProducer_nJet", baseline, false);
    
+   TH1D * h_MET = new TH1D("h_MET", ";MET [GeV];events / 75 GeV", 5, 0., 375.);
+   runPoint(h_MET, "MET_pt", baseline, true);
+
+   TH1D * h_METsig = new TH1D("h_METsig", ";MET significance;events / 1", 10, 0., 10.);
+   runPoint(h_METsig, "MET_significance", baseline, true);
 
    //TH1D * h_npv = new TH1D("h_npv", ";PV_npvsGood;events / 2", 50, -0.5, 99.5);
    //runPoint(h_npv, "PV_npvsGood", baseline, false);
@@ -542,17 +563,17 @@ void fullStudy()
    TH1D * h_decayMode = new TH1D("h_decayMode", ";#tau_{h} decay mode;events / 1", 13, -0.5, 12.5);
    runPoint(h_decayMode, "Tau_decayMode[MuTauGamma_TauIdx]", baseline, false);*/
 
-   //TH1D * h_photonpt = new TH1D("h_photonpt", ";photon p_{T} [GeV];events / 100 GeV", 4, 100., 500.);
+   //TH1D * h_photonpt = new TH1D("h_photonpt", ";photon p_{T} [GeV];events / 50 GeV", 10, 0., 500.);
    //runPoint(h_nJet, "Photon_pt[MuTauGamma_PhotonIdx]", baseline, true);
 
-   //TH1D * h_photonpt_low = new TH1D("h_photonpt_low", ";photon p_{T} [GeV];events / 10 GeV;", 5, 0.001, 50.);
+   //TH1D * h_photonpt_low = new TH1D("h_photonpt_low", ";photon p_{T} [GeV];events / 10 GeV;", 5, 0., 50.);
    //runPoint(h_photonpt_low, "Photon_pt[MuTauGamma_PhotonIdx]", baseline, true);
 
-    //TH1D * h_minmass = new TH1D("h_minmass_s", ";min collinear mass [GeV];events / 200 GeV", 5, 0., 1000.);
-    //runPoint(h_minmass, "TMath::Min(MuTauGamma_MuGammaCollinearMass, MuTauGamma_TauGammaCollinearMass)", baseline, true);
+ //   TH1D * h_minmass = new TH1D("h_minmass_s", ";min collinear mass [GeV];events / 200 GeV", 5, 0., 1000.);
+   // runPoint(h_minmass, "TMath::Min(MuTauGamma_MuGammaCollinearMass, MuTauGamma_TauGammaCollinearMass)", baseline, true);
       
-   TH1D * h_bin0 = new TH1D("h_bin0_s", ";mass bin;events / bin", 5, -0.5, 4.5);
-   runPoint(h_bin0, "abcdRegion[0]", baseline, true);
+  // TH1D * h_bin0 = new TH1D("h_bin0_s", ";mass bin;events / bin", 5, -0.5, 4.5);
+//   runPoint(h_bin0, "abcdRegion[0]", baseline, true);
 
  //  TH1D * h_bin3 = new TH1D("h_bin3_v", ";mass bin;events / bin", 5, -0.5, 4.5);
    //runPoint(h_bin3, "abcdRegion[3]", baseline, true);

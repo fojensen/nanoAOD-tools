@@ -39,6 +39,7 @@ class JetProducer(Module):
         JetProducer_HT = JetProducer_HT_dr = 0
         #https://twiki.cern.ch/CMS/BtagRecommendation102X
         JetProducer_nBJetL = JetProducer_nBJetM = JetProducer_nBJetT = 0
+        JetProducer_nBJetL = JetProducer_nBJetM = JetProducer_nBJetT = 0
 
         for jet in jets:
             if jet.pt>=20. and abs(jet.eta)<2.5 and (4&jet.jetId):

@@ -5,7 +5,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR, deltaPhi
-from ROOT import TLorentzVector, TVector2
+from ROOT import TLorentzVector, TVector2, TVector3
 import math
 from TauPOG.TauIDSFs.TauIDSFTool import TauIDSFTool
 from MuonPOG.MuonSFs.MuonSFTool import MuonSFTool
@@ -56,6 +56,8 @@ class MuTauGammaProducer(Module):
         self.out.branch("MuTauGamma_MuTauGammaCollinearMass", "F")
         self.out.branch("MuTauGamma_MuTauDeltaR", "F")
         self.out.branch("MuTauGamma_MuTauPt", "F")
+        self.out.branch("MuTauGamma_MuDotMET", "F")
+        self.out.branch("MuTauGamma_TauDotMET", "F")
         self.out.branch("MuTauGamma_MuTauDeltaPhi", "F")
         self.out.branch("MuTauGamma_MuTauDeltaEta", "F")
         self.out.branch("MuTauGamma_MuTauCollinearMass", "F")
@@ -80,6 +82,7 @@ class MuTauGammaProducer(Module):
         self.out.branch("MuTauGamma_trigger", "O")
         self.out.branch("MuTauGamma_MuGammaMass", "F")
         self.out.branch("MuTauGamma_TauGammaMass", "F")
+        self.out.branch("MuTauGamma_isInside", "O")
         if self.isMC__ or self.isEmb__:
             self.out.branch("MuTauGamma_TauSFjet", "F", 8, None, None)
         if self.isEmb__:
@@ -116,8 +119,9 @@ class MuTauGammaProducer(Module):
         MuTauDeltaEta = 0
         haveTriplet = 0
         PhotonIdx = -1
+        MuDotMET = TauDotMET = 0
         MuGammaCollinearMass = TauGammaCollinearMass = 0 
-        MinGammaCollinearMass = MaxGammaCollinearMass = 0  
+        MinCollinearMass = MaxCollinearMass = 0  
         ClosestCollinearMass = FurthestCollinearMass = 0
         MuTauGammaCollinearMass  = 0
         MuTauGammaMass = 0
@@ -133,6 +137,7 @@ class MuTauGammaProducer(Module):
         transversemass = 0
         trigger = False
         MuGammaMass = TauGammaMass = 0
+        isInside = False
    
         photons = Collection(event, "Photon")
         muons = Collection(event, "Muon")
@@ -177,14 +182,14 @@ class MuTauGammaProducer(Module):
         goodTauIdx = []
         for i, tau in enumerate(taus):
             tauID = (1&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu) and (4&tau.idDeepTau2017v2p1VSe)
-            #tauID = tauID and not (tau.decayMode==5 or tau.decayMode==6)
+            tauID = tauID and not (tau.decayMode==5 or tau.decayMode==6)
             if tau.pt>=20. and abs(tau.eta)<2.3 and tauID:
                 goodTauIdx.append(i)
         nGoodTau = len(goodTauIdx)
 
         goodPhotonIdx = []
         for i, photon in enumerate(photons):
-            photonID = photon.mvaID_WP90 and photon.electronVeto
+            photonID = photon.mvaID_WP90 and photon.electronVeto and (photon.isScEtaEB or photon.isScEtaEE):
             if abs(photon.eta)<2.5 and photonID: 
                 goodPhotonIdx.append(i)
         nGoodPhoton = len(goodPhotonIdx)
@@ -223,6 +228,23 @@ class MuTauGammaProducer(Module):
                                     nu1.SetPtEtaPhiM(nu1mag, mu.eta, mu.phi, 0.)
                                     MuTauCollinearMass = (mu.p4()+nu0+tau.p4()+nu1).M()
 
+                                    Tauv3 = TVector3()
+                                    Tauv3.SetPtEtaPhi(tau.pt, 0., tau.phi)
+                                    METv3 = TVector3()
+                                    METv3.SetPtEtaPhi(event.MET_pt, 0., event.MET_phi)
+                                    Muv3 = TVector3()
+                                    Muv3.SetPtEtaPhi(mu.pt, 0., mu.phi)
+                                    MuDotMET = Muv3.Dot(METv3)/(mu.pt*event.MET_pt)
+                                    TauDotMET = Tauv3.Dot(METv3)/(tau.pt*event.MET_pt)
+
+                                    isInside = False
+                                    tauxmet = Tauv3.Cross(METv3)
+                                    tauxmu = Tauv3.Cross(Muv3)
+                                    muxmet = Muv3.Cross(METv3)
+                                    muxtau = Muv3.Cross(Tauv3)
+                                    if (tauxmet.Dot(tauxmu)>=0 and muxmet.Dot(muxtau)>=0):
+                                        isInside = True
+                                    
                                     if self.isMC__ or self.isEmb__:
                                         TauSFjet[0] = self.tauIDSFTool_jet_VVVLoose.getSFvsPT(tau.pt, tau.genPartFlav)
                                         TauSFjet[1] =  self.tauIDSFTool_jet_VVLoose.getSFvsPT(tau.pt, tau.genPartFlav)
@@ -284,6 +306,11 @@ class MuTauGammaProducer(Module):
                                                     else :
                                                         ClosestCollinearMass = TauGammaCollinearMass
                                                         FurthestCollinearMass = MuGammaCollinearMass
+                                                    MinCollinearMass = MuGammaCollinearMass
+                                                    MaxCollinearMass = TauGammaCollinearMass
+                                                    if MuGammaCollinearMass>TauGammaCollinearMass:
+                                                        MinCollinearMass = TauGammaCollinearMass
+                                                        MaxCollinearMass = MuGammaCollinearMass
  
         self.out.fillBranch("MuTauGamma_havePair", havePair)
         self.out.fillBranch("MuTauGamma_qq", qq)
@@ -299,6 +326,8 @@ class MuTauGammaProducer(Module):
         self.out.fillBranch("MuTauGamma_MuTauDeltaEta", MuTauDeltaEta)
         self.out.fillBranch("MuTauGamma_haveTriplet", haveTriplet)
         self.out.fillBranch("MuTauGamma_PhotonIdx", PhotonIdx)
+        self.out.fillBranch("MuTauGamma_MuDotMET", MuDotMET)
+        self.out.fillBranch("MuTauGamma_TauDotMET", TauDotMET)
         self.out.fillBranch("MuTauGamma_MuTauGammaCollinearMass", MuTauGammaCollinearMass)
         self.out.fillBranch("MuTauGamma_MuTauGammaMass", MuTauGammaMass)
         self.out.fillBranch("MuTauGamma_MuGammaMass", MuGammaMass)
@@ -307,8 +336,8 @@ class MuTauGammaProducer(Module):
         self.out.fillBranch("MuTauGamma_FurthestCollinearMass", FurthestCollinearMass)
         self.out.fillBranch("MuTauGamma_MuGammaCollinearMass", MuGammaCollinearMass)
         self.out.fillBranch("MuTauGamma_TauGammaCollinearMass", TauGammaCollinearMass)
-        self.out.fillBranch("MuTauGamma_MinGammaCollinearMass", MuGammaCollinearMass)
-        self.out.fillBranch("MuTauGamma_MaxGammaCollinearMass", TauGammaCollinearMass)
+        self.out.fillBranch("MuTauGamma_MinCollinearMass", MinCollinearMass)
+        self.out.fillBranch("MuTauGamma_MaxCollinearMass", MaxCollinearMass)
         self.out.fillBranch("MuTauGamma_MuGammaDeltaR", MuGammaDeltaR)
         self.out.fillBranch("MuTauGamma_MuGammaDeltaPhi", MuGammaDeltaPhi)
         self.out.fillBranch("MuTauGamma_MuGammaDeltaEta", MuGammaDeltaEta)
@@ -320,6 +349,7 @@ class MuTauGammaProducer(Module):
         self.out.fillBranch("MuTauGamma_nGoodPhoton", nGoodPhoton)
         self.out.fillBranch("MuTauGamma_transversemass", transversemass)
         self.out.fillBranch("MuTauGamma_trigger", trigger)
+        self.out.fillBranch("MuTauGamma_isInside", isInside)
  
         if self.isMC__ or self.isEmb__:
             self.out.fillBranch("MuTauGamma_TauSFjet", TauSFjet)

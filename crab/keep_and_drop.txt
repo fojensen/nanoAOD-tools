@@ -96,3 +96,4 @@ keep HLT_Photon175
 keep DYStudy_*
 keep genTtbarId
 keep GenTau*
+keep abcdRegion

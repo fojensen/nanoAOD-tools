@@ -219,7 +219,67 @@ data['people'].append({
     'nEvents': '50000',
     'nFiles': '5',
     'isMC': isMC_,
-    'xs': '1.',
+    'xs': '0.007024',
+    'year': year_,
+})
+
+data['people'].append({
+    'name': 'Taustar_m1000',
+    'inputDataset': '/Taustar_TauG_L10000_m1000_CP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '5',
+    'isMC': isMC_,
+    'xs': '0.004236',
+    'year': year_,
+})
+
+data['people'].append({
+    'name': 'Taustar_m1250',
+    'inputDataset': '/Taustar_TauG_L10000_m1250_CP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '3',
+    'isMC': isMC_,
+    'xs': '0.002554',
+    'year': year_,
+})
+
+data['people'].append({
+    'name': 'Taustar_m1500',
+    'inputDataset': '/Taustar_TauG_L10000_m1500_CP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '3',
+    'isMC': isMC_,
+    'xs': '0.001522',
+    'year': year_,
+})
+
+data['people'].append({
+    'name': 'Taustar_m1750',
+    'inputDataset': '/Taustar_TauG_L10000_m1750_CP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '3',
+    'isMC': isMC_,
+    'xs': '0.0009048',
+    'year': year_,
+})
+
+data['people'].append({
+    'name': 'Taustar_m2000',
+    'inputDataset': '/Taustar_TauG_L10000_m2000_CP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '9',
+    'isMC': isMC_,
+    'xs': '0.0005328',
+    'year': year_,
+})
+
+data['people'].append({
+    'name': 'Taustar_m5000',
+    'inputDataset': '/Taustar_TauG_L10000_m5000_CP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '6',
+    'isMC': isMC_,
+    'xs': '1.178e-06',
     'year': year_,
 })
 
@@ -233,55 +293,55 @@ data['people'].append({
     'year': year_,
 })
 
-#data['people'].append({
-#    'name': '',
-#    'inputDataset': '',
-#    'nEvents': '',
-#    'nFiles': '',
-#    'isMC': isMC_,
-#    'xs': '',
-#    'year': year_,
-#})
+data['people'].append({
+    'name': 'WJetsToLNu',
+    'inputDataset': '/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '71026861',
+    'nFiles': '44',
+    'isMC': isMC_,
+    'xs': '',
+    'year': year_,
+})
 
-#data['people'].append({
-#    'name': '',
-#    'inputDataset': '',
-#    'nEvents': '',
-#    'nFiles': '',
-#    'isMC': isMC_,
-#    'xs': '',
-#    'year': year_,
-#})
+data['people'].append({
+    'name': 'W1JetsToLNu',
+    'inputDataset': '/W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '51082776',
+    'nFiles': '30',
+    'isMC': isMC_,
+    'xs': '',
+    'year': year_,
+})
 
-#data['people'].append({
-#    'name': '',
-#    'inputDataset': '',
-#    'nEvents': '',
-#    'nFiles': '',
-#    'isMC': isMC_,
-#    'xs': '',
-#    'year': year_,
-#})
+data['people'].append({
+    'name': 'W2JetsToLNu',
+    'inputDataset': '/W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '23290710',
+    'nFiles': '57',
+    'isMC': isMC_,
+    'xs': '',
+    'year': year_,
+})
 
-#data['people'].append({
-#    'name': '',
-#    'inputDataset': '',
-#    'nEvents': '',
-#    'nFiles': '',
-#    'isMC': isMC_,
-#    'xs': '',
-#    'year': year_,
-#})
+data['people'].append({
+    'name': 'W3JetsToLNu',
+    'inputDataset': '/W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '14508481',
+    'nFiles': '82',
+    'isMC': isMC_,
+    'xs': '',
+    'year': year_,
+})
 
-#data['people'].append({
-#    'name': '',
-#    'inputDataset': ''
-#    'nEvents': '',
-#    'nFiles': '',
-#    'isMC': isMC_,
-#    'xs': '',
-#    'year': year_,
-#})
+data['people'].append({
+    'name': 'W4JetsToLNu',
+    'inputDataset': '/W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '10082747',
+    'nFiles': '68',
+    'isMC': isMC_,
+    'xs': '',
+    'year': year_,
+})
 
 with open('mc_2018.json', 'w') as outfile:
    json.dump(data, outfile)
