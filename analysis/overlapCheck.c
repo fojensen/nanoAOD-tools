@@ -122,7 +122,7 @@ void runPoint(const TString infile, const TString tag)
       h_nb->Fill(nb);
       h_nb_overlap->Fill(nb_overlap);
       ++ntot;
-      if (ntot==1000) break;
+      //if (ntot==1000) break;
    }
 
    TLegend * l = new TLegend(0.5, 0.7, 0.875, 0.875);
@@ -130,9 +130,9 @@ void runPoint(const TString infile, const TString tag)
    l->AddEntry(h_nb, "no overlap", "L");
    l->AddEntry(h_nb_overlap, "allow overlap", "L");
 
-   TCanvas * c = new TCanvas("c", tag, 400, 400);
+   TCanvas * c = new TCanvas("c_"+tag, tag, 400, 400);
    h_nb->Draw("HIST, E");
-   h_nb_overlap->Draw("HIST, E");
+   h_nb_overlap->Draw("HIST, E, SAME");
    c->SetLogy();
    h_nb->SetMinimum(0.001);
    h_nb->SetMaximum(1.);
