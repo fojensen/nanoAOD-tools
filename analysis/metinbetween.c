@@ -1,3 +1,4 @@
+#include <TLine.h>
 #include <TGraphErrors.h>
 #include <TROOT.h>
 #include <fstream>
@@ -118,7 +119,7 @@ pair<double,double> runPoint(const TString infile, TH1D * h_num, TH1D* h_denom)
       if (nmu==0) continue;
 
       if (std::fabs(tau_t.DeltaPhi(muon_t)<0.3)) continue;
-      if ((tau+muon).M()<100.) continue;
+      //if ((tau+muon).M()<100.) continue;
 
       TVector3 photon_t;
       int nphoton = 0;
@@ -169,11 +170,13 @@ void metinbetween_bkg()
    TH1D * h_denom = (TH1D*)h_num->Clone("h_denom");
 
    //const TString inlist = "./filelists/ZGToLLG_01J_5f.list"; const TString tag = "ZGToLLG_01J_5f";
+   const TString inlist = "./filelists/DYJetsToLL_M-50.list"; const TString tag = "DYJetsToLL_M_50";
    //const TString inlist = "./filelists/WGToLNuG.list"; const TString tag = "WGToLNuG";
-   const TString inlist = "./filelists/QCD_Pt-20toInf_MuEnrichedPt15.list"; const TString tag = "QCD";
+   //const TString inlist = "./filelists/QCD_Pt-20toInf_MuEnrichedPt15.list"; const TString tag = "QCD";
+   //const TString inlist = "./filelists/DYJetsToLL_M-50_Zpt-150toInf.list"; const TString tag = "DYJetsToLL_M_50_Zpt_150toInf";
 
-   int n_num = 0;
-   int n_denom = 0;
+   double n_num = 0;
+   double n_denom = 0;
 
    std::ifstream infile(inlist);
    std::string line;
@@ -210,13 +213,18 @@ void metinbetween_bkg()
    sprintf(title, "%s;%s;efficiency", tag.Data(), h_num->GetXaxis()->GetTitle());
    g_eff->SetTitle(title);
    g_eff->SetMarkerStyle(20);
+   
+   TLine * l = new TLine(h_num->GetBinLowEdge(1), eff, h_num->GetBinLowEdge(h_num->GetNbinsX()+1), eff);
+   l->SetLineStyle(2);
+   l->Draw();
+
    c->SaveAs("./plots/metinbetween_bkg_"+tag+".pdf");
 }
 
 void metinbetween_sig()
 {
-   const int n = 10;
-   const int mass[n] = {250, 375, 500, 625, 750, 1000, 2000, 3000, 4000, 5000};
+   const int n = 11;
+   const int mass[n] = {250, 375, 500, 625, 750, 1000, 1250, 2000, 3000, 4000, 5000};
 
    TH1D * h_num = new TH1D("h_num", ";visible mass (#mu+#tau_{h}) [GeV];events / 25 GeV", 8, 0., 200.);
    TH1D * h_denom = (TH1D*)h_num->Clone("h_denom");

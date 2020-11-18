@@ -12,20 +12,20 @@ void sigYields()
    const TCut eVeto = "Sum$(Electron_pt>=32. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0";
    const TCut Zveto = "Sum$(Muon_pt>=10. && TMath::Abs(Muon_eta)<2.4 && Muon_mediumId && Muon_pfIsoId>=2)<2";
    const TCut bVeto = "Sum$(Jet_pt>=20. && TMath::Abs(Jet_eta)<2.5 && (4&Jet_jetId) && Jet_btagDeepB>=0.7527)==0";
-   const TCut baseline = mu && tau && photon && trigger && eVeto && Zveto && bVeto;
+   const TCut filter = "Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter";
+   const TCut baseline = mu && tau && photon && trigger && eVeto && Zveto && bVeto && filter;
 
    const TString infile = "root://cmsxrootd.fnal.gov///store/mc/RunIIAutumn18NanoAODv7/Taustar_TauG_L10000_m250_CP5_13TeV_pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/130000/7FEC7B94-611C-364A-9A12-B9BD43C01EC3.root";
    TFile * f = TFile::Open(infile);
    TTree * t = (TTree*)f->Get("Events");
 
    const double xs = 0.02135;
-   //const double lumi = 59725.419;
-   const double lumi = 41525.059;
+   const double lumi = 59725.419;
    const double n1 = t->GetEntries();
    const double n2 = t->GetEntries(baseline);
    const double nexp = (lumi*(xs/n1)) * n2;
    const double eff = n2/n1;
-   
+ 
    std::cout << n1 << " " << n2 << " " << nexp << " " << eff << std::endl;
 }
 

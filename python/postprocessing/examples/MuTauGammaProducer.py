@@ -150,9 +150,8 @@ class MuTauGammaProducer(Module):
         elif self.year__=="2018":
             trigger = event.HLT_IsoMu27 or event.HLT_IsoMu24
 
-        if self.isMC__ or self.isEmb__:
+        if self.isEmb__ or self.isMC__:
             TauSFjet = [0, 0, 0, 0, 0, 0, 0, 0]
-        if self.isEmb__:
             trkEff = 0
             nGenTau = 0
             gt1_pt = gt1_eta = gt2_pt = gt2_eta = 0
@@ -189,7 +188,7 @@ class MuTauGammaProducer(Module):
 
         goodPhotonIdx = []
         for i, photon in enumerate(photons):
-            photonID = photon.mvaID_WP90 and photon.electronVeto and (photon.isScEtaEB or photon.isScEtaEE):
+            photonID = photon.mvaID_WP90 and photon.electronVeto and (photon.isScEtaEB or photon.isScEtaEE)
             if abs(photon.eta)<2.5 and photonID: 
                 goodPhotonIdx.append(i)
         nGoodPhoton = len(goodPhotonIdx)
