@@ -28,7 +28,8 @@ with open(infile) as json_file:
       f.write("config.JobType.psetName = 'PSet.py'\n")
       f.write("config.JobType.scriptExe = 'crab_script.sh'\n")
       f.write("config.JobType.inputFiles = ['keep_and_drop.txt', 'crab_script.py', '../scripts/haddnano.py']\n")
-      f.write("config.JobType.sendPythonFolder=True\n")
+      f.write("config.JobType.sendPythonFolder = True\n")
+      f.write("config.JobType.allowUndistributedCMSSW = True\n")
       f.write("\n")
    
       f.write("config.section_('Data')\n")
@@ -36,10 +37,10 @@ with open(infile) as json_file:
          f.write("config.Data.lumiMask='Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt'\n")
       f.write("config.Data.inputDataset = '"+p['das']+"'\n")
       f.write("config.Data.inputDBS='global'\n")
-      #f.write("config.Data.splitting='Automatic'\n")
-      f.write("config.Data.splitting = 'FileBased'\n")
-      f.write("config.Data.unitsPerJob = 1\n")
-      f.write("config.Data.outLFNDirBase = '/store/user/fjensen/tauHats_06072020/'\n")
+      f.write("config.Data.splitting='Automatic'\n")
+      #f.write("config.Data.splitting = 'FileBased'\n")
+      #f.write("config.Data.unitsPerJob = 1\n")
+      f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_03122020/'\n")
       f.write("config.Data.publication = False\n")
       f.write("\n")
 
@@ -50,5 +51,5 @@ with open(infile) as json_file:
       f.close()
 
       # actually submit jobs or not
-      os.system("crab submit -c " + f.name)
+      #os.system("crab submit -c " + f.name)
 
