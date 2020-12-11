@@ -1,7 +1,7 @@
 import json
 import os
 
-infile = 'samples.json'
+infile = 'datasets.json'
 
 with open(infile) as json_file:
 
@@ -34,13 +34,13 @@ with open(infile) as json_file:
    
       f.write("config.section_('Data')\n")
       if 'lumiMask' in p:
-         f.write("config.Data.lumiMask='Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt'\n")
-      f.write("config.Data.inputDataset = '"+p['das']+"'\n")
+         f.write("config.Data.lumiMask='"+p['lumiMask']+"'\n")
+      f.write("config.Data.inputDataset = '"+p['inputDataset']+"'\n")
       f.write("config.Data.inputDBS='global'\n")
-      f.write("config.Data.splitting='Automatic'\n")
-      #f.write("config.Data.splitting = 'FileBased'\n")
-      #f.write("config.Data.unitsPerJob = 1\n")
-      f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_03122020/'\n")
+      #f.write("config.Data.splitting='Automatic'\n")
+      f.write("config.Data.splitting = 'FileBased'\n")
+      f.write("config.Data.unitsPerJob = 1\n")
+      f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_11122020/'\n")
       f.write("config.Data.publication = False\n")
       f.write("\n")
 
@@ -50,6 +50,6 @@ with open(infile) as json_file:
     
       f.close()
 
-      # actually submit jobs or not
-      #os.system("crab submit -c " + f.name)
+      #actually submit jobs or not
+      os.system("crab submit -c " + f.name)
 

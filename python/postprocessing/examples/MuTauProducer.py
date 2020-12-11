@@ -22,9 +22,9 @@ class MuTauProducer(Module):
         self.out.branch("MuTauProducer_MuIdx", "I")
         self.out.branch("MuTauProducer_TauIdx", "I")
         self.out.branch("MuTauProducer_mT", "F")
-        self.out.branch("MuTauProducer_MuTauMass", "F")
-        self.out.branch("MuTauProducer_MuTauPt", "F")
-        self.out.branch("MuTauProducer_MuTauDeltaR", "F")
+        self.out.branch("MuTauProducer_Mass", "F")
+        self.out.branch("MuTauProducer_Pt", "F")
+        self.out.branch("MuTauProducer_DeltaR", "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -38,9 +38,9 @@ class MuTauProducer(Module):
         MuIdx = -1
         TauIdx = -1
         mT = 0
-        MuTauMass = 0
-        MuTauPt = 0
-        MuTauDeltaR = 0
+        Mass = 0
+        Pt = 0
+        DeltaR = 0
  
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html
         muons = Collection(event, "Muon")
@@ -49,7 +49,7 @@ class MuTauProducer(Module):
         #https://twiki.cern.ch/CMS/SWGuideMuonIdRun2 
         goodMuonIdx = []
         for i, mu in enumerate(muons):
-            muonID = mu.tightId
+            muonID = mu.tightId and mu.pfIsoId>=1
             if mu.pt>=27. and abs(mu.eta)<2.4 and muonID:
                 goodMuonIdx.append(i)
         nGoodMuon = len(goodMuonIdx)
@@ -57,7 +57,7 @@ class MuTauProducer(Module):
         #https://twiki.cern.ch/CMS/TauIDRecommendationForRun2
         goodTauIdx = []
         for i, tau in enumerate(taus):
-            tauID = (8&tau.idDeepTau2017v2p1VSmu) and (128&tau.idDeepTau2017v2p1VSe) and not (tau.decayMode==5 or tau.decayMode==6)
+            tauID = (1&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu) and (128&tau.idDeepTau2017v2p1VSe) and not (tau.decayMode==5 or tau.decayMode==6)
             if tau.pt>=20. and abs(tau.eta)<2.3 and tauID:
                 goodTauIdx.append(i)
         nGoodTau = len(goodTauIdx)
@@ -74,8 +74,8 @@ class MuTauProducer(Module):
                                  qq = mu.charge*tau.charge
                                  MuIdx = i
                                  TauIdx = j
-                                 MuTauMass = (mu.p4()+tau.p4()).M()
-                                 MuTauPt =  (mu.p4()+tau.p4()).Pt()
+                                 Mass = (mu.p4()+tau.p4()).M()
+                                 Pt =  (mu.p4()+tau.p4()).Pt()
                                  HavePair = HavePair + 1
                                  mT = 2. * event.MET_pt * mu.pt * (1-math.cos(deltaPhi(event.MET_phi, mu.phi)))
                                  mT = math.sqrt(mT)
@@ -87,9 +87,9 @@ class MuTauProducer(Module):
         self.out.fillBranch("MuTauProducer_MuIdx", MuIdx)
         self.out.fillBranch("MuTauProducer_TauIdx", TauIdx)
         self.out.fillBranch("MuTauProducer_mT", mT)
-        self.out.fillBranch("MuTauProducer_MuTauMass", MuTauMass)
-        self.out.fillBranch("MuTauProducer_MuTauPt", MuTauPt)
-        self.out.fillBranch("MuTauProducer_MuTauDeltaR", MuTauDeltaR)
+        self.out.fillBranch("MuTauProducer_Mass", Mass)
+        self.out.fillBranch("MuTauProducer_Pt", Pt)
+        self.out.fillBranch("MuTauProducer_DeltaR", DeltaR)
         return True, MuIdx, TauIdx
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed

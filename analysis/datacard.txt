@@ -1,23 +1,21 @@
 imax 1 number of bins
-jmax 4 number of processes minus 1
-kmax 9 number of nuisance parameters
+jmax 5 number of processes minus 1
+kmax 7 number of nuisance parameters
 ----------------------------------------------------------------------------------------------------------------------------------
 shapes *    ch1  FAKE
 ----------------------------------------------------------------------------------------------------------------------------------
 bin          ch1
-observation  49570
+observation  32350
 ----------------------------------------------------------------------------------------------------------------------------------
-bin                                ch1      ch1      ch1      ch1      ch1
-process                            ZTT      ZEEMUMU  TT       W        QCD
-process                            0        1        2        3        4
-rate                               43999.3  3460.77  971.638  5222.89  2678.52
+bin                 ch1       ch1       ch1       ch1       ch1       ch1
+process             Ztautau   faketau   ttbar     Zeemumu   EWK       H
+process             0         1         2         3         4         5
+rate                20020     10200     651       780       185       100
 ----------------------------------------------------------------------------------------------------------------------------------
-CMS_eff_m               lnN        1.02     1.02     1.02     1.02     -
-CMS_trigEff_m           lnN        1.02     1.02     1.02     1.02     -
-CMS_eff_t               lnN        1.05     1.05     1.05     1.05     -
-lumi_13TeV              lnN        1.025    1.025    1.025    1.025    -
-mcstats_ZTT             lnN        1.01     -        -        -        -
-mcstats_ZEEMUMU         lnN        -        1.02     -        -        -
-mcstats_TT              lnN        -        -        1.05     -        -
-mcstats_W               lnN        -        -        -        1.07     -
-QCD_method              lnN        -        -        -        -        2.0
+trigger        lnN  1.02      1.02      1.02      1.02      1.02      1.02
+lumi           lnN  1.023     1.023     1.023     1.023     1.023     1.023
+norm_faketau   lnN  -         1.13      -         -         -         -
+norm_ttbar     lnN  -         -         1.09      -         -         -
+norm_Zeemumu   lnN  -         -         -         1.27      -         -
+norm_EWK       lnN  -         -         -         -         1.16      -
+norm_H         lnN  -         -         -         -         -         1.21

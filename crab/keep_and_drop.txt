@@ -5,7 +5,6 @@ keep Muon*
 keep Tau*
 keep Jet*
 keep MET*
-keep Photon*
 keep GenPart*
 keep GenVisTau*
 keep GenJet*
@@ -17,6 +16,7 @@ keep ZProducer*
 keep puWeight*
 keep Pileup*
 
+keep HLT_IsoMu24
 keep HLT_IsoMu27
 keep HLT_Mu50
 keep HLT_OldMu100
@@ -56,3 +56,10 @@ keep HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_MET120
 keep HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_MET130
 keep HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_MET140
 keep HLT_MediumChargedIsoPFTau50_Trk30_eta2p1_1pr_MET90
+
+keep HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL
+keep HLT_Mu8_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ
+keep HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL
+keep HLT_Mu12_TrkIsoVVL_Ele23_CaloIdL_TrackIdL_IsoVL_DZ
+keep HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL
+keep HLT_Mu23_TrkIsoVVL_Ele12_CaloIdL_TrackIdL_IsoVL_DZ

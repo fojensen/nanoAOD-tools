@@ -11,9 +11,23 @@ double addOverflow(TH1D * h)
 {
    const int n = h->GetNbinsX();
    const double o = h->GetBinContent(n+1);
+   if (!o) return 0;
+
+   std::cout << "Adding overflow to " << h->GetName() << std::endl;
+   const int nbefore = h->GetEntries();
+   std::cout << "   there are " << nbefore << " entries in the histogram." << std::endl;
+
+   const double oerr = h->GetBinError(n+1);
+   std::cout << "   content of the overflow bin: " << o << " +- " << oerr << std::endl;
+   std::cout << "   content of the last bin: " << h->GetBinContent(n) << " +- " << h->GetBinError(n) << std::endl;
    h->AddBinContent(n, o);
    h->SetBinContent(n+1, 0.);
    h->SetBinError(n+1, 0.);
+   std::cout << "   new content of the overflow bin: " << h->GetBinContent(n+1) << " +- " << h->GetBinError(n+1) << std::endl;
+   std::cout << "   new content of the last bin: " << h->GetBinContent(n) << " +- " << h->GetBinError(n) << std::endl;
+
+   const int nafter = h->GetEntries();
+   std::cout << "   there are " << nafter << " entries in the modified histogram." << std::endl;
    return o;
 }
 
@@ -26,18 +40,19 @@ TFile * makeHists(const TString tag, const double weight=0.)
    TFile * f_in = TFile::Open(infile);
    TTree * t = (TTree*)f_in->Get("Events");
 
-   TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1";
-   baseline = baseline && TCut("128&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]");
+   TCut baseline = "MuTauProducer_HavePair>0 && (HLT_IsoMu24||HLT_IsoMu27)";
+   baseline = baseline && TCut("ZProducer_EEHavePair==0 && ZProducer_MuMuHavePair==0 && ZProducer_TauTauHavePair==0");
+   baseline = baseline && TCut("Sum$(Electron_pt>=10. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
+   baseline = baseline && TCut("Sum$(Muon_pt>=10. && TMath::Abs(Muon_eta)<2.4 && Muon_mediumId && Muon_pfIsoId>=2)==1");
    baseline = baseline && TCut("MuTauProducer_mT<40.");
-   baseline = baseline && TCut("MuTauProducer_nBJetT==0");
+   //baseline = baseline && TCut("JetProducer_nBJetT==0");
 
-   const TCut regionA = "MuTauProducer_qq==-1 && Muon_pfIsoId[MuTauProducer_MuIdx]>=4";
-   const TCut regionB = "MuTauProducer_qq==+1 && Muon_pfIsoId[MuTauProducer_MuIdx]>=4";
-   const TCut regionC = "MuTauProducer_qq==-1 && Muon_pfIsoId[MuTauProducer_MuIdx]<4";
-   const TCut regionD = "MuTauProducer_qq==+1 && Muon_pfIsoId[MuTauProducer_MuIdx]<4";
-  
+   const TCut regionA = "MuTauProducer_qq==-1 && Muon_pfIsoId[MuTauProducer_MuIdx]>=4 && Muon_pfIsoId[MuTauProducer_MuIdx]>=4 && (4&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]) &&  (64&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx])";
+   const TCut regionB = "MuTauProducer_qq==-1 && Muon_pfIsoId[MuTauProducer_MuIdx]>=4 && Muon_pfIsoId[MuTauProducer_MuIdx]>=4 && (4&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx])";
+   const TCut regionC = "MuTauProducer_qq==+1 && Muon_pfIsoId[MuTauProducer_MuIdx]>=2 && Muon_pfIsoId[MuTauProducer_MuIdx]<4  && (4&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]) &&  (64&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx])";
+   const TCut regionD = "MuTauProducer_qq==+1 && Muon_pfIsoId[MuTauProducer_MuIdx]>=2 && Muon_pfIsoId[MuTauProducer_MuIdx]<4  && (4&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx])";
+ 
    char bufferA[1000], bufferB[1000], bufferC[1000], bufferD[1000];
-   
    if (weight) {
       sprintf(bufferA, "%f * (%s)", weight, TString(baseline && regionA).Data());
       sprintf(bufferB, "%f * (%s)", weight, TString(baseline && regionB).Data());
@@ -50,16 +65,16 @@ TFile * makeHists(const TString tag, const double weight=0.)
       sprintf(bufferD, "%s", TString(baseline && regionD).Data());
    }
 
-   const TString var = "MuTauProducer_MuTauVisMass";
-   TH1D * h_A = new TH1D("h_A", ";#mu+#tau_{h} visible mass [GeV];events / 25 GeV", 12, 0., 300.);
+   const TString var = "MuTauProducer_Mass";
+   TH1D * h_A = new TH1D("h_A", ";#mu+#tau_{h} visible mass [GeV];events / 10 GeV", 30, 0., 300.);
    TH1D * h_B = (TH1D*)h_A->Clone("h_B");
    TH1D * h_C = (TH1D*)h_A->Clone("h_C");
    TH1D * h_D = (TH1D*)h_A->Clone("h_D");
 
-   const int n_A = t->Project(h_A->GetName(), var, bufferA);
-   const int n_B = t->Project(h_B->GetName(), var, bufferB);
-   const int n_C = t->Project(h_C->GetName(), var, bufferC);
-   const int n_D = t->Project(h_D->GetName(), var, bufferD);
+   const int n_A = t->Project(h_A->GetName(), var, bufferA); addOverflow(h_A);
+   const int n_B = t->Project(h_B->GetName(), var, bufferB); addOverflow(h_B);
+   const int n_C = t->Project(h_C->GetName(), var, bufferC); addOverflow(h_C);
+   const int n_D = t->Project(h_D->GetName(), var, bufferD); addOverflow(h_D);
 
    const double i_A = h_A->Integral();
    const double i_B = h_B->Integral();
@@ -89,45 +104,30 @@ TFile * makeQCDHists()
    TH1D * data_B = (TH1D*)f_data->Get("h_B");
    TH1D * data_C = (TH1D*)f_data->Get("h_C");
    TH1D * data_D = (TH1D*)f_data->Get("h_D");
-   
-   TFile * f_WJetsToLNu = TFile::Open("./outputHists/WJetsToLNu.root");
-   //TH1D * WJetsToLNu_A = (TH1D*)f_WJetsToLNu->Get("h_A");
-   TH1D * WJetsToLNu_B = (TH1D*)f_WJetsToLNu->Get("h_B");
-   TH1D * WJetsToLNu_C = (TH1D*)f_WJetsToLNu->Get("h_C");
-   TH1D * WJetsToLNu_D = (TH1D*)f_WJetsToLNu->Get("h_D");
 
-   TFile * f_TTJets = TFile::Open("./outputHists/TTJets.root");
-   //TH1D * TTJets_A = (TH1D*)f_TTJets->Get("h_A");
-   TH1D * TTJets_B = (TH1D*)f_TTJets->Get("h_B");
-   TH1D * TTJets_C = (TH1D*)f_TTJets->Get("h_C");
-   TH1D * TTJets_D = (TH1D*)f_TTJets->Get("h_D");
+   const int nmc = 4;
+   TString mctags[nmc];
+   mctags[0] = "WJetsToLNu";
+   mctags[1] = "TTJets";
+   mctags[2] = "DYJetsToEEMuMu_M50";
+   mctags[3] = "DYJetsToTauTau_M50";
 
-   TFile * f_DYJetsToEEMuMu = TFile::Open("./outputHists/DYJetsToEEMuMu_M-50.root");
-   //TH1D * DYJetsToEEMuMu_A = (TH1D*)f_DYJetsToEEMuMu->Get("h_A");
-   TH1D * DYJetsToEEMuMu_B = (TH1D*)f_DYJetsToEEMuMu->Get("h_B");
-   TH1D * DYJetsToEEMuMu_C = (TH1D*)f_DYJetsToEEMuMu->Get("h_C");
-   TH1D * DYJetsToEEMuMu_D = (TH1D*)f_DYJetsToEEMuMu->Get("h_D");
+   TH1D *h_A[nmc], *h_B[nmc], *h_C[nmc], *h_D[nmc];
+   for (int i = 0; i < nmc; ++i) {
+      char fname[100];
+      sprintf(fname, "./outputHists/%s.root", mctags[i].Data());
+      TFile * f = TFile::Open(fname);
+      h_A[i] = (TH1D*)f->Get("h_A");
+      h_B[i] = (TH1D*)f->Get("h_B");
+      h_C[i] = (TH1D*)f->Get("h_C");
+      h_D[i] = (TH1D*)f->Get("h_D");
+   }
 
-   TFile * f_DYJetsToTauTau = TFile::Open("./outputHists/DYJetsToTauTau_M-50.root");
-   //TH1D * DYJetsToTauTau_A = (TH1D*)f_DYJetsToTauTau->Get("h_A");
-   TH1D * DYJetsToTauTau_B = (TH1D*)f_DYJetsToTauTau->Get("h_B");
-   TH1D * DYJetsToTauTau_C = (TH1D*)f_DYJetsToTauTau->Get("h_C");
-   TH1D * DYJetsToTauTau_D = (TH1D*)f_DYJetsToTauTau->Get("h_D");
-
-   data_B->Add(TTJets_B, -1.);
-   data_B->Add(DYJetsToEEMuMu_B, -1.);
-   data_B->Add(DYJetsToTauTau_B, -1.);
-   data_B->Add(WJetsToLNu_B, -1.);
-
-   data_C->Add(TTJets_C, -1.);
-   data_C->Add(DYJetsToEEMuMu_C, -1.);
-   data_C->Add(DYJetsToTauTau_C, -1.);
-   data_C->Add(WJetsToLNu_C, -1.);
-
-   data_D->Add(TTJets_D, -1.);
-   data_D->Add(DYJetsToEEMuMu_D, -1.);
-   data_D->Add(DYJetsToTauTau_D, -1.);
-   data_D->Add(WJetsToLNu_D, -1.);
+   for (int i = 0; i < nmc; ++i) {
+      data_B->Add(h_B[i], -1.);
+      data_C->Add(h_C[i], -1.);
+      data_D->Add(h_D[i], -1.);
+   }
 
    double B, Berr;
    B = data_B->IntegralAndError(1, data_B->GetNbinsX()+1, Berr);
@@ -147,7 +147,16 @@ TFile * makeQCDHists()
    TH1D * h_QCD = (TH1D*)data_B->Clone("h_QCD");
    h_QCD->Scale(CoD);
    //h_QCD->Multiply(h_CoD);
-   
+ 
+   TCanvas * c = new TCanvas("c_makeQCDHists", "c_makeQCDHists", 400, 400);
+   h_CoD->Draw("PE");
+   h_CoD->GetYaxis()->SetTitle("C / D");
+   h_CoD->SetStats(0);
+   h_CoD->SetMinimum(0.);
+   h_CoD->SetMaximum(2.);
+   h_CoD->SetMarkerStyle(20);
+   c->SaveAs("./plots/CoD.pdf");
+ 
    TFile * f_qcd = new TFile("./outputHists/QCD.root", "RECREATE");
    h_QCD->Write("h_A");
    data_B->Write("h_B");
@@ -155,197 +164,204 @@ TFile * makeQCDHists()
    data_D->Write("h_D");
    h_CoD->Write("h_CoD");
    f_qcd->Close();
+   std::cout << "j" << std::endl;
    return f_qcd;
 }
 
 void plotControlRegions()
 {
-   const double lumi = 31742.979;
-   double xsweight[4];
-   xsweight[0] = lumi * 831.76 / 10244307.;
-   xsweight[1] = lumi * 61334.9 / 70454125.;
-   xsweight[2] = lumi * 6025.2 / 100194597.;
-   xsweight[3] = lumi * 6025.2 / 100194597.;
+   const double ymin = 10.;
+   const double ymax = 1.e6;
 
    TFile *f_SingleMuon_2018D = TFile::Open("./outputHists/SingleMuon_2018D.root");
    TH1D * h_SingleMuon_2018D_B = (TH1D*)f_SingleMuon_2018D->Get("h_B");
-   h_SingleMuon_2018D_B->SetMarkerStyle(20);
    TH1D * h_SingleMuon_2018D_C = (TH1D*)f_SingleMuon_2018D->Get("h_C");
-   h_SingleMuon_2018D_C->SetMarkerStyle(20);
    TH1D * h_SingleMuon_2018D_D = (TH1D*)f_SingleMuon_2018D->Get("h_D");
+   h_SingleMuon_2018D_B->SetMarkerStyle(20);
+   h_SingleMuon_2018D_C->SetMarkerStyle(20);
    h_SingleMuon_2018D_D->SetMarkerStyle(20);
 
-   TFile * f_TTJets = TFile::Open("./outputHists/TTJets.root");
-   TH1D * h_TTJets_B = (TH1D*)f_TTJets->Get("h_B");
-   TH1D * h_TTJets_C = (TH1D*)f_TTJets->Get("h_C");
-   TH1D * h_TTJets_D = (TH1D*)f_TTJets->Get("h_D");
-   h_TTJets_B->SetFillColor(2);
-   h_TTJets_C->SetFillColor(2);
-   h_TTJets_D->SetFillColor(2);
+   int nmc = 4;
+   double xsweight[nmc];
+   const double lumi = 31742.979;
+   xsweight[0] = lumi * 61334.9 / 56999392.;
+   xsweight[1] = lumi * 831.76 / 148740576.;
+   xsweight[2] = lumi * 6025.2 / 104017741.;
+   xsweight[3] = lumi * 6025.2 / 104017741.;
 
-   TFile * f_WJetsToLNu = TFile::Open("./outputHists/WJetsToLNu.root");
-   TH1D * h_WJetsToLNu_B = (TH1D*)f_WJetsToLNu->Get("h_B");
-   TH1D * h_WJetsToLNu_C = (TH1D*)f_WJetsToLNu->Get("h_C");
-   TH1D * h_WJetsToLNu_D = (TH1D*)f_WJetsToLNu->Get("h_D");
-   h_WJetsToLNu_B->SetFillColor(3);
-   h_WJetsToLNu_C->SetFillColor(3);
-   h_WJetsToLNu_D->SetFillColor(3);
+   TString mctags[nmc];
+   mctags[0] = "WJetsToLNu";
+   mctags[1] = "TTJets";
+   mctags[2] = "DYJetsToEEMuMu_M50";
+   mctags[3] = "DYJetsToTauTau_M50";
+ 
+   TString labels[nmc];
+   labels[0] = "W#rightarrowl#nu";
+   labels[1] = "t#bar{t}";
+   labels[2] = "Z#rightarrowee,#mu#mu";
+   labels[3] = "Z#rightarrow#tau#tau";
+   // is the "signal" the correct gen matching, i.e. do we only want Z->tau_htau_mu for signal? or all Z->tautau, including any potential crossover fakes
 
-   TFile * f_DYJetsToEEMuMu = TFile::Open("./outputHists/DYJetsToEEMuMu_M-50.root");
-   TH1D * h_DYJetsToEEMuMu_B = (TH1D*)f_DYJetsToEEMuMu->Get("h_B");
-   TH1D * h_DYJetsToEEMuMu_C = (TH1D*)f_DYJetsToEEMuMu->Get("h_C");
-   TH1D * h_DYJetsToEEMuMu_D = (TH1D*)f_DYJetsToEEMuMu->Get("h_D");
-   h_DYJetsToEEMuMu_B->SetFillColor(4);
-   h_DYJetsToEEMuMu_C->SetFillColor(4);
-   h_DYJetsToEEMuMu_D->SetFillColor(4);
-  
-   TFile * f_DYJetsToTauTau = TFile::Open("./outputHists/DYJetsToTauTau_M-50.root");
-   TH1D * h_DYJetsToTauTau_B = (TH1D*)f_DYJetsToTauTau->Get("h_B");
-   TH1D * h_DYJetsToTauTau_C = (TH1D*)f_DYJetsToTauTau->Get("h_C");
-   TH1D * h_DYJetsToTauTau_D = (TH1D*)f_DYJetsToTauTau->Get("h_D");
-   h_DYJetsToTauTau_B->SetFillColor(5);
-   h_DYJetsToTauTau_C->SetFillColor(5);
-   h_DYJetsToTauTau_D->SetFillColor(5);
+   int colz[nmc];
+   colz[0] = 2;
+   colz[1] = 3;
+   colz[2] = 4;
+   colz[3] = 5;
+
+   TH1D *h_mc_B[nmc], *h_mc_C[nmc], *h_mc_D[nmc];
+   for (int i = 0; i < nmc; ++i) {
+      TFile * f = TFile::Open("./outputHists/"+mctags[i]+".root");
+      h_mc_B[i] = (TH1D*)f->Get("h_B");
+      h_mc_C[i] = (TH1D*)f->Get("h_C");
+      h_mc_D[i] = (TH1D*)f->Get("h_D");
+      h_mc_B[i]->SetFillColor(colz[i]);
+      h_mc_C[i]->SetFillColor(colz[i]);
+      h_mc_D[i]->SetFillColor(colz[i]);
+   }
+
+   std::cout << "WJetsToLNu D: " << std::endl;;
+   std::cout << " GetEntries: " << h_mc_D[0]->GetEntries() << std::endl;
+   std::cout << " Integral: " << h_mc_D[0]->Integral() << std::endl;
 
    THStack * s_B = new THStack("s_B", "");
    s_B->SetTitle("B;#mu+#tau_{h} visible mass [GeV];events / 25 GeV");
-   s_B->Add(h_TTJets_B);
-   s_B->Add(h_WJetsToLNu_B);
-   s_B->Add(h_DYJetsToEEMuMu_B);
-   s_B->Add(h_DYJetsToTauTau_B);   
+   for (int i = 0; i < nmc; ++i) s_B->Add(h_mc_B[i]);
 
    THStack * s_C = new THStack("s_C", "");
    s_C->SetTitle("C;#mu+#tau_{h} visible mass [GeV];events / 25 GeV");
-   s_C->Add(h_TTJets_C);
-   s_C->Add(h_WJetsToLNu_C);
-   s_C->Add(h_DYJetsToEEMuMu_C);
-   s_C->Add(h_DYJetsToTauTau_C);
+   for (int i = 0; i < nmc; ++i) s_C->Add(h_mc_C[i]);
 
    THStack * s_D = new THStack("s_D", "");
    s_D->SetTitle("D;#mu+#tau_{h} visible mass [GeV];events / 25 GeV");
-   s_D->Add(h_TTJets_D);
-   s_D->Add(h_WJetsToLNu_D);
-   s_D->Add(h_DYJetsToEEMuMu_D);
-   s_D->Add(h_DYJetsToTauTau_D);
-   
+   for (int i = 0; i < nmc; ++i) s_D->Add(h_mc_D[i]);
+
    TLegend * l = new TLegend(0.5, 0.7, 0.875, 0.875);
    l->SetBorderSize(0);
    l->SetNColumns(2);
-   l->AddEntry(h_TTJets_B, "t#bar{t}", "F");
-   l->AddEntry(h_WJetsToLNu_B, "W#rightarrow#ell#nu", "F");
-   l->AddEntry(h_DYJetsToEEMuMu_B, "Z#rightarrow ee, #mu#mu", "F");
-   l->AddEntry(h_DYJetsToTauTau_B, "Z#rightarrow #tau#tau", "F");
+   for (int i = 0; i < nmc; ++i) l->AddEntry(h_mc_B[i], labels[i], "F");
    l->AddEntry(h_SingleMuon_2018D_B, "data", "P");
 
-   TCanvas * c = new TCanvas("c_cr", "", 800, 800);
+   TCanvas * c = new TCanvas("c", "c", 800, 800);
    c->Divide(2,2);
 
    TPad * p2 = (TPad*)c->cd(2);
    s_B->Draw("HIST");
    h_SingleMuon_2018D_B->Draw("PE, SAME"); 
    p2->SetLogy();
-   s_B->SetMinimum(1.);
-   s_B->SetMaximum(10000.);
+   s_B->SetMinimum(ymin);
+   s_B->SetMaximum(ymax);
    l->Draw();
 
    TPad * p3 = (TPad*)c->cd(3);
    s_C->Draw("HIST");
    h_SingleMuon_2018D_C->Draw("PE, SAME");
    p3->SetLogy();
-   s_C->SetMinimum(1.);
-   s_C->SetMaximum(10000.);
+   s_C->SetMinimum(ymin);
+   s_C->SetMaximum(ymax);
    l->Draw();
 
    TPad * p4 = (TPad*)c->cd(4);
    s_D->Draw("HIST");
    h_SingleMuon_2018D_C->Draw("PE, SAME");
    p4->SetLogy();
-   s_D->SetMinimum(1.);
-   s_D->SetMaximum(10000.);
+   s_D->SetMinimum(ymin);
+   s_D->SetMaximum(ymax);
    l->Draw();
 
-   c->SaveAs("./plots/cr.pdf");  
-
+   c->SaveAs("./plots/cr.pdf");
 }
 
 void yields_ZTauTau()
 {
+   const double ymin = 1.;
+   const double ymax = 1.e6;
+
    makeHists("SingleMuon_2018D");
 
+   int nmc = 4;
+   double xsweight[nmc];
    const double lumi = 31742.979;
-   double xsweight[4];
-   xsweight[0] = lumi * 831.76 / 10244307.;
-   xsweight[1] = lumi * 61334.9 / 70454125.;
-   xsweight[2] = lumi * 6025.2 / 100194597.;
-   xsweight[3] = lumi * 6025.2 / 100194597.;
-   makeHists("TTJets", xsweight[0]);
-   makeHists("WJetsToLNu", xsweight[1]);
-   makeHists("DYJetsToEEMuMu_M-50", xsweight[2]);
-   makeHists("DYJetsToTauTau_M-50", xsweight[3]);
+   xsweight[0] = lumi * 61334.9 / 56999392.;
+   xsweight[1] = lumi * 831.76 / 148740576.;
+   xsweight[2] = lumi * 6025.2 / 104017741.;
+   xsweight[3] = lumi * 6025.2 / 104017741.;
+
+   TString mctags[nmc];
+   mctags[0] = "WJetsToLNu";
+   mctags[1] = "TTJets";
+   mctags[2] = "DYJetsToEEMuMu_M50";
+   mctags[3] = "DYJetsToTauTau_M50";
+   
+   TString labels[nmc];
+   labels[0] = "W#rightarrowl#nu";
+   labels[1] = "t#bar{t}";
+   labels[2] = "Z#rightarrowee,#mu#mu";
+   labels[3] = "Z#rightarrow#tau#tau"; //correct gen matching?
+   int colz[nmc];
+   colz[0] = 2;
+   colz[1] = 3;
+   colz[2] = 4;
+   colz[3] = 5;
+
+   for (int i = 0; i < nmc; ++i) {
+      makeHists(mctags[i], xsweight[i]);
+   }
+
    makeQCDHists();
 
    TFile *f_SingleMuon_2018D = TFile::Open("./outputHists/SingleMuon_2018D.root");
    TH1D * h_SingleMuon_2018D = (TH1D*)f_SingleMuon_2018D->Get("h_A");
    h_SingleMuon_2018D->SetMarkerStyle(20);
-
+   
    double mcsum = 0.;
+   TH1D * h[nmc];
+   for (int i = 0; i < nmc; ++i) {
+      char fname[100];
+      sprintf(fname, "./outputHists/%s.root", mctags[i].Data());
+      TFile * f = TFile::Open(fname);
+      h[i] = (TH1D*)f->Get("h_A");
+      h[i]->SetFillColor(colz[i]);
+      mcsum += h[i]->Integral();
+   }
 
-   TFile * f_TTJets = TFile::Open("./outputHists/TTJets.root");
-   TH1D * h_TTJets = (TH1D*)f_TTJets->Get("h_A");
-   h_TTJets->SetFillColor(2);
-   mcsum += h_TTJets->Integral();
+   for (int i = 0; i < nmc; ++i) {
+      std::cout << mctags[i] << std::endl;
+      std::cout << "   expected yield: " << h[i]->Integral() << "; fraction of total:" << h[i]->Integral()/mcsum << std::endl;
+      std::cout << "   # of mc events: " << h[i]->GetEntries() << std::endl;
+   }
+
+   const double n_tautau = h[3]->Integral();
+   std::cout << "n_tautau = n_DYJetsToTauTau_M50 = " << n_tautau << std::endl;
 
    TFile * f_QCD = TFile::Open("./outputHists/QCD.root");
    TH1D * h_QCD = (TH1D*)f_QCD->Get("h_A");
+   std::cout << "expected number of multijet events: " << h_QCD->Integral() << std::endl;
    h_QCD->SetFillColor(6);
-   mcsum += h_QCD->Integral();
-   
-   TFile * f_WJetsToLNu = TFile::Open("./outputHists/WJetsToLNu.root");
-   TH1D * h_WJetsToLNu = (TH1D*)f_WJetsToLNu->Get("h_A");
-   h_WJetsToLNu->SetFillColor(3);
-   mcsum += h_WJetsToLNu->Integral();
 
-   TFile * f_DYJetsToEEMuMu = TFile::Open("./outputHists/DYJetsToEEMuMu_M-50.root");
-   TH1D * h_DYJetsToEEMuMu = (TH1D*)f_DYJetsToEEMuMu->Get("h_A");
-   h_DYJetsToEEMuMu->SetFillColor(4);
-   mcsum += h_DYJetsToEEMuMu->Integral();
-  
-   TFile * f_DYJetsToTauTau = TFile::Open("./outputHists/DYJetsToTauTau_M-50.root");
-   TH1D * h_DYJetsToTauTau = (TH1D*)f_DYJetsToTauTau->Get("h_A");
-   h_DYJetsToTauTau->SetFillColor(5);
-   mcsum += h_DYJetsToTauTau->Integral();
-
-   std::cout << "fractions of expected background: " << std::endl;
-   std::cout << "   TTJets: " << h_TTJets->Integral()/mcsum << std::endl;
-   std::cout << "   QCD: " << h_QCD->Integral()/mcsum << std::endl;
-   std::cout << "   WJetsToLNu: " << h_WJetsToLNu->Integral()/mcsum << std::endl;
-   std::cout << "   DYJetsToEEMuMu: " << h_DYJetsToEEMuMu->Integral()/mcsum << std::endl;
-   std::cout << "   DYJetsToTauTau: " << h_DYJetsToTauTau->Integral()/mcsum << std::endl;
- 
-   TCanvas * c = new TCanvas("c_ZMuTauVisibleMass", "", 400, 400);
-   h_SingleMuon_2018D->Draw("P, E");
    THStack * s = new THStack("s", "");
    s->SetTitle(h_SingleMuon_2018D->GetTitle());
-   s->Add(h_TTJets);
+   for (int i = 0; i < nmc; ++i) {
+      s->Add(h[i]);
+   }
    s->Add(h_QCD);
-   s->Add(h_WJetsToLNu);
-   s->Add(h_DYJetsToEEMuMu);
-   s->Add(h_DYJetsToTauTau);
-   s->Draw("HIST, SAME");
-   h_SingleMuon_2018D->Draw("PE, SAME");
-   c->SetLogy();
-   h_SingleMuon_2018D->SetStats(0);
-   h_SingleMuon_2018D->SetMinimum(10.);
-   h_SingleMuon_2018D->SetMaximum(1000000.);
 
-   TLegend * l = new TLegend(0.5, 0.7, 0.875, 0.875);
+   TCanvas * c = new TCanvas("c_yieldsZTauTau", "c_yieldsZTauTau", 400, 400);
+   h_SingleMuon_2018D->SetMinimum(ymin);
+   h_SingleMuon_2018D->SetMaximum(ymax);
+   h_SingleMuon_2018D->Draw("P, E");
+   h_SingleMuon_2018D->SetStats(0);
+   h_SingleMuon_2018D->SetMinimum(ymin);
+   h_SingleMuon_2018D->SetMaximum(ymax);
+   c->SetLogy();
+   s->Draw("HIST, SAME");
+   s->SetMinimum(ymin);
+   s->SetMaximum(ymax);
+
+   TLegend * l = new TLegend(0.4, 0.7, 0.875, 0.875);
    l->SetBorderSize(0);
    l->SetNColumns(2);
-   l->AddEntry(h_TTJets, "t#bar{t}", "F");
-   l->AddEntry(h_QCD, "QCD", "F");
-   l->AddEntry(h_WJetsToLNu, "W#rightarrow#ell#nu", "F");
-   l->AddEntry(h_DYJetsToEEMuMu, "Z#rightarrow ee, #mu#mu", "F");
-   l->AddEntry(h_DYJetsToTauTau, "Z#rightarrow #tau#tau", "F");
+   for (int i = 0; i < nmc; ++i) l->AddEntry(h[i], labels[i], "F");
+   l->AddEntry(h_QCD, "multijet", "F");
    l->AddEntry(h_SingleMuon_2018D, "data", "P");
    l->Draw();
 
