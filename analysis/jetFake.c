@@ -12,15 +12,17 @@ TFile * runPoint(const TString tag, const double xsweight=1.)
 {
    std::cout << "filling histograms from: " << tag << std::endl;
    char infile[1000];
-   sprintf(infile, "root://cmseos.fnal.gov//store/user/hats/2020/Tau/%s.root", tag.Data());
+   sprintf(infile, "./outputData/%s.root", tag.Data());
+   //sprintf(infile, "root://cmseos.fnal.gov//store/user/hats/2020/Tau/%s.root", tag.Data());
    TFile *f = TFile::Open(infile);
    //TFile *f = TFile::Open("./outputData/"+tag+".root");
    TTree *t = (TTree*)f->Get("Events");
 
-   TCut baseline = "MuMuProducer_HavePair==0 && MuTauProducer_HavePair==1";
-   //baseline = baseline && TCut("MuTauProducer_mT>=0.");
-   //baseline = baseline && TCut("MuTauProducer_nBJetT>=0");
-   //baseline = baseline && TCut("MuTauProducer_MuTauVisMass>=0.");
+   TCut baseline = "MuTauProducer_HavePair>0";
+   baseline = baseline && TCut("ZProducer_EEHavePair==0 && ZProducer_MuMuHavePair==0 && ZProducer_TauTauHavePair==0");
+   //baseline = baseline && TCut("MuTauProducer_mT<80.379");
+   //baseline = baseline && TCut("MuTauProducer_nBJetT==0");
+   //baseline = baseline && TCut("MuTauProducer_MuTauVisMass>=91.1876");
 
    char buffer_denom[1000];
    sprintf(buffer_denom, "%f * (%s)", xsweight, TString(baseline).Data());
@@ -156,7 +158,7 @@ TFile * bkgSubtractedData()
    }
 
    const int nbkg = 3;
-   const TString samples[nbkg] = {"DYJetsToEEMuMu_M-50", "DYJetsToTauTau_M-50", "TTJets"};
+   const TString samples[nbkg] = {"DYJetsToEEMuMu_M50", "DYJetsToTauTau_M50", "TTJets"};
    for (int i = 0; i < nbkg; ++i) {
       TFile *f = TFile::Open("./outputHists/"+samples[i]+".root");
       TH1D * htemp_pt = (TH1D*)f->Get("h_pt");
@@ -199,7 +201,7 @@ void makeStackPlot()
    double mcsum = 0.;
 
    const int nmc = 4;
-   const TString samples[nmc] = {"TTJets", "DYJetsToEEMuMu_M-50", "DYJetsToTauTau_M-50", "WJetsToLNu"};
+   const TString samples[nmc] = {"TTJets", "DYJetsToEEMuMu_M50", "DYJetsToTauTau_M50", "WJetsToLNu"};
    TH1D * h_mc[nmc];
    THStack * s = new THStack("s", "");
    for (int i = 0; i < nmc; ++i) {
@@ -238,10 +240,10 @@ void jetFake()
    runPoint("SingleMuon_2018D");
 
    const int nmc = 4;
-   const TString samples[nmc] = {"WJetsToLNu", "DYJetsToEEMuMu_M-50", "DYJetsToTauTau_M-50", "TTJets"};
+   const TString samples[nmc] = {"WJetsToLNu", "DYJetsToEEMuMu_M50", "DYJetsToTauTau_M50", "TTJets"};
    const double lumi = 31742.979;
    double xsweight[nmc];
-   xsweight[0] = lumi * 61334.9 / 70454125.;
+   xsweight[0] = lumi * 61334.9 / 71026861.;
    xsweight[1] = lumi * 6025.2 / 100194597.;
    xsweight[2] = lumi * 6025.2 / 100194597.;
    xsweight[3] = lumi * 831.76 / 10244307.;

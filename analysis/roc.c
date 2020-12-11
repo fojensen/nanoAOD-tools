@@ -1,4 +1,4 @@
-//https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html
+//https://cms-nanoaod-integration.web.cern.ch/integration/master-106X/mc106X_doc.html
 #include <TCut.h>
 #include <TFile.h>
 #include <TTree.h>
