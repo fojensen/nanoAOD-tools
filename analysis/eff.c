@@ -10,23 +10,16 @@
 void eff(const bool isSig=true)
 {
    const TString tag = "WJetsToLNu";
+   const TString infile = "root://cmseos.fnal.gov//store/user/cmsdas/2021/short_exercises/Tau/WJetsToLNu__A0A48A5A-15B8-914B-8DC7-E407797D4539.root";
+   //const TString infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv7/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/70000/A0A48A5A-15B8-914B-8DC7-E407797D4539.root";
 
-   TString infile;
-   if (tag=="WJetsToLNu") {   
-      //infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
-      //infile = "/uscms_data/d3/fojensen/tauHATS/CMSSW_10_2_18/src/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
-      infile = "root://cmseos.fnal.gov//store/user/hats/2020/Tau/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
-   }
-   if (tag=="DYJetsToLL") {
-      //infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/E78C9017-BB6E-FE48-BA37-E059AEA79CD3.root";
-      //infile = "/uscms_data/d3/fojensen/tauHATS/CMSSW_10_2_18/src/E78C9017-BB6E-FE48-BA37-E059AEA79CD3.root";
-      infile = "root://cmseos.fnal.gov//store/user/hats/2020/Tau/E78C9017-BB6E-FE48-BA37-E059AEA79CD3.root";
-   }
-   if (tag=="TTJets") {
-      //infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/250000/8969BAAF-2D11-7449-A180-97850997CD0A.root";
-      //infile = "/uscms_data/d3/fojensen/tauHATS/CMSSW_10_2_18/src/8969BAAF-2D11-7449-A180-97850997CD0A.root";
-      infile = "root://cmseos.fnal.gov//store/user/hats/2020/Tau/8969BAAF-2D11-7449-A180-97850997CD0A.root";
-   }
+   //const TString tag = "DYJetsToLL";
+   //const TString infile = "root://cmseos.fnal.gov//store/user/cmsdas/2021/short_exercises/Tau/DYJetsToLL_M-50__51C9FDF1-F122-4943-87BA-6EFE4459F867.root";
+   //const TString infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv7/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/100000/51C9FDF1-F122-4943-87BA-6EFE4459F867.root";
+
+   //const TString tag = "TTJets";
+   //const TString infile = "root://cmseos.fnal.gov//store/user/cmsdas/2021/short_exercises/Tau/TTJets__3B433A98-416E-7242-B1F7-9E1153CBBC64.root";
+   //const TString infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv7/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/130000/3B433A98-416E-7242-B1F7-9E1153CBBC64.root";
 
    std::cout << "producing efficiency curves: " << tag << std::endl;
    if (isSig) {
@@ -45,13 +38,13 @@ void eff(const bool isSig=true)
    }
  
    UInt_t nTau = 0;
-   Float_t Tau_pt[50];
-   Float_t Tau_eta[50];
-   UChar_t Tau_genPartFlav[50];
-   Int_t Tau_decayMode[50];
-   UChar_t Tau_idDeepTau2017v2p1VSe[50];
-   UChar_t Tau_idDeepTau2017v2p1VSmu[50];
-   UChar_t Tau_idDeepTau2017v2p1VSjet[50];
+   Float_t Tau_pt[20];
+   Float_t Tau_eta[20];
+   UChar_t Tau_genPartFlav[20];
+   Int_t Tau_decayMode[20];
+   UChar_t Tau_idDeepTau2017v2p1VSe[20];
+   UChar_t Tau_idDeepTau2017v2p1VSmu[20];
+   UChar_t Tau_idDeepTau2017v2p1VSjet[20];
 
    t->SetBranchAddress("nTau", &nTau);
    t->SetBranchAddress("Tau_pt", Tau_pt);
@@ -65,8 +58,9 @@ void eff(const bool isSig=true)
    int tauMatch;
    isSig ? tauMatch=5 : tauMatch=0;
 
-   int n = t->GetEntries();
+   const int n = t->GetEntries();
    std::cout << "entries in the tree: " << n << std::endl;
+   //int ndenom = 0;
    for (int i = 0; i < n; ++i) {
       if (i%100000==0) std::cout << "beginning event: " << i << std::endl;
       t->GetEntry(i);
@@ -75,12 +69,12 @@ void eff(const bool isSig=true)
             const bool tauID = (8&Tau_idDeepTau2017v2p1VSmu[j]) && (128&Tau_idDeepTau2017v2p1VSe[j]) && !(Tau_decayMode[j]==5||Tau_decayMode[j]==6);
             if (Tau_pt[j]>=20. && TMath::Abs(Tau_eta[j])<2.3 && tauID) {
                h_pt->Fill(Tau_pt[j]);
+               //++ndenom;
                for (int k = 0; k < 8; ++k) {
                   const int mask = 1<<k;
                   //std::cout << mask << std::endl;
                   const bool passid = mask&Tau_idDeepTau2017v2p1VSjet[j];
                   if (passid) {
-                     const bool tauID = (8&Tau_idDeepTau2017v2p1VSmu[j]) && (128&Tau_idDeepTau2017v2p1VSe[j]) && !(Tau_decayMode[j]==5||Tau_decayMode[j]==6);
                      h_pt_num[k]->Fill(Tau_pt[j]);
                   } else {
                      break;
@@ -89,6 +83,7 @@ void eff(const bool isSig=true)
             }
          }
       }
+      //if (ndenom>=1000) break;
    }
 
    TGraphAsymmErrors *g_pt[8];

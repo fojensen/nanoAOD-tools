@@ -22,11 +22,11 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import inputF
 cut_TT = "Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (1&Tau_idDeepTau2017v2p1VSmu) && (1&Tau_idDeepTau2017v2p1VSe))>=2"
 cut_ET = "Sum$(TMath::Abs(Electron_eta)<2.5  && Electron_pt>=12. && Electron_mvaFall17V2Iso_WPL)>0 && Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (1&Tau_idDeepTau2017v2p1VSmu) && (1&Tau_idDeepTau2017v2p1VSe))>0"
 cut_MT = "Sum$(TMath::Abs(Muon_eta)<2.4 && Muon_pt>=8. && Muon_looseId && Muon_pfIsoId>=1)>0 && Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (1&Tau_idDeepTau2017v2p1VSmu) && (1&Tau_idDeepTau2017v2p1VSe))>0"
-cut_EM = "Sum$(TMath::Abs(Electron_eta)<2.5 && Electron_pt>=12. && Electron_mvaFall17V2Iso_WPL)>0 && Sum$(TMath::Abs(Muon_eta)<2.4 && Muon_pt>=8. && Muon_looseId && Muon_pfIsoId>=1)>0"
+#cut_EM = "Sum$(TMath::Abs(Electron_eta)<2.5 && Electron_pt>=12. && Electron_mvaFall17V2Iso_WPL)>0 && Sum$(TMath::Abs(Muon_eta)<2.4 && Muon_pt>=8. && Muon_looseId && Muon_pfIsoId>=1)>0"
 #https://twiki.cern.ch/CMS/MissingETOptionalFiltersRun2
 cut_Flag = "(Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter)"
 
-cut_ = "("+ cut_TT + " || " + cut_ET + " || " + cut_MT + " || " + cut_EM +") && " + cut_Flag
+cut_ = "("+ cut_TT + " || " + cut_ET + " || " + cut_MT + ") && " + cut_Flag
 print cut_
 
 from PhysicsTools.NanoAODTools.postprocessing.examples.MuTauProducer import MuTauProducerConstr

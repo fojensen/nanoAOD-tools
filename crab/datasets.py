@@ -6,21 +6,21 @@ isMC_ = True
 year_ = "2018"
 
 
-data['people'].append({
-    'name': 'DYJetsToLL_M-10to50',
-    'inputDataset': '/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
-    'nEvents': '39392062',
-    'nFiles': '27',
-    'xs': '',
-})
+#data['people'].append({
+#    'name': 'DYJetsToLL_M-10to50',
+#    'inputDataset': '/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+#    'nEvents': '39392062',
+#    'nFiles': '27',
+#    'xs': '',
+#})
 
-data['people'].append({
-    'name': 'DYJetsToLL_M-10to50_ext1',
-    'inputDataset': '/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21_ext1-v1/NANOAODSIM',
-    'nEvents': '46976952',
-    'nFiles': '79',
-    'xs': '',
-})
+#data['people'].append({
+#    'name': 'DYJetsToLL_M-10to50_ext1',
+#    'inputDataset': '/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21_ext1-v1/NANOAODSIM',
+#    'nEvents': '46976952',
+#    'nFiles': '79',
+#    'xs': '',
+#})
 
 data['people'].append({
     'name': 'DYJetsToLL_M-50',
@@ -224,26 +224,26 @@ data['people'].append({
 
 lumiMask = 'Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt'
 
-data['people'].append({
-   'name': 'SingleMuon_Run2018A',
-   'inputDataset': '/SingleMuon/Run2018A-02Apr2020-v1/NANOAOD',
-   'lumiMask': lumiMask,
-   'nFiles': '225',
-})
+#data['people'].append({
+#   'name': 'SingleMuon_Run2018A',
+#   'inputDataset': '/SingleMuon/Run2018A-02Apr2020-v1/NANOAOD',
+#   'lumiMask': lumiMask,
+#   'nFiles': '225',
+#})
 
-data['people'].append({
-   'name': 'SingleMuon_Run2018B',
-   'inputDataset': '/SingleMuon/Run2018B-02Apr2020-v1/NANOAOD',
-   'lumiMask': lumiMask,
-   'nFiles': '110',
-})
+#data['people'].append({
+#   'name': 'SingleMuon_Run2018B',
+#   'inputDataset': '/SingleMuon/Run2018B-02Apr2020-v1/NANOAOD',
+#   'lumiMask': lumiMask,
+#   'nFiles': '110',
+#})
 
-data['people'].append({
-   'name': 'SingleMuon_Run2018C',
-   'inputDataset': '/SingleMuon/Run2018C-02Apr2020-v1/NANOAOD',
-   'lumiMask': lumiMask,
-   'nFiles': '79',
-})
+#data['people'].append({
+#   'name': 'SingleMuon_Run2018C',
+#   'inputDataset': '/SingleMuon/Run2018C-02Apr2020-v1/NANOAOD',
+#   'lumiMask': lumiMask,
+#   'nFiles': '79',
+#})
 
 data['people'].append({
    'name': 'SingleMuon_Run2018D',
