@@ -8,33 +8,25 @@
 #include <TCut.h>
 #include <TGraphAsymmErrors.h>
 
-TFile * runPoint(const TString tag, const double xsweight=1.)
+TFile * runPoint(const TString tag, TH1D * h, const TString var, const double xsweight=1.)
 {
-   std::cout << "filling histograms from: " << tag << std::endl;
+   std::cout << "runPoint(): " << tag << std::endl;
    char infile[1000];
-   sprintf(infile, "./outputData/%s.root", tag.Data());
-   //sprintf(infile, "root://cmseos.fnal.gov//store/user/hats/2020/Tau/%s.root", tag.Data());
+   sprintf(infile, "root://cmseos.fnal.gov//store/user/cmsdas/2021/short_exercises/Tau/%s.root", tag.Data());
    TFile *f = TFile::Open(infile);
-   //TFile *f = TFile::Open("./outputData/"+tag+".root");
    TTree *t = (TTree*)f->Get("Events");
 
-   TCut baseline = "MuTauProducer_HavePair>0";
-   baseline = baseline && TCut("ZProducer_EEHavePair==0 && ZProducer_MuMuHavePair==0 && ZProducer_TauTauHavePair==0");
-   //baseline = baseline && TCut("MuTauProducer_mT<80.379");
-   //baseline = baseline && TCut("MuTauProducer_nBJetT==0");
-   //baseline = baseline && TCut("MuTauProducer_MuTauVisMass>=91.1876");
+   TCut baseline = "MuTauProducer_HavePair>0 && Muon_pfIsoId[MuTauProducer_MuIdx]>=4 && (HLT_IsoMu24||HLT_IsoMu27)";
+   baseline = baseline && TCut("1&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]");
 
    char buffer_denom[1000];
    sprintf(buffer_denom, "%f * (%s)", xsweight, TString(baseline).Data());
 
-   TH1D *h_pt = new TH1D("h_pt", ";#tau_{h} p_{T} [GeV];events / 10 GeV", 10, 20., 120.);
-   TH1D *h_pt_num[8], *h_eta_num[8];
-   for (int i = 0; i < 8; ++i) {
-      h_pt_num[i] = (TH1D*)h_pt->Clone("h_pt_num_"+TString::Itoa(i, 10));
-   }
+   TH1D *h_denom = (TH1D*)h->Clone("h_denom");
+   TH1D *h_num[8];
+   for (int i = 0; i < 8; ++i) h_num[i] = (TH1D*)h->Clone("h_num_"+TString::Itoa(i, 10));
 
-   t->Project(h_pt->GetName(), "Tau_pt[MuTauProducer_TauIdx]", buffer_denom);
-
+   t->Project(h_denom->GetName(), var, buffer_denom);
    for (int i = 0; i < 8; ++i) {
       char buffer[100];
       const int mask = 1<<i;
@@ -42,28 +34,28 @@ TFile * runPoint(const TString tag, const double xsweight=1.)
       const TCut cutTag = TCut(buffer);
       char buffer_num[1000];
       sprintf(buffer_num, "%f * (%s)", xsweight, TString(baseline&&cutTag).Data());
-      const int n = t->Project(h_pt_num[i]->GetName(), "Tau_pt[MuTauProducer_TauIdx]", buffer_num);
+      const int n = t->Project(h_num[i]->GetName(), var, buffer_num);
       if (n==0) break;
    }
 
-   TGraphAsymmErrors *g_pt[8];
+   TGraphAsymmErrors *g[8];
    for (int i = 0; i < 8; ++i) {    
-      g_pt[i] = new TGraphAsymmErrors();
-      g_pt[i]->SetName("g_pt_"+TString::Itoa(i, 10));
-      g_pt[i]->Divide(h_pt_num[i], h_pt, "N");
-      g_pt[i]->SetLineColor(i+2);
-      g_pt[i]->SetMarkerColor(i+2);
-      g_pt[i]->SetMarkerStyle(7);
-      char buffer_pt[100];
-      sprintf(buffer_pt, ";%s;tagging efficiency", h_pt->GetXaxis()->GetTitle());
-      g_pt[i]->SetTitle(buffer_pt);
+      g[i] = new TGraphAsymmErrors();
+      g[i]->SetName("g_"+TString::Itoa(i, 10));
+      g[i]->Divide(h_num[i], h_denom, "N");
+      g[i]->SetLineColor(i+2);
+      g[i]->SetMarkerColor(i+2);
+      g[i]->SetMarkerStyle(7);
+      char buffer[100];
+      sprintf(buffer, ";%s;tagging efficiency", h_denom->GetXaxis()->GetTitle());
+      g[i]->SetTitle(buffer);
    }
 
    TFile * fout = new TFile("./outputHists/"+tag+".root", "RECREATE");
-   h_pt->Write();
+   h_denom->Write();
    for (int i = 0; i < 8; ++i) {
-      h_pt_num[i]->Write();
-      g_pt[i]->Write();
+      h_num[i]->Write();
+      g[i]->Write();
    }
    fout->Close();
    return fout;
@@ -71,22 +63,23 @@ TFile * runPoint(const TString tag, const double xsweight=1.)
 
 void makePlots()
 {
-   TGraphAsymmErrors *g_pt_data[8];
+   std::cout << "makePlots()" << std::endl;
+   TGraphAsymmErrors *g_data[8];
    TFile * f_data = TFile::Open("./outputHists/bkgSubtractedData.root");
    for (int i = 0; i < 8; ++i) {
-      g_pt_data[i] = (TGraphAsymmErrors*)f_data->Get("g_pt_"+TString::Itoa(i, 10));
-      g_pt_data[i]->SetMarkerStyle(47);
-      g_pt_data[i]->SetMarkerColor(7);
-      g_pt_data[i]->SetLineColor(7);
+      g_data[i] = (TGraphAsymmErrors*)f_data->Get("g_"+TString::Itoa(i, 10));
+      g_data[i]->SetMarkerStyle(47);
+      g_data[i]->SetMarkerColor(7);
+      g_data[i]->SetLineColor(7);
    }
    
-   TGraphAsymmErrors *g_pt_mc[8];
+   TGraphAsymmErrors *g_mc[8];
    TFile * f_mc = TFile::Open("./outputHists/WJetsToLNu.root");
    for (int i = 0; i < 8; ++i) {
-      g_pt_mc[i] = (TGraphAsymmErrors*)f_mc->Get("g_pt_"+TString::Itoa(i, 10));
-      g_pt_mc[i]->SetMarkerStyle(20);
-      g_pt_mc[i]->SetMarkerColor(8);
-      g_pt_mc[i]->SetLineColor(8); 
+      g_mc[i] = (TGraphAsymmErrors*)f_mc->Get("g_"+TString::Itoa(i, 10));
+      g_mc[i]->SetMarkerStyle(20);
+      g_mc[i]->SetMarkerColor(8);
+      g_mc[i]->SetLineColor(8); 
    }
 
    const TString taglabels[8] = {"VVVLoose", "VVLoose" ,"VLoose" ,"Loose", "Medium", "Tight", "VTight", "VVTight"};
@@ -95,41 +88,43 @@ void makePlots()
    c1->Divide(4, 2);
    for (int i = 0; i < 8; ++i) {
       TPad * p = (TPad*)c1->cd(i+1);
-      g_pt_data[i]->Draw("APE");
-      g_pt_data[i]->SetMaximum(1.1);
-      g_pt_data[i]->SetMinimum(0.001);
-      g_pt_data[i]->SetTitle(taglabels[i]);
-      g_pt_mc[i]->Draw("PE, SAME");
-      g_pt_data[i]->Draw("PE, SAME");
+      g_data[i]->Draw("APE");
+      g_data[i]->SetMaximum(1.1);
+      g_data[i]->SetMinimum(0.001);
+      g_data[i]->SetTitle(taglabels[i]);
+      g_mc[i]->Draw("PE, SAME");
+      g_data[i]->Draw("PE, SAME");
       p->SetLogy();
       TLegend * l = new TLegend(0.5, 0.2, 0.875, 0.3);
       l->SetNColumns(2);
       l->SetBorderSize(0);
-      l->AddEntry(g_pt_data[i], "data", "P");
-      l->AddEntry(g_pt_mc[i], "mc", "P");
+      l->AddEntry(g_data[i], "data", "P");
+      l->AddEntry(g_mc[i], "mc", "P");
       l->Draw();
    }
    c1->SaveAs("./plots/fakerate.pdf");
 
    // scale factors
-   TGraphAsymmErrors *r_pt[8];
+   TGraphAsymmErrors *r[8];
    for (int i = 0; i < 8; ++i) {
-      r_pt[i] = (TGraphAsymmErrors*)g_pt_data[i]->Clone("r_pt_"+TString::Itoa(i, 10));
-      for (int j = 0; j < g_pt_data[i]->GetN(); ++j) {
+      r[i] = (TGraphAsymmErrors*)g_data[i]->Clone("r_"+TString::Itoa(i, 10));
+      for (int j = 0; j < g_data[i]->GetN(); ++j) {
          double x_data, y_data;
-         g_pt_data[i]->GetPoint(j, x_data, y_data);
-         const double y_data_err = g_pt_data[i]->GetErrorY(j);
+         g_data[i]->GetPoint(j, x_data, y_data);
+         const double y_data_err = g_data[i]->GetErrorY(j);
 
          double x_mc, y_mc;
-         g_pt_mc[i]->GetPoint(j, x_mc, y_mc);
-         const double y_mc_err = g_pt_mc[i]->GetErrorY(j);
+         g_mc[i]->GetPoint(j, x_mc, y_mc);
+         const double y_mc_err = g_mc[i]->GetErrorY(j);
 
-         const double r = y_data/y_mc;
-         const double r_err = r * sqrt((y_data_err/y_data)*(y_data_err/y_data)+(y_mc_err/y_mc)*(y_mc_err/y_mc));
-         r_pt[i]->SetPoint(j, x_data, r);
-         r_pt[i]->SetPointEYhigh(j, r_err);
-         r_pt[i]->SetPointEYlow(j, r_err);
-         r_pt[i]->SetTitle(";#tau_{h} p_{T} [GeV];data / mc");
+         const double r_val = y_data/y_mc;
+         const double r_err = r_val * sqrt((y_data_err/y_data)*(y_data_err/y_data)+(y_mc_err/y_mc)*(y_mc_err/y_mc));
+         r[i]->SetPoint(j, x_data, r_val);
+         r[i]->SetPointEYhigh(j, r_err);
+         r[i]->SetPointEYlow(j, r_err);
+         char title[100];
+         sprintf(title, ";%s;data / mc", g_data[i]->GetXaxis()->GetTitle());
+         r[i]->SetTitle(title);
       }
    }
 
@@ -137,119 +132,82 @@ void makePlots()
    c2->Divide(4, 2);
    for (int i = 0; i < 8; ++i) {
       c2->cd(i+1);
-      r_pt[i]->SetMarkerColor(1);
-      r_pt[i]->SetLineColor(1);
-      r_pt[i]->Draw("APE");
-      r_pt[i]->SetMinimum(0.75);
-      r_pt[i]->SetMaximum(1.25);
-      r_pt[i]->SetTitle(taglabels[i]);
+      r[i]->SetMarkerColor(1);
+      r[i]->SetLineColor(1);
+      r[i]->Draw("APE");
+      r[i]->SetMinimum(0.75);
+      r[i]->SetMaximum(1.25);
+      r[i]->SetTitle(taglabels[i]);
    }
-   c2->SaveAs("./plots/scalefactors.pdf");
-   
+   c2->SaveAs("./plots/scalefactors.pdf"); 
 }
 
 TFile * bkgSubtractedData()
 {
+   std::cout << "bkgSubtractedData()" << std::endl;
    TFile * f_data = TFile::Open("./outputHists/SingleMuon_2018D.root");
-   TH1D *h_pt = (TH1D*)f_data->Get("h_pt");
-   TH1D *h_pt_num[8], *h_eta_num[8];
+   TH1D *h = (TH1D*)f_data->Get("h_denom");
+   TH1D *h_num[8];
    for (int i = 0; i < 8; ++i) {
-      h_pt_num[i] = (TH1D*)f_data->Get("h_pt_num_"+TString::Itoa(i, 10));
+      h_num[i] = (TH1D*)f_data->Get("h_num_"+TString::Itoa(i, 10));
    }
 
-   const int nbkg = 3;
-   const TString samples[nbkg] = {"DYJetsToEEMuMu_M50", "DYJetsToTauTau_M50", "TTJets"};
+   const int nbkg = 4;
+   const TString samples[nbkg] = {"TTJets", "DYJetsToEEMuMu_M50", "DYJetsToTauTau_M50", "QCD"};
    for (int i = 0; i < nbkg; ++i) {
+      std::cout << "i " << i << std::endl;
       TFile *f = TFile::Open("./outputHists/"+samples[i]+".root");
-      TH1D * htemp_pt = (TH1D*)f->Get("h_pt");
-      h_pt->Add(htemp_pt, -1.);
+      TH1D * htemp = (TH1D*)f->Get("h_denom");
+      h->Add(htemp, -1.);
       for (int j = 0; j < 8; ++j) {
-         TH1D * htemp_pt_num = (TH1D*)f->Get("h_pt_num_"+TString::Itoa(j, 10));
-         h_pt_num[j]->Add(htemp_pt_num, -1.);
+         std::cout << "j " << j << std::endl;
+         TH1D * htemp_num = (TH1D*)f->Get("h_num_"+TString::Itoa(j, 10));
+         h_num[j]->Add(htemp_num, -1.);
       }
    }
 
    TFile * f = new TFile("./outputHists/bkgSubtractedData.root", "RECREATE");
-   h_pt->Write();
+   h->Write();
    for (int i = 0; i < 8; ++i) {
-      h_pt_num[i]->Write("h_pt_"+TString::Itoa(i, 10));
+      h_num[i]->Write("h_"+TString::Itoa(i, 10));
    }
 
-   TGraphAsymmErrors *g_pt[8];
+   TGraphAsymmErrors *g[8];
    for (int i = 0; i < 8; ++i) {    
-      g_pt[i] = new TGraphAsymmErrors();
-      g_pt[i]->SetName("g_pt_"+TString::Itoa(i, 10));
-      g_pt[i]->Divide(h_pt_num[i], h_pt, "N");
-      g_pt[i]->SetLineColor(i+2);
-      g_pt[i]->SetMarkerColor(i+2);
-      g_pt[i]->SetMarkerStyle(7);
-      char buffer_pt[100];
-      sprintf(buffer_pt, ";%s;tagging efficiency", h_pt->GetXaxis()->GetTitle());
-      g_pt[i]->SetTitle(buffer_pt);
-      g_pt[i]->Write();
+      g[i] = new TGraphAsymmErrors();
+      g[i]->SetName("g_"+TString::Itoa(i, 10));
+      g[i]->Divide(h_num[i], h, "N");
+      g[i]->SetLineColor(i+2);
+      g[i]->SetMarkerColor(i+2);
+      g[i]->SetMarkerStyle(7);
+      char buffer[100];
+      sprintf(buffer, ";%s;tagging efficiency", h->GetXaxis()->GetTitle());
+      g[i]->SetTitle(buffer);
+      g[i]->Write();
    }
 
    f->Close();
    return f;
 }
 
-void makeStackPlot()
-{
-   TFile * f_data = TFile::Open("./outputHists/SingleMuon_2018D.root");
-   TH1D * h_data = (TH1D*)f_data->Get("h_pt");
-
-   double mcsum = 0.;
-
-   const int nmc = 4;
-   const TString samples[nmc] = {"TTJets", "DYJetsToEEMuMu_M50", "DYJetsToTauTau_M50", "WJetsToLNu"};
-   TH1D * h_mc[nmc];
-   THStack * s = new THStack("s", "");
-   for (int i = 0; i < nmc; ++i) {
-      TFile * f = TFile::Open("./outputHists/"+samples[i]+".root");
-      h_mc[i] = (TH1D*)f->Get("h_pt");
-      h_mc[i]->SetFillColor(2+i);
-      s->Add(h_mc[i]);
-      mcsum += h_mc[i]->Integral();
-   }
-   TCanvas * c = new TCanvas("c_makeStackPlots", "", 400, 400);
-   h_data->Draw("PE");
-   s->Draw("SAME, HIST");
-   h_data->Draw("PE, SAME");
-   h_data->SetMarkerStyle(20);
-   h_data->SetStats(0);
-   c->SetLogy();
-   h_data->SetMinimum(100.);
-   h_data->SetMaximum(10000000.);
-
-   TLegend * l = new TLegend(0.5, 0.6, 0.875, 0.875);
-   l->SetBorderSize(0); 
-   l->AddEntry(h_data, "data", "P");
-   for (int i = 0; i < nmc; ++i) l->AddEntry(h_mc[i], samples[i], "F");
-   l->Draw();
-
-   std::cout << "expected background composition: " << std::endl;
-   for (int i = 0; i < nmc; ++i) {
-      const double h_integral = h_mc[i]->Integral();
-      std::cout << samples[i] << " " << h_integral << " " << h_integral/mcsum << std::endl;
-   }
-   c->SaveAs("./plots/fakerate_tauptdenom.pdf");
-}
-
 void jetFake()
 {
-   runPoint("SingleMuon_2018D");
+   std::cout << "jetFake()" << std::endl;
+   TH1D * h = new TH1D("h", ";#tau_{h} p_{T} [GeV];events / 10 GeV", 10, 20., 120.);
+   const TString var = "Tau_pt[MuTauProducer_TauIdx]";
 
-   const int nmc = 4;
-   const TString samples[nmc] = {"WJetsToLNu", "DYJetsToEEMuMu_M50", "DYJetsToTauTau_M50", "TTJets"};
-   const double lumi = 31742.979;
+   runPoint("SingleMuon_2018D", h, var);
+
+   const int nmc = 5;
+   const double lumi = 31742.979; //https://twiki.cern.ch/CMS/RA2b13TeVProduction
+   TString samples[nmc] = {"TTJets", "DYJetsToEEMuMu_M50", "DYJetsToTauTau_M50", "QCD", "WJetsToLNu"};
    double xsweight[nmc];
-   xsweight[0] = lumi * 61334.9 / 71026861.;
+   xsweight[0] = lumi * 831.76 / 10244307.;
    xsweight[1] = lumi * 6025.2 / 100194597.;
    xsweight[2] = lumi * 6025.2 / 100194597.;
-   xsweight[3] = lumi * 831.76 / 10244307.;
-   for (int i = 0; i < nmc; ++i) runPoint(samples[i], xsweight[i]);
-
-   makeStackPlot();
+   xsweight[3] = lumi * 239400.0 / 22165320.;
+   xsweight[4] = lumi * 61334.9 / 70454125.;
+   for (int i = 0; i < nmc; ++i) runPoint(samples[i], h, var, xsweight[i]);
 
    TFile * f_cleanData = bkgSubtractedData();
    makePlots();
