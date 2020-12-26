@@ -1,7 +1,8 @@
 import json
 import os
 
-infile = 'datasets.json'
+infile = 'datasamples.json'
+#infile = 'mcsamples.json'
 
 with open(infile) as json_file:
 
@@ -17,7 +18,7 @@ with open(infile) as json_file:
       f.write("\n")
       
       f.write("config.section_('General')\n")
-      f.write("config.General.requestName = 'tauHats_"+p['name']+"'\n")
+      f.write("config.General.requestName = 'cmsdas_"+p['name']+"'\n")
       f.write("config.General.workArea = 'crab_projects'\n")
       f.write("config.General.transferOutputs = True\n")
       f.write("config.General.transferLogs = True\n")
@@ -40,7 +41,7 @@ with open(infile) as json_file:
       #f.write("config.Data.splitting='Automatic'\n")
       f.write("config.Data.splitting = 'FileBased'\n")
       f.write("config.Data.unitsPerJob = 1\n")
-      f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_11122020/'\n")
+      f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_23122020/'\n")
       f.write("config.Data.publication = False\n")
       f.write("\n")
 

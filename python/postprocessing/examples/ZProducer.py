@@ -19,8 +19,6 @@ class ZProducer(Module):
         self.out.branch("ZProducer_MuMuMass", "F")
         self.out.branch("ZProducer_EEHavePair", "I")
         self.out.branch("ZProducer_EEMass", "F")
-        self.out.branch("ZProducer_TauTauHavePair", "I")
-        self.out.branch("ZProducer_TauTauMass", "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -62,24 +60,6 @@ class ZProducer(Module):
                                 MuMuHavePair = MuMuHavePair+1
         self.out.fillBranch("ZProducer_MuMuHavePair", MuMuHavePair)
         self.out.fillBranch("ZProducer_MuMuMass", MuMuMass)
-       
-
-        #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html#Tau
-        TauTauHavePair = 0
-        TauTauMass = 0
-        taus = Collection(event, "Tau")
-        for i, t1 in enumerate(taus):
-            for j, t2 in enumerate(taus):
-                if i>j:
-                    t1Id = (32&t1.idDeepTau2017v2p1VSjet) and (8&t1.idDeepTau2017v2p1VSmu) and (128&t1.idDeepTau2017v2p1VSe) and not (t1.decayMode==5 or t1.decayMode==6)
-                    if t1.pt>=20. and abs(t1.eta)<2.3 and t1Id:
-                        t2Id = (32&t2.idDeepTau2017v2p1VSjet) and (8&t2.idDeepTau2017v2p1VSmu) and (128&t2.idDeepTau2017v2p1VSe) and not (t2.decayMode==5 or t2.decayMode==6)
-                        if t2.pt>=20. and abs(t2.eta)<2.3 and t2Id:
-                            if (t1.charge*t2.charge<0 and deltaR(t1, t2)>=0.1):
-                                TauTauMass = (t1.p4()+t2.p4()).M()
-                                TauTauHavePair = TauTauHavePair+1
-        self.out.fillBranch("ZProducer_TauTauHavePair", TauTauHavePair)
-        self.out.fillBranch("ZProducer_TauTauMass", TauTauMass)
 
         return True
 

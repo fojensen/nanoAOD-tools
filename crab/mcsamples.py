@@ -2,9 +2,6 @@ import json
 
 data = {}
 data['people'] = []
-isMC_ = True
-year_ = "2018"
-
 
 #data['people'].append({
 #    'name': 'DYJetsToLL_M-10to50',
@@ -222,36 +219,5 @@ data['people'].append({
 #    'year': year_,
 #})
 
-lumiMask = 'Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt'
-
-#data['people'].append({
-#   'name': 'SingleMuon_Run2018A',
-#   'inputDataset': '/SingleMuon/Run2018A-02Apr2020-v1/NANOAOD',
-#   'lumiMask': lumiMask,
-#   'nFiles': '225',
-#})
-
-#data['people'].append({
-#   'name': 'SingleMuon_Run2018B',
-#   'inputDataset': '/SingleMuon/Run2018B-02Apr2020-v1/NANOAOD',
-#   'lumiMask': lumiMask,
-#   'nFiles': '110',
-#})
-
-#data['people'].append({
-#   'name': 'SingleMuon_Run2018C',
-#   'inputDataset': '/SingleMuon/Run2018C-02Apr2020-v1/NANOAOD',
-#   'lumiMask': lumiMask,
-#   'nFiles': '79',
-#})
-
-data['people'].append({
-   'name': 'SingleMuon_Run2018D',
-   'inputDataset': '/SingleMuon/Run2018D-02Apr2020-v1/NANOAOD',
-   'lumiMask': lumiMask,
-   'nFiles': '293',
-})
-
-with open('datasets.json', 'w') as outfile:
+with open('mcsamples.json', 'w') as outfile:
    json.dump(data, outfile)
-

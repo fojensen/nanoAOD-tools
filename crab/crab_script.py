@@ -7,7 +7,10 @@ import os
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import * 
 
 #this takes care of converting the input files from CRAB
-from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import inputFiles#,runsAndLumis
+from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import inputFiles
+from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import runsAndLumis
+
+import sys
 
 #testfile = [
     #"root://cmsxrootd.fnal.gov///store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019-v1/100000/76BEBA77-9DDB-8144-A183-5842729F006D.root"
@@ -16,40 +19,47 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import inputF
     #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/9E6A9BA6-C187-0F4E-8A45-01B2F2F33E11.root", #small W file
     #"root://cmsxrootd.fnal.gov///store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root" #large W file
     #"root://cmsxrootd.fnal.gov//store/user/fojensen/EmbeddedSamples_08052020/Embedded_2018D.root"
+#    "root://cmsxrootd.fnal.gov//store/user/fojensen/cmsdasskims/SingleMuon_2018.root"
 #]
 #print testfile
 
-cut_TT = "Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (1&Tau_idDeepTau2017v2p1VSmu) && (1&Tau_idDeepTau2017v2p1VSe))>=2"
-cut_ET = "Sum$(TMath::Abs(Electron_eta)<2.5  && Electron_pt>=12. && Electron_mvaFall17V2Iso_WPL)>0 && Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (1&Tau_idDeepTau2017v2p1VSmu) && (1&Tau_idDeepTau2017v2p1VSe))>0"
-cut_MT = "Sum$(TMath::Abs(Muon_eta)<2.4 && Muon_pt>=8. && Muon_looseId && Muon_pfIsoId>=1)>0 && Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (1&Tau_idDeepTau2017v2p1VSmu) && (1&Tau_idDeepTau2017v2p1VSe))>0"
-#cut_EM = "Sum$(TMath::Abs(Electron_eta)<2.5 && Electron_pt>=12. && Electron_mvaFall17V2Iso_WPL)>0 && Sum$(TMath::Abs(Muon_eta)<2.4 && Muon_pt>=8. && Muon_looseId && Muon_pfIsoId>=1)>0"
+cut_TauTau = "Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (1&Tau_idDeepTau2017v2p1VSmu) && (1&Tau_idDeepTau2017v2p1VSe))>=2"
+cut_Tau    = "Sum$(Tau_pt>=180. && TMath::Abs(Tau_eta)<2.1 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (1&Tau_idDeepTau2017v2p1VSmu) && (1&Tau_idDeepTau2017v2p1VSe))>=1"
+cut_TauMET = "Sum$(Tau_pt>=50. && TMath::Abs(Tau_eta)<2.1 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (1&Tau_idDeepTau2017v2p1VSmu) && (1&Tau_idDeepTau2017v2p1VSe))>=1 && MET_pt>=90."
+cut_EleTau = "Sum$(TMath::Abs(Electron_eta)<2.5  && Electron_pt>=12. && (Electron_mvaFall17V2Iso_WPL||Electron_mvaFall17V2noIso_WPL))>0 && Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (1&Tau_idDeepTau2017v2p1VSmu) && (1&Tau_idDeepTau2017v2p1VSe))>0"
+cut_MuoTau = "Sum$(TMath::Abs(Muon_eta)<2.4 && Muon_pt>=8. && Muon_looseId && Muon_pfIsoId>=1)>0 && Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (1&Tau_idDeepTau2017v2p1VSmu) && (1&Tau_idDeepTau2017v2p1VSe))>0"
+#cut_EleMuo = "Sum$(TMath::Abs(Electron_eta)<2.5 && Electron_pt>=12. && (Electron_mvaFall17V2Iso_WPL||Electron_mvaFall17V2noIso_WPL))>0 && Sum$(TMath::Abs(Muon_eta)<2.4 && Muon_pt>=8. && Muon_looseId && Muon_pfIsoId>=1)>0"
 #https://twiki.cern.ch/CMS/MissingETOptionalFiltersRun2
 cut_Flag = "(Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter)"
-
-cut_ = "("+ cut_TT + " || " + cut_ET + " || " + cut_MT + ") && " + cut_Flag
-print cut_
+cut_ = "("+ cut_TauTau + " || " + cut_Tau + " || " + cut_TauMET + " || " + cut_EleTau + " || " + cut_MuoTau + ") && " + cut_Flag
+#print cut_
 
 from PhysicsTools.NanoAODTools.postprocessing.examples.MuTauProducer import MuTauProducerConstr
+#from PhysicsTools.NanoAODTools.postprocessing.examples.MuTauProducer import ETauProducerConstr
+#from PhysicsTools.NanoAODTools.postprocessing.examples.MuTauProducer import TauTauProducerConstr
 from PhysicsTools.NanoAODTools.postprocessing.examples.ZProducer import ZProducerConstr
 from PhysicsTools.NanoAODTools.postprocessing.examples.JetProducer import JetProducerConstr
 modules_ = [MuTauProducerConstr(), ZProducerConstr(), JetProducerConstr()]
 
 #isMC = True
 #if isMC:
-    #from PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer import puWeight_2018
-    #modules_.append(puWeight_2018())
+#from PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer import puWeight_2018
+#modules_.append(puWeight_2018())
+
+print "running on %s" % sys.argv[1]
 
 p=PostProcessor(
     outputDir = "./",
-    inputFiles = inputFiles(),
-    #inputFiles = testfile,
-    cut = cut_,
+    #inputFiles = inputFiles(),
+    inputFiles = [sys.argv[1]],
+    #cut = cut_,
     modules = modules_,
-    #maxEntries = 100000,
+    #maxEntries = 10000,
     provenance = True,
     fwkJobReport = True,
     #jsonInput = runsAndLumis(),
-    outputbranchsel = "keep_and_drop.txt"
+    #outputbranchsel = "keep_and_drop.txt"
+    outputbranchsel = "keep_all.txt"
 )
 p.run()
 
@@ -57,4 +67,3 @@ now = datetime.datetime.now()
 print ("Finish date and time: ", now.strftime("%Y-%m-%d %H:%M:%S"))
 duration = now - then
 print ("Total seconds elapsed: ", duration.total_seconds())
-
