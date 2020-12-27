@@ -41,8 +41,8 @@ class ZProducer(Module):
                             if (e1.charge*e2.charge<0 and deltaR(e1, e2)>=0.1):
                                 EEMass = (e1.p4()+e2.p4()).M()
                                 EEHavePair = EEHavePair+1
-        self.out.fillBranch("ZProducer_EEHavePair", EEHavePair)
-        self.out.fillBranch("ZProducer_EEMass", EEMass)
+        if EEMass>=50.:
+            return False
 
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html#Muon
         MuMuHavePair = 0
@@ -58,9 +58,13 @@ class ZProducer(Module):
                             if (mu1.charge*mu2.charge<0 and deltaR(mu1, mu2)>=0.1):
                                 MuMuMass = (mu1.p4()+mu2.p4()).M()
                                 MuMuHavePair = MuMuHavePair+1
+        if MuMuMass>=50.:
+             return False
+
+        self.out.fillBranch("ZProducer_EEHavePair", EEHavePair)
+        self.out.fillBranch("ZProducer_EEMass", EEMass)
         self.out.fillBranch("ZProducer_MuMuHavePair", MuMuHavePair)
         self.out.fillBranch("ZProducer_MuMuMass", MuMuMass)
-
         return True
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed

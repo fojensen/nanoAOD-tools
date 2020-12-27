@@ -18,8 +18,7 @@ import sys
     #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/109AFD23-2019-E447-8070-8FA4B9203018.root" # large DY file
     #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/9E6A9BA6-C187-0F4E-8A45-01B2F2F33E11.root", #small W file
     #"root://cmsxrootd.fnal.gov///store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root" #large W file
-    #"root://cmsxrootd.fnal.gov//store/user/fojensen/EmbeddedSamples_08052020/Embedded_2018D.root"
-#    "root://cmsxrootd.fnal.gov//store/user/fojensen/cmsdasskims/SingleMuon_2018.root"
+    #"root://cmsxrootd.fnal.gov//store/user/fojensen/cmsdasskims/SingleMuon_2018D.root"
 #]
 #print testfile
 
@@ -34,12 +33,10 @@ cut_Flag = "(Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HB
 cut_ = "("+ cut_TauTau + " || " + cut_Tau + " || " + cut_TauMET + " || " + cut_EleTau + " || " + cut_MuoTau + ") && " + cut_Flag
 #print cut_
 
-from PhysicsTools.NanoAODTools.postprocessing.examples.MuTauProducer import MuTauProducerConstr
-#from PhysicsTools.NanoAODTools.postprocessing.examples.MuTauProducer import ETauProducerConstr
-#from PhysicsTools.NanoAODTools.postprocessing.examples.MuTauProducer import TauTauProducerConstr
 from PhysicsTools.NanoAODTools.postprocessing.examples.ZProducer import ZProducerConstr
+from PhysicsTools.NanoAODTools.postprocessing.examples.MuTauProducer import MuTauProducerConstr
 from PhysicsTools.NanoAODTools.postprocessing.examples.JetProducer import JetProducerConstr
-modules_ = [MuTauProducerConstr(), ZProducerConstr(), JetProducerConstr()]
+modules_ = [ZProducerConstr(), MuTauProducerConstr(), JetProducerConstr()]
 
 #isMC = True
 #if isMC:
