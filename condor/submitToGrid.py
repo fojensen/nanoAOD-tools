@@ -30,9 +30,9 @@ os.system(cmdmv)
 os.chdir("%s/src/PhysicsTools/NanoAODTools/condor" % os.getenv("CMSSW_BASE"))
 
 inputDatasets = ['DYJetsToLL_M50', 'TTJets', 'WJetsToLNu']
-inputDatasets += ['SingleMuon_2018A', 'SingleMuon_2018B', 'SingleMuon_2018C', 'SingleMuon_2018D']
-inputDatasets += ['EGamma_2018A', 'EGamma_2018B', 'EGamma_2018C', 'EGamma_2018D']
-inputDatasets += ['Tau_2018A', 'Tau_2018B', 'Tau_2018C', 'Tau_2018D']
+inputDatasets += ['SingleMuon_2018A', 'SingleMuon_2018B', 'SingleMuon_2018C', 'SingleMuon_2018D_1', 'SingleMuon_2018D_2']
+inputDatasets += ['EGamma_2018A', 'EGamma_2018B', 'EGamma_2018C', 'EGamma_2018D_1', 'EGamma_2018D_2']
+inputDatasets += ['Tau_2018A', 'Tau_2018B', 'Tau_2018C', 'Tau_2018D_1', 'Tau_2018D_2']
 
 for dataset in inputDatasets:
     print("%s_%s" % (dataset, ui))
