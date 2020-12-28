@@ -8,7 +8,7 @@ from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR, deltaPhi
 #from ROOT import TLorentzVector
 import math
 
-class MuTauProducer(Module):
+class ElTauProducer(Module):
     def __init__(self):
         pass
     def beginJob(self):
@@ -17,14 +17,14 @@ class MuTauProducer(Module):
         pass
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.out = wrappedOutputTree
-        self.out.branch("MuTau_HavePair", "I")
-        self.out.branch("MuTau_qq", "I")
-        self.out.branch("MuTau_MuIdx", "I")
-        self.out.branch("MuTau_TauIdx", "I")
-        self.out.branch("MuTau_mT", "F")
-        self.out.branch("MuTau_Mass", "F")
-        self.out.branch("MuTau_Pt", "F")
-        self.out.branch("MuTau_DeltaR", "F")
+        self.out.branch("ElTau_HavePair", "I")
+        self.out.branch("ElTau_qq", "I")
+        self.out.branch("ElTau_ElIdx", "I")
+        self.out.branch("ElTau_TauIdx", "I")
+        self.out.branch("ElTau_mT", "F")
+        self.out.branch("ElTau_Mass", "F")
+        self.out.branch("ElTau_Pt", "F")
+        self.out.branch("ElTau_DeltaR", "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -35,7 +35,7 @@ class MuTauProducer(Module):
 
         HavePair = 0
         qq = 0
-        MuIdx = -1
+        ElIdx = -1
         TauIdx = -1
         mT = 0
         Mass = 0
@@ -43,16 +43,16 @@ class MuTauProducer(Module):
         DeltaR = 0
  
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html
-        muons = Collection(event, "Muon")
+        electrons = Collection(event, "Electron")
         taus = Collection(event, "Tau")
  
         #https://twiki.cern.ch/CMS/SWGuideMuonIdRun2 
-        goodMuonIdx = []
-        for i, mu in enumerate(muons):
-            muonID = mu.tightId and (mu.pfIsoId>=4)
-            if abs(mu.eta)<2.4 and muonID:
-                goodMuonIdx.append(i)
-        nGoodMuon = len(goodMuonIdx)
+        goodElectronIdx = []
+        for i, el in enumerate(electrons):
+            elID = el.mvaFall17V2Iso_WP90
+            if abs(el.eta)<2.5 and elID:
+                goodElectronIdx.append(i)
+        nGoodElectron = len(goodElectronIdx)
 
         #https://twiki.cern.ch/CMS/TauIDRecommendationForRun2
         goodTauIdx = []
@@ -63,37 +63,37 @@ class MuTauProducer(Module):
         nGoodTau = len(goodTauIdx)
 
         maxtauiso = 0
-        maxmupt = 0
-        for i, mu in enumerate(muons):
-            if i in goodMuonIdx:
+        maxelectronpt = 0
+        for i, el in enumerate(electrons):
+            if i in goodElectronIdx:
                 for j, tau in enumerate(taus):
                     if j in goodTauIdx:
-                        if deltaR(mu, tau)>=0.4:
-                             if (mu.pt>=maxmupt) and (tau.idDeepTau2017v2p1VSjet>=maxtauiso):
-                                 DeltaR = deltaR(mu, tau)
-                                 qq = mu.charge*tau.charge
-                                 MuIdx = i
+                        if deltaR(el, tau)>=0.4:
+                             if el.pt>=maxelectronpt and tau.idDeepTau2017v2p1VSjet>=maxtauiso:
+                                 DeltaR = deltaR(el, tau)
+                                 qq = el.charge*tau.charge
+                                 ElIdx = i
                                  TauIdx = j
-                                 Mass = (mu.p4()+tau.p4()).M()
-                                 Pt =  (mu.p4()+tau.p4()).Pt()
+                                 Mass = (el.p4()+tau.p4()).M()
+                                 Pt =  (el.p4()+tau.p4()).Pt()
                                  HavePair = HavePair + 1
-                                 mT = 2. * event.MET_pt * mu.pt * (1-math.cos(deltaPhi(event.MET_phi, mu.phi)))
+                                 mT = 2. * event.MET_pt * el.pt * (1-math.cos(deltaPhi(event.MET_phi, el.phi)))
                                  mT = math.sqrt(mT)
                                  maxtauiso = tau.idDeepTau2017v2p1VSjet
-                                 maxmupt = mu.pt
+                                 maxelectronpt = el.pt
 
-        self.out.fillBranch("MuTau_HavePair", HavePair)
-        self.out.fillBranch("MuTau_qq", qq)
-        self.out.fillBranch("MuTau_MuIdx", MuIdx)
-        self.out.fillBranch("MuTau_TauIdx", TauIdx)
-        self.out.fillBranch("MuTau_mT", mT)
-        self.out.fillBranch("MuTau_Mass", Mass)
-        self.out.fillBranch("MuTau_Pt", Pt)
-        self.out.fillBranch("MuTau_DeltaR", DeltaR)
-        return True, MuIdx, TauIdx
+        self.out.fillBranch("ElTau_HavePair", HavePair)
+        self.out.fillBranch("ElTau_qq", qq)
+        self.out.fillBranch("ElTau_ElIdx", ElIdx)
+        self.out.fillBranch("ElTau_TauIdx", TauIdx)
+        self.out.fillBranch("ElTau_mT", mT)
+        self.out.fillBranch("ElTau_Mass", Mass)
+        self.out.fillBranch("ElTau_Pt", Pt)
+        self.out.fillBranch("ElTau_DeltaR", DeltaR)
+        return True, ElIdx, TauIdx
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-MuTauProducerConstr = lambda : MuTauProducer(
+ElTauProducerConstr = lambda : ElTauProducer(
 )
 

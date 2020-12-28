@@ -12,14 +12,14 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import runsAn
 
 import sys
 
-#testfile = [
+testfile = [
     #"root://cmsxrootd.fnal.gov///store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019-v1/100000/76BEBA77-9DDB-8144-A183-5842729F006D.root"
-    #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/C00024AD-3D0D-DE45-949F-E56A81BDDCA7.root" # small DY file
+    "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/C00024AD-3D0D-DE45-949F-E56A81BDDCA7.root" # small DY file
     #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/109AFD23-2019-E447-8070-8FA4B9203018.root" # large DY file
     #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/9E6A9BA6-C187-0F4E-8A45-01B2F2F33E11.root", #small W file
     #"root://cmsxrootd.fnal.gov///store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root" #large W file
     #"root://cmsxrootd.fnal.gov//store/user/fojensen/cmsdasskims/SingleMuon_2018D.root"
-#]
+]
 #print testfile
 
 cut_TauTau = "Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (1&Tau_idDeepTau2017v2p1VSmu) && (1&Tau_idDeepTau2017v2p1VSe))>=2"
@@ -34,21 +34,26 @@ cut_ = "("+ cut_TauTau + " || " + cut_Tau + " || " + cut_TauMET + " || " + cut_E
 #print cut_
 
 from PhysicsTools.NanoAODTools.postprocessing.examples.ZProducer import ZProducerConstr
+from PhysicsTools.NanoAODTools.postprocessing.examples.ElTauProducer import ElTauProducerConstr
 from PhysicsTools.NanoAODTools.postprocessing.examples.MuTauProducer import MuTauProducerConstr
+from PhysicsTools.NanoAODTools.postprocessing.examples.TauTauProducer import TauTauProducerConstr
 from PhysicsTools.NanoAODTools.postprocessing.examples.JetProducer import JetProducerConstr
-modules_ = [ZProducerConstr(), MuTauProducerConstr(), JetProducerConstr()]
+modules_ = [ZProducerConstr(), MuTauProducerConstr(), ElTauProducerConstr(), TauTauProducerConstr(), JetProducerConstr()]
 
 #isMC = True
 #if isMC:
 #from PhysicsTools.NanoAODTools.postprocessing.modules.common.puWeightProducer import puWeight_2018
 #modules_.append(puWeight_2018())
 
-print "running on %s" % sys.argv[1]
+#if len(sys.argv)>1:
+#    print "running on %s" % sys.argv[1]
+#else:
 
 p=PostProcessor(
     outputDir = "./",
     #inputFiles = inputFiles(),
     inputFiles = [sys.argv[1]],
+    #inputFiles = testfile,
     #cut = cut_,
     modules = modules_,
     #maxEntries = 10000,

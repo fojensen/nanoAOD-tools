@@ -12,6 +12,8 @@ keep event
 keep run
 keep luminosityBlock
 keep MuTauProducer*
+keep ElTauProducer*
+keep TauTauProducer*
 keep ZProducer*
 keep puWeight*
 keep Pileup*
