@@ -49,8 +49,8 @@ class MuTauProducer(Module):
         #https://twiki.cern.ch/CMS/SWGuideMuonIdRun2 
         goodMuonIdx = []
         for i, mu in enumerate(muons):
-            muonID = mu.tightId and (mu.pfIsoId>=4)
-            if abs(mu.eta)<2.4 and muonID:
+            muonID = mu.tightId
+            if mu.pt>=27. and abs(mu.eta)<2.4 and muonID:
                 goodMuonIdx.append(i)
         nGoodMuon = len(goodMuonIdx)
 
@@ -63,13 +63,13 @@ class MuTauProducer(Module):
         nGoodTau = len(goodTauIdx)
 
         maxtauiso = 0
-        maxmupt = 0
+        maxmuiso = 0
         for i, mu in enumerate(muons):
             if i in goodMuonIdx:
                 for j, tau in enumerate(taus):
                     if j in goodTauIdx:
                         if deltaR(mu, tau)>=0.4:
-                             if (mu.pt>=maxmupt) and (tau.idDeepTau2017v2p1VSjet>=maxtauiso):
+                             if (mu.pfIsoId>=maxmuiso) and (tau.idDeepTau2017v2p1VSjet>=maxtauiso):
                                  DeltaR = deltaR(mu, tau)
                                  qq = mu.charge*tau.charge
                                  MuIdx = i
@@ -80,7 +80,7 @@ class MuTauProducer(Module):
                                  mT = 2. * event.MET_pt * mu.pt * (1-math.cos(deltaPhi(event.MET_phi, mu.phi)))
                                  mT = math.sqrt(mT)
                                  maxtauiso = tau.idDeepTau2017v2p1VSjet
-                                 maxmupt = mu.pt
+                                 maxmuiso = mu.pfIsoId
 
         self.out.fillBranch("MuTau_HavePair", HavePair)
         self.out.fillBranch("MuTau_qq", qq)

@@ -39,9 +39,8 @@ void splitDY()
 {
    //const TString testfile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/C00024AD-3D0D-DE45-949F-E56A81BDDCA7.root";
    //const TString testfile ="C00024AD-3D0D-DE45-949F-E56A81BDDCA7.root";
-   //runPoint(testfile, "ll.root", "tautau.root"); 
+   //runPoint(testfile, "ll.root", "tautau.root");
 
-   runPoint("./outputData/DYJetsToLL_M50.root", "./outputData/DYJetsToEEMuMu_M50.root", "./outputData/DYJetsToTauTau_M50.root");
-   //runPoint("./outputData/DYJetsToLL_M10to50.root", "./outputData/DYJetsToEEMuMu_M10to50.root", "./outputData/DYJetsToTauTau_M10to50.root");
+   runPoint("root://cmseos.fnal.gov//store/user/fojensen/cmsdasskims/DYJetsToLL_M50.root", "./outputData/DYJetsToEEMuMu_M50.root", "./outputData/DYJetsToTauTau_M50.root");
 }
 

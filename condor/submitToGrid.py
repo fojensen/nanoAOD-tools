@@ -6,7 +6,7 @@ import os
 #make ui
 import datetime as dt
 a = dt.datetime.now()
-ui = int(a.strftime('%Y%m%d%H%M%S'))
+ui = int(a.strftime('%d%H%M%S'))
 
 condordir = "condor_project_%s" % ui
 if not os.path.isdir(condordir):
@@ -29,10 +29,10 @@ cmdmv = "mv PhysicsTools_%s.tgz ./PhysicsTools/NanoAODTools/condor/%s" % (ui, co
 os.system(cmdmv)
 os.chdir("%s/src/PhysicsTools/NanoAODTools/condor" % os.getenv("CMSSW_BASE"))
 
-inputDatasets = ['DYJetsToLL_M50', 'TTJets', 'WJetsToLNu', 'QCD_Pt20toInf_MuEnrichedPt15']
-inputDatasets += ['SingleMuon_2018A', 'SingleMuon_2018B', 'SingleMuon_2018C', 'SingleMuon_2018D_1', 'SingleMuon_2018D_2']
-inputDatasets += ['EGamma_2018A', 'EGamma_2018B', 'EGamma_2018C', 'EGamma_2018D_1', 'EGamma_2018D_2']
-inputDatasets += ['Tau_2018A', 'Tau_2018B', 'Tau_2018C', 'Tau_2018D_1', 'Tau_2018D_2']
+inputDatasets = ['DYJetsToTauTau_M50', 'DYJetsToEEMuMu_M50', 'TTJets', 'WJetsToLNu', 'QCD_Pt20toInf_MuEnrichedPt15']
+inputDatasets += ['SingleMuon_2018A_1', 'SingleMuon_2018A_2', 'SingleMuon_2018B_1', 'SingleMuon_2018B_2', 'SingleMuon_2018C_1', 'SingleMuon_2018C_2', 'SingleMuon_2018D_1', 'SingleMuon_2018D_2']
+#inputDatasets += ['EGamma_2018A_1', 'EGamma_2018A_2', 'EGamma_2018B_1', 'EGamma_2018B_2', 'EGamma_2018C_1', 'EGamma_2018C_2', 'EGamma_2018D_1', 'EGamma_2018D_2']
+inputDatasets += ['Tau_2018A_1', 'Tau_2018A_2', 'Tau_2018B_1', 'Tau_2018B_2', 'Tau_2018C_1', 'Tau_201C_2', 'Tau_2018D_1', 'Tau_2018D_2', 'Tau_2018D_3']
 
 for dataset in inputDatasets:
     print("%s_%s" % (dataset, ui))

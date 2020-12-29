@@ -53,7 +53,7 @@ class JetProducer(Module):
                     dr_1 = deltaR(jet, taus[event.TauTau_Tau0Idx])
                     dr_2 = deltaR(jet, taus[event.TauTau_Tau1Idx])
 
-                if dr_1>=0.4 and dr_1>=0.4:
+                if dr_1>=0.4 and dr_2>=0.4:
                     JetProducer_nJet = JetProducer_nJet + 1
                     JetProducer_HT += jet.pt
                     if jet.btagDeepB>=0.1241:

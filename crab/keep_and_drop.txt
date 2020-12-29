@@ -4,19 +4,21 @@ keep Electron*
 keep Muon*
 keep Tau*
 keep Jet*
+keep Photon*
 keep MET*
 keep GenPart*
 keep GenVisTau*
 keep GenJet*
 keep event
 keep run
+keep Pileup*
 keep luminosityBlock
+
 keep MuTauProducer*
 keep ElTauProducer*
 keep TauTauProducer*
 keep ZProducer*
 keep puWeight*
-keep Pileup*
 
 keep HLT_IsoMu24
 keep HLT_IsoMu27

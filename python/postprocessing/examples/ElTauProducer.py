@@ -49,8 +49,8 @@ class ElTauProducer(Module):
         #https://twiki.cern.ch/CMS/SWGuideMuonIdRun2 
         goodElectronIdx = []
         for i, el in enumerate(electrons):
-            elID = el.mvaFall17V2Iso_WP90
-            if abs(el.eta)<2.5 and elID:
+            elID = 1>0
+            if el.pt>=32. and abs(el.eta)<2.5 and elID:
                 goodElectronIdx.append(i)
         nGoodElectron = len(goodElectronIdx)
 
@@ -63,13 +63,13 @@ class ElTauProducer(Module):
         nGoodTau = len(goodTauIdx)
 
         maxtauiso = 0
-        maxelectronpt = 0
+        maxelectronid = -1
         for i, el in enumerate(electrons):
             if i in goodElectronIdx:
                 for j, tau in enumerate(taus):
                     if j in goodTauIdx:
                         if deltaR(el, tau)>=0.4:
-                             if el.pt>=maxelectronpt and tau.idDeepTau2017v2p1VSjet>=maxtauiso:
+                             if el.mvaFall17V2Iso>=maxelectronid and tau.idDeepTau2017v2p1VSjet>=maxtauiso:
                                  DeltaR = deltaR(el, tau)
                                  qq = el.charge*tau.charge
                                  ElIdx = i
@@ -80,7 +80,7 @@ class ElTauProducer(Module):
                                  mT = 2. * event.MET_pt * el.pt * (1-math.cos(deltaPhi(event.MET_phi, el.phi)))
                                  mT = math.sqrt(mT)
                                  maxtauiso = tau.idDeepTau2017v2p1VSjet
-                                 maxelectronpt = el.pt
+                                 maxelectronid = el.mvaFall17V2Iso
 
         self.out.fillBranch("ElTau_HavePair", HavePair)
         self.out.fillBranch("ElTau_qq", qq)

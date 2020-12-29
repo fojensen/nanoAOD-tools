@@ -13,11 +13,12 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import runsAn
 import sys
 
 testfile = [
-    #"root://cmsxrootd.fnal.gov///store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019-v1/100000/76BEBA77-9DDB-8144-A183-5842729F006D.root"
-    "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/C00024AD-3D0D-DE45-949F-E56A81BDDCA7.root" # small DY file
+    "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv7/QCD_HT50to100_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/70000/73AF8628-CE5C-7141-B091-BBBCF3BF4333.root",
+    #"root://cmsxrootd.fnal.gov//store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019-v1/100000/76BEBA77-9DDB-8144-A183-5842729F006D.root"
+    #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/C00024AD-3D0D-DE45-949F-E56A81BDDCA7.root" # small DY file
     #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/109AFD23-2019-E447-8070-8FA4B9203018.root" # large DY file
     #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/9E6A9BA6-C187-0F4E-8A45-01B2F2F33E11.root", #small W file
-    #"root://cmsxrootd.fnal.gov///store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root" #large W file
+    #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/20000/E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root" #large W file
     #"root://cmsxrootd.fnal.gov//store/user/fojensen/cmsdasskims/SingleMuon_2018D.root"
 ]
 #print testfile
@@ -30,6 +31,7 @@ cut_MuoTau = "Sum$(TMath::Abs(Muon_eta)<2.4 && Muon_pt>=8. && Muon_looseId && Mu
 #cut_EleMuo = "Sum$(TMath::Abs(Electron_eta)<2.5 && Electron_pt>=12. && (Electron_mvaFall17V2Iso_WPL||Electron_mvaFall17V2noIso_WPL))>0 && Sum$(TMath::Abs(Muon_eta)<2.4 && Muon_pt>=8. && Muon_looseId && Muon_pfIsoId>=1)>0"
 #https://twiki.cern.ch/CMS/MissingETOptionalFiltersRun2
 cut_Flag = "(Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter)"
+#cut_Photon = "Sum$(Photon_pt>=200. && TMath::Abs(Photon_eta)<2.5 && Photon_mvaID_WP80 && !Photon_hasPixelSeed)==0" #EGamma dataset is huge!
 cut_ = "("+ cut_TauTau + " || " + cut_Tau + " || " + cut_TauMET + " || " + cut_EleTau + " || " + cut_MuoTau + ") && " + cut_Flag
 #print cut_
 
@@ -38,7 +40,11 @@ from PhysicsTools.NanoAODTools.postprocessing.examples.ElTauProducer import ElTa
 from PhysicsTools.NanoAODTools.postprocessing.examples.MuTauProducer import MuTauProducerConstr
 from PhysicsTools.NanoAODTools.postprocessing.examples.TauTauProducer import TauTauProducerConstr
 from PhysicsTools.NanoAODTools.postprocessing.examples.JetProducer import JetProducerConstr
-modules_ = [ZProducerConstr(), MuTauProducerConstr(), ElTauProducerConstr(), TauTauProducerConstr(), JetProducerConstr()]
+#modules_ = [ZProducerConstr(), MuTauProducerConstr(), ElTauProducerConstr(), TauTauProducerConstr(), JetProducerConstr()]
+
+
+from PhysicsTools.NanoAODTools.postprocessing.examples.EventAnalyzer import EventAnalyzerConstr
+modules_ = [EventAnalyzerConstr()]
 
 #isMC = True
 #if isMC:
@@ -49,19 +55,23 @@ modules_ = [ZProducerConstr(), MuTauProducerConstr(), ElTauProducerConstr(), Tau
 #    print "running on %s" % sys.argv[1]
 #else:
 
+cut_ = "Sum$(Jet_pt>=20. && TMath::Abs(Jet_eta)<2.5 && (4&Jet_jetId))>=2"
+
 p=PostProcessor(
     outputDir = "./",
     #inputFiles = inputFiles(),
-    inputFiles = [sys.argv[1]],
-    #inputFiles = testfile,
-    #cut = cut_,
+    #inputFiles = [sys.argv[1]],
+    inputFiles = testfile,
+    cut = cut_,
     modules = modules_,
-    #maxEntries = 10000,
+    maxEntries = 10000,
     provenance = True,
     fwkJobReport = True,
     #jsonInput = runsAndLumis(),
     #outputbranchsel = "keep_and_drop.txt"
-    outputbranchsel = "keep_all.txt"
+    outputbranchsel = "keep_all.txt",
+    histFileName = "myhists.root",
+    histDirName = "histdir"    
 )
 p.run()
 
