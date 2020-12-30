@@ -5,7 +5,7 @@
 #include <TCanvas.h>
 #include <TGraphAsymmErrors.h>
 #include <iostream>
-//#include <TLegend.h>
+#include <TLegend.h>
 
 void eff(const bool isSig=true)
 {
@@ -60,7 +60,7 @@ void eff(const bool isSig=true)
 
    const int n = t->GetEntries();
    std::cout << "entries in the tree: " << n << std::endl;
-   //int ndenom = 0;
+   int ndenom = 0;
    for (int i = 0; i < n; ++i) {
       if (i%100000==0) std::cout << "beginning event: " << i << std::endl;
       t->GetEntry(i);
@@ -69,7 +69,7 @@ void eff(const bool isSig=true)
             const bool tauID = (8&Tau_idDeepTau2017v2p1VSmu[j]) && (128&Tau_idDeepTau2017v2p1VSe[j]) && !(Tau_decayMode[j]==5||Tau_decayMode[j]==6);
             if (Tau_pt[j]>=20. && TMath::Abs(Tau_eta[j])<2.3 && tauID) {
                h_pt->Fill(Tau_pt[j]);
-               //++ndenom;
+               ++ndenom;
                for (int k = 0; k < 8; ++k) {
                   const int mask = 1<<k;
                   //std::cout << mask << std::endl;
@@ -83,14 +83,14 @@ void eff(const bool isSig=true)
             }
          }
       }
-      //if (ndenom>=1000) break;
+      if (ndenom>=10000) break;
    }
 
    TGraphAsymmErrors *g_pt[8];
-   //TLegend * l = new TLegend(0.25, 0.7, 0.875, 0.875);
-   //l->SetNColumns(4);
-   //l->SetBorderSize(0);
-   //const TString labels[8] = {"VVVLoose", "VVLoose" ,"VLoose" ,"Loose", "Medium", "Tight", "VTight", "VVTight"};
+   TLegend * l = new TLegend(0.25, 0.175, 0.875, 0.3);
+   l->SetNColumns(4);
+   l->SetBorderSize(0);
+   const TString labels[8] = {"VVVLoose", "VVLoose" ,"VLoose" ,"Loose", "Medium", "Tight", "VTight", "VVTight"};
    for (int i = 0; i < 8; ++i) {    
       g_pt[i] = new TGraphAsymmErrors();
       g_pt[i]->Divide(h_pt_num[i], h_pt);
@@ -100,7 +100,7 @@ void eff(const bool isSig=true)
       char buffer_pt[100];
       sprintf(buffer_pt, ";%s;tagging efficiency", h_pt->GetXaxis()->GetTitle());
       g_pt[i]->SetTitle(buffer_pt);
-      //l->AddEntry(g_pt[i], labels[i], "P");
+      l->AddEntry(g_pt[i], labels[i], "P");
    }
 
    TCanvas * c = new TCanvas("c", tag, 400, 400);
@@ -114,7 +114,7 @@ void eff(const bool isSig=true)
       c->SetLogy();
    }
    for (int i = 1; i < 8; ++i) g_pt[i]->Draw("PE, SAME");
-   //l->Draw();
+   l->Draw();
    if (isSig) {
       c->SaveAs("./plots/eff."+tag+".sig.pdf");
    } else {

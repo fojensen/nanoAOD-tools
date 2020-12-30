@@ -44,14 +44,14 @@ void taumdm_1()
          l->AddEntry(h_mass[i], title, "L");
       }
    }
-   h_mass[0]->Scale(0.16246);
+   h_mass[0]->Scale(0.1); //for plotting
    h_mass[0]->SetStats(0);
 
    TH2D * h_mdm = new TH2D("h_mdm", ";#tau_{h} mass [GeV];#tau_{h} decayMode", 40, 0., 2., 12, -0.5, 11.5);
    h_mdm->SetStats(0);
    const double n = t->Project("h_mdm", "Tau_decayMode:Tau_mass", "Tau_genPartFlav==5 && TMath::Abs(Tau_eta)<2.3 && Tau_pt>=20.");
 
-   TCanvas * c = new TCanvas("c", "taumdm", 800, 800);
+   TCanvas * c = new TCanvas("c_1", "taumdm_1", 800, 800);
    c->Divide(2, 2);
 
    TPad * p1 = (TPad*)c->cd(1);
@@ -85,7 +85,7 @@ void taumdm_1()
    h_mass[0]->SetMaximum(0.2);
    l->Draw();
 
-   c->SaveAs("./plots/taumdm.pdf");
+   c->SaveAs("./plots/taumdm_1.pdf");
 }
 
 void taumdm_2()
@@ -157,11 +157,11 @@ void taumdm_2()
       }
    }
 
-   TCanvas * c = new TCanvas("c", "c", 400, 400);
+   TCanvas * c = new TCanvas("c_2", "taumdm_2", 400, 400);
    h->Draw("COLZ");
    h->SetStats(0);
    c->SetLogz();
-   c->SaveAs("./plots/gendmdm.pdf");
+   c->SaveAs("./plots/taudmdm_2.pdf");
 }
 
 void taumdm()

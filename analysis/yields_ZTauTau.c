@@ -158,8 +158,8 @@ TFile * makeQCDHists()
    h_CoD->Divide(data_D);
 
    TH1D * h_QCD = (TH1D*)data_B->Clone("h_QCD");
-   h_QCD->Scale(CoD);
-   //h_QCD->Multiply(h_CoD);
+   //h_QCD->Scale(CoD);
+   h_QCD->Multiply(h_CoD);
  
    TCanvas * c = new TCanvas("c_makeQCDHists", "c_makeQCDHists", 400, 400);
    h_CoD->Draw("PE");
