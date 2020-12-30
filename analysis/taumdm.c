@@ -14,12 +14,12 @@ void taumdm_1()
    TFile * f = TFile::Open(infile);
    TTree * t = (TTree*)f->Get("Events");
 
-   TH1D * h_massinc = new TH1D("h_massinc", ";#tau_{h} mass [GeV];events / 0.05 GeV", 40, 0., 2.);
+   TH1D * h_massinc = new TH1D("h_massinc", ";#tau_{h} mass [GeV];#tau_{h} / 0.05 GeV", 40, 0., 2.);
    h_massinc->SetLineWidth(2);
    const double n_m = t->Project(h_massinc->GetName(), "Tau_mass", "Tau_genPartFlav==5 && TMath::Abs(Tau_eta)<2.3 && Tau_pt>=20.");
    h_massinc->Scale(1./n_m);
 
-   TH1D * h_decayMode = new TH1D("h_decayMode", ";#tau_{h} decayMode;events / 1", 12, -0.5, 11.5);
+   TH1D * h_decayMode = new TH1D("h_decayMode", ";#tau_{h} decayMode;#tau_{h} / 1", 12, -0.5, 11.5);
    h_decayMode->SetLineWidth(2);
    const double n_d = t->Project("h_decayMode", "Tau_decayMode", "Tau_genPartFlav==5 && TMath::Abs(Tau_eta)<2.3 && Tau_pt>=20.");
    h_decayMode->Scale(1./n_d);
@@ -83,6 +83,7 @@ void taumdm_1()
    }
    h_mass[0]->SetMinimum(0.);
    h_mass[0]->SetMaximum(0.2);
+   h_mass[0]->GetYaxis()->SetTitle("a.u. / 0.05 GeV");
    l->Draw();
 
    c->SaveAs("./plots/taumdm_1.pdf");
