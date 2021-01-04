@@ -30,9 +30,9 @@ os.system(cmdmv)
 os.chdir("%s/src/PhysicsTools/NanoAODTools/condor" % os.getenv("CMSSW_BASE"))
 
 inputDatasets = ['DYJetsToTauTau_M50', 'DYJetsToEEMuMu_M50', 'TTJets', 'WJetsToLNu', 'QCD_Pt20toInf_MuEnrichedPt15']
-inputDatasets += ['SingleMuon_2018A_1', 'SingleMuon_2018A_2', 'SingleMuon_2018B_1', 'SingleMuon_2018B_2', 'SingleMuon_2018C_1', 'SingleMuon_2018C_2', 'SingleMuon_2018D_1', 'SingleMuon_2018D_2']
-#inputDatasets += ['EGamma_2018A_1', 'EGamma_2018A_2', 'EGamma_2018B_1', 'EGamma_2018B_2', 'EGamma_2018C_1', 'EGamma_2018C_2', 'EGamma_2018D_1', 'EGamma_2018D_2']
-inputDatasets += ['Tau_2018A_1', 'Tau_2018A_2', 'Tau_2018B_1', 'Tau_2018B_2', 'Tau_2018C_1', 'Tau_201C_2', 'Tau_2018D_1', 'Tau_2018D_2', 'Tau_2018D_3']
+inputDatasets += ['SingleMuon_2018A_0', 'SingleMuon_2018A_1', 'SingleMuon_2018B_0', 'SingleMuon_2018B_1', 'SingleMuon_2018C_0', 'SingleMuon_2018C_1', 'SingleMuon_2018D_0', 'SingleMuon_2018D_1']
+inputDatasets += ['EGamma_2018A_0', 'EGamma_2018A_1', 'EGamma_2018A_2', 'EGamma_2018B_0', 'EGamma_2018B_1', 'EGamma_2018B_2', 'EGamma_2018C_0', 'EGamma_2018C_1', 'EGamma_2018C_2', 'EGamma_2018D_0', 'EGamma_2018D_1', 'EGamma_2018D_2']
+inputDatasets += ['Tau_2018A_0', 'Tau_2018A_1', 'Tau_2018B_0', 'Tau_2018B_1', 'Tau_2018C_0', 'Tau_2018C_1', 'Tau_2018D_0', 'Tau_2018D_1', 'Tau_2018D_2']
 
 for dataset in inputDatasets:
     print("%s_%s" % (dataset, ui))

@@ -54,7 +54,7 @@ void runPoint(const TString intag, const int nchunks)
    std::cout << "   missing entries: " << nmiss << std::endl;
 }
 
-void splitInHalf()
+void divideDataFiles()
 {
    //runPoint("QCD_Pt20toInf_MuEnrichedPt15", 3);
 
@@ -66,7 +66,7 @@ void splitInHalf()
    //runPoint("EGamma_2018A", 3);
    //runPoint("EGamma_2018B", 3);
    //runPoint("EGamma_2018C", 3);
-   //runPoint("EGamma_2018D", 3);
+   runPoint("EGamma_2018D", 4);
   
    //runPoint("Tau_2018A", 2);
    //runPoint("Tau_2018B", 2);

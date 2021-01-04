@@ -31,10 +31,10 @@ void eff(const bool isSig=true)
    TFile * f = TFile::Open(infile);
    TTree * t = (TTree*)f->Get("Events");
   
-   TH1D *h_pt = new TH1D("h_pt", ";#tau_{h} p_{T} [GeV];#tau_{h} / 10 GeV", 10, 20., 120.);
-   TH1D *h_pt_num[8];
-   for (int i = 0; i < 8; ++i) {
-      h_pt_num[i] = (TH1D*)h_pt->Clone("h_pt_num_"+TString::Itoa(i, 10));
+   TH1D *h_denom = new TH1D("h_denom", ";#tau_{h} p_{T} [GeV];#tau_{h} / 10 GeV", 10, 20., 120.);
+   TH1D *h_num[4];
+   for (int i = 0; i < 4; ++i) {
+      h_num[i] = (TH1D*)h_denom->Clone("h_num_"+TString::Itoa(i, 10));
    }
  
    UInt_t nTau = 0;
@@ -56,7 +56,7 @@ void eff(const bool isSig=true)
    t->SetBranchAddress("Tau_idDeepTau2017v2p1VSjet", Tau_idDeepTau2017v2p1VSjet);
 
    int tauMatch;
-   isSig ? tauMatch=5 : tauMatch=0;
+   isSig ? tauMatch=5 : tauMatch=2;
 
    const int n = t->GetEntries();
    std::cout << "entries in the tree: " << n << std::endl;
@@ -66,16 +66,16 @@ void eff(const bool isSig=true)
       t->GetEntry(i);
       for (unsigned int j = 0; j < nTau; ++j) {
          if (Tau_genPartFlav[j]==tauMatch) {
-            const bool tauID = (8&Tau_idDeepTau2017v2p1VSmu[j]) && (128&Tau_idDeepTau2017v2p1VSe[j]) && !(Tau_decayMode[j]==5||Tau_decayMode[j]==6);
+            const bool tauID = (32&Tau_idDeepTau2017v2p1VSjet[j]) && (32&Tau_idDeepTau2017v2p1VSe[j]) && !(Tau_decayMode[j]==5||Tau_decayMode[j]==6);
             if (Tau_pt[j]>=20. && TMath::Abs(Tau_eta[j])<2.3 && tauID) {
-               h_pt->Fill(Tau_pt[j]);
+               h_denom->Fill(Tau_pt[j]);
                ++ndenom;
-               for (int k = 0; k < 8; ++k) {
+               for (int k = 0; k < 4; ++k) {
                   const int mask = 1<<k;
                   //std::cout << mask << std::endl;
-                  const bool passid = mask&Tau_idDeepTau2017v2p1VSjet[j];
+                  const bool passid = mask&Tau_idDeepTau2017v2p1VSmu[j];
                   if (passid) {
-                     h_pt_num[k]->Fill(Tau_pt[j]);
+                     h_num[k]->Fill(Tau_pt[j]);
                   } else {
                      break;
                   }
@@ -86,34 +86,34 @@ void eff(const bool isSig=true)
       if (ndenom>=10000) break;
    }
 
-   TGraphAsymmErrors *g_pt[8];
+   TGraphAsymmErrors *g[4];
    TLegend * l = new TLegend(0.25, 0.175, 0.875, 0.3);
-   l->SetNColumns(4);
+   l->SetNColumns(2);
    l->SetBorderSize(0);
-   const TString labels[8] = {"VVVLoose", "VVLoose" ,"VLoose" ,"Loose", "Medium", "Tight", "VTight", "VVTight"};
-   for (int i = 0; i < 8; ++i) {    
-      g_pt[i] = new TGraphAsymmErrors();
-      g_pt[i]->Divide(h_pt_num[i], h_pt);
-      g_pt[i]->SetLineColor(i+2);
-      g_pt[i]->SetMarkerColor(i+2);
-      g_pt[i]->SetMarkerStyle(7);
-      char buffer_pt[100];
-      sprintf(buffer_pt, ";%s;tagging efficiency", h_pt->GetXaxis()->GetTitle());
-      g_pt[i]->SetTitle(buffer_pt);
-      l->AddEntry(g_pt[i], labels[i], "P");
+   const TString labels[4] = {"VLoose" ,"Loose", "Medium", "Tight"};
+   for (int i = 0; i < 4; ++i) {    
+      g[i] = new TGraphAsymmErrors();
+      g[i]->Divide(h_num[i], h_denom);
+      g[i]->SetLineColor(i+2);
+      g[i]->SetMarkerColor(i+2);
+      g[i]->SetMarkerStyle(7);
+      char buffer[100];
+      sprintf(buffer, ";%s;tagging efficiency", h_denom->GetXaxis()->GetTitle());
+      g[i]->SetTitle(buffer);
+      l->AddEntry(g[i], labels[i], "P");
    }
 
    TCanvas * c = new TCanvas("c", tag, 400, 400);
-   g_pt[0]->Draw("APE");
+   g[0]->Draw("APE");
    if (isSig) {
-      g_pt[0]->SetMinimum(0.);
-      g_pt[0]->SetMaximum(1.);
+      g[0]->SetMinimum(0.);
+      g[0]->SetMaximum(1.);
    } else {
-      g_pt[0]->SetMinimum(0.001);
-      g_pt[0]->SetMaximum(1.);
+      g[0]->SetMinimum(0.001);
+      g[0]->SetMaximum(1.);
       c->SetLogy();
    }
-   for (int i = 1; i < 8; ++i) g_pt[i]->Draw("PE, SAME");
+   for (int i = 1; i < 4; ++i) g[i]->Draw("PE, SAME");
    l->Draw();
    if (isSig) {
       c->SaveAs("./plots/eff."+tag+".sig.pdf");
