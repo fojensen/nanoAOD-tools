@@ -87,6 +87,9 @@ void makeStackPlots()
    TH1D * h_qq = new TH1D("h_qq", ";q_{#mu} * q_{#tau_{h}};events / 1", 3, -1.5, +1.5);
    runPoint(h_qq, "MuTauProducer_qq");
 
+   TH1D * h_nJet = new TH1D("h_nJet", ";# of jets;events / 1", 10, -0.5, 9.5);
+   runPoint(h_nJet, "JetProducer_nJet");
+
    TH1D * h_nBJetM = new TH1D("h_nBJetM", ";# of b-tagged jets (medium);events / 1", 5, -0.5, 4.5);
    runPoint(h_nBJetM, "JetProducer_nBJetM");
 
