@@ -11,13 +11,9 @@ void runPoint(TH1D * h, const TString var)
 {
    std::cout << "plotting " << var << std::endl;
 
-   TCut baseline = "MuTauProducer_HavePair>0 && Muon_pfIsoId[MuTauProducer_MuIdx]>=4 && (HLT_IsoMu24||HLT_IsoMu27)";
-   baseline = baseline && TCut("1&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]");
-   //baseline = baseline && TCut("ZProducer_EEHavePair==0 && ZProducer_MuMuHavePair==0 && ZProducer_TauTauHavePair==0");
-   //baseline = baseline && TCut("Sum$(Electron_pt>=10. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
-   //baseline = baseline && TCut("JetProducer_nBJetM==0");
-   //baseline = baseline && TCut("MuTauProducer_mT>=50.");
-   //baseline = baseline && TCut("MuTauProducer_Mass>=91.1876");
+   TCut baseline = "MuTauProducer_HavePair>0";
+   baseline = baseline && TCut("Muon_pfIsoId[MuTauProducer_MuIdx]>=2 && (HLT_IsoMu24||HLT_IsoMu27) && Muon_pt[MuTauProducer_MuIdx]>=27.");
+   baseline = baseline && TCut("1&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]"); //dont even bother if it doesnt pass the loosest wp
 
    TFile * f_data = TFile::Open("root://cmseos.fnal.gov//store/user/cmsdas/2021/short_exercises/Tau/SingleMuon_2018D.root");
    TTree * t_data = (TTree*)f_data->Get("Events"); 
@@ -54,17 +50,17 @@ void runPoint(TH1D * h, const TString var)
       s->Add(h_mc[i]);
    }
 
-   std::cout << "expected data composition: " << std::endl;
+   std::cout << "   expected data composition: " << std::endl;
    for (int i = 0; i < nmc; ++i) {
       const double h_integral = h_mc[i]->Integral();
-      std::cout << "   " << samples[i] << " " << h_integral << " " << h_integral/sum << std::endl;
+      std::cout << "      " << samples[i] << " " << h_integral << " " << h_integral/sum << std::endl;
    }
    
    TCanvas * c = new TCanvas("c_"+TString(h->GetName()), var, 400, 400);
    h_data->SetMarkerStyle(20);
    h_data->Draw("PE, SAME");
    h_data->SetStats(0);
-   h_data->SetMinimum(10.);
+   h_data->SetMinimum(100.);
    h_data->SetMaximum(1.e8);
    c->SetLogy();
    s->Draw("HIST, SAME");
@@ -82,8 +78,14 @@ void runPoint(TH1D * h, const TString var)
 
 void makeStackPlots()
 {
+   TH1D * h_VisMass = new TH1D("h_VisMass", ";#mu+#tau_{h} visible mass [GeV];events / 25 GeV", 10, 0., 250.);
+   runPoint(h_VisMass, "MuTauProducer_Mass");
+
    TH1D * h_mT = new TH1D("h_mT", ";m_{T} [GeV];events / 20 GeV", 10, 0., 200.);
    runPoint(h_mT, "MuTauProducer_mT");
+
+   TH1D * h_qq = new TH1D("h_qq", ";q_{#mu} * q_{#tau_{h}};events / 1", 3, -1.5, +1.5);
+   runPoint(h_qq, "MuTauProducer_qq");
 
    TH1D * h_nBJetM = new TH1D("h_nBJetM", ";# of b-tagged jets (medium);events / 1", 5, -0.5, 4.5);
    runPoint(h_nBJetM, "JetProducer_nBJetM");
@@ -91,8 +93,8 @@ void makeStackPlots()
    TH1D * h_nBJetT = new TH1D("h_nBJetT", ";# of b-tagged jets (tight);events / 1", 5, -0.5, 4.5);
    runPoint(h_nBJetT, "JetProducer_nBJetT");
 
-   TH1D * h_VisMass = new TH1D("h_VisMass", ";#mu+#tau_{h} visible mass [GeV];events / 25 GeV", 10, 0., 250.);
-   runPoint(h_VisMass, "MuTauProducer_Mass");
+   TH1D * h_pfIsoId = new TH1D("h_pfIsoId", ";Muon_pfIsoId;events / 1", 7, -0.5, 6.5);
+   runPoint(h_pfIsoId, "Muon_pfIsoId[MuTauProducer_MuIdx]");
 
    TH1D * h_nEle = new TH1D("h_nEle", ";# of electrons;events / 1", 4, -0.5, 3.5);
    runPoint(h_nEle, "Sum$(Electron_pt>=10. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)");
@@ -100,8 +102,14 @@ void makeStackPlots()
    TH1D * h_nEE = new TH1D("h_nEE", ";# of e^{+}e^{-} pairs;events / 1", 3, -0.5, 2.5);
    runPoint(h_nEE, "ZProducer_EEHavePair");
 
+   TH1D * h_nMu = new TH1D("h_nMu", ";# of muons;events / 1", 3, -0.5, 2.5);
+   runPoint(h_nMu, "Sum$(Muon_pt>=10. && TMath::Abs(Muon_eta)<2.4 && Muon_pfIsoId>=2 && Muon_mediumId)");
+
    TH1D * h_nMuMu = new TH1D("h_nMuMu", ";# of #mu^{+}#mu^{-} pairs;events / 1", 3, -0.5, 2.5);
    runPoint(h_nMuMu, "ZProducer_MuMuHavePair");
+
+   TH1D * h_nTau = new TH1D("h_nTau", ";# of #tau_{h};events / 1", 3, -0.5, 2.5);
+   runPoint(h_nTau, "Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && (32&Tau_idDeepTau2017v2p1VSjet) && (8&Tau_idDeepTau2017v2p1VSmu) && (32&Tau_idDeepTau2017v2p1VSe))");
 
    TH1D * h_nTauTau = new TH1D("h_nTauTau", ";# of #tau_{h}^{+}#tau_{h}^{-} pairs;events / 1", 3, -0.5, 2.5);
    runPoint(h_nTauTau, "ZProducer_TauTauHavePair");

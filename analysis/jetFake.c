@@ -16,8 +16,9 @@ TFile * runPoint(const TString tag, TH1D * h, const TString var, const double xs
    TFile *f = TFile::Open(infile);
    TTree *t = (TTree*)f->Get("Events");
 
-   TCut baseline = "MuTauProducer_HavePair>0 && Muon_pfIsoId[MuTauProducer_MuIdx]>=4 && (HLT_IsoMu24||HLT_IsoMu27)";
-   baseline = baseline && TCut("1&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]");
+   TCut baseline = "MuTauProducer_HavePair>0";
+   baseline = baseline && TCut("Muon_pfIsoId[MuTauProducer_MuIdx]>=2 && (HLT_IsoMu24||HLT_IsoMu27) && Muon_pt[MuTauProducer_MuIdx]>=27.");
+   baseline = baseline && TCut("1&Tau_idDeepTau2017v2p1VSjet[MuTauProducer_TauIdx]"); //dont even bother if it doesnt pass the loosest wp
 
    char buffer_denom[1000];
    sprintf(buffer_denom, "%f * (%s)", xsweight, TString(baseline).Data());
