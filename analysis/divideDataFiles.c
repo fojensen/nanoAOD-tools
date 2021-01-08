@@ -63,11 +63,11 @@ void divideDataFiles()
    //runPoint("SingleMuon_2018C", 2);
    //runPoint("SingleMuon_2018D", 2);   
   
-   //runPoint("EGamma_2018A", 3);
+   runPoint("EGamma_2018A", 4);
    //runPoint("EGamma_2018B", 3);
    //runPoint("EGamma_2018C", 3);
-   runPoint("EGamma_2018D", 4);
-  
+   runPoint("EGamma_2018D", 5);
+ 
    //runPoint("Tau_2018A", 2);
    //runPoint("Tau_2018B", 2);
    //runPoint("Tau_2018C", 2);
