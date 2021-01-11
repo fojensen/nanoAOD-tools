@@ -1,3 +1,4 @@
+#include <TLine.h>
 #include <TLegend.h>
 #include <TH1D.h>
 #include <TH2D.h>
@@ -17,12 +18,12 @@ void taumdm_1()
    TH1D * h_massinc = new TH1D("h_massinc", ";#tau_{h} mass [GeV];#tau_{h} / 0.05 GeV", 40, 0., 2.);
    h_massinc->SetLineWidth(2);
    const double n_m = t->Project(h_massinc->GetName(), "Tau_mass", "Tau_genPartFlav==5 && TMath::Abs(Tau_eta)<2.3 && Tau_pt>=20.");
-   h_massinc->Scale(1./n_m);
+   h_massinc->Scale(0.648/n_m);
 
    TH1D * h_decayMode = new TH1D("h_decayMode", ";#tau_{h} decayMode;#tau_{h} / 1", 12, -0.5, 11.5);
    h_decayMode->SetLineWidth(2);
    const double n_d = t->Project("h_decayMode", "Tau_decayMode", "Tau_genPartFlav==5 && TMath::Abs(Tau_eta)<2.3 && Tau_pt>=20.");
-   h_decayMode->Scale(1./n_d);
+   h_decayMode->Scale(0.648/n_d);
 
    TH1D * h_mass[12];
    TLegend * l = new TLegend(0.5, 0.75, 0.875, 0.875);
@@ -51,6 +52,12 @@ void taumdm_1()
    h_mdm->SetStats(0);
    const double n = t->Project("h_mdm", "Tau_decayMode:Tau_mass", "Tau_genPartFlav==5 && TMath::Abs(Tau_eta)<2.3 && Tau_pt>=20.");
 
+   TLine * l1 = new TLine(0.770, 0., 0.770, 0.2);
+   l1->Draw();
+
+   TLine * l2 = new TLine(1.260, 0., 1.260, 0.2);
+   l2->Draw();
+
    TCanvas * c = new TCanvas("c_1", "taumdm_1", 800, 800);
    c->Divide(2, 2);
 
@@ -60,6 +67,8 @@ void taumdm_1()
    h_massinc->SetStats(0);
    h_massinc->SetMinimum(0.);
    h_massinc->SetMaximum(0.2);
+   l1->Draw();
+   l2->Draw();
    //p1->SetLogy();   
 
    TPad * p2 = (TPad*)c->cd(2);
@@ -74,6 +83,11 @@ void taumdm_1()
    TPad * p3 = (TPad*)c->cd(3);
    h_mdm->Draw("COLZ");
    p3->SetLogz();
+  
+   TLine * l3 = new TLine(0.770, -0.5, 0.770, 11.5);
+   l3->Draw();
+   TLine * l4 = new TLine(1.260, -0.5, 1.260, 11.5);
+   l4->Draw();
 
    TPad * p4 = (TPad*)c->cd(4);
    for (int i = 0; i < 12; ++i) {
@@ -84,7 +98,9 @@ void taumdm_1()
    h_mass[0]->SetMinimum(0.);
    h_mass[0]->SetMaximum(0.2);
    h_mass[0]->GetYaxis()->SetTitle("a.u. / 0.05 GeV");
-   l->Draw();
+   l1->Draw();
+   l2->Draw();
+   l->Draw(); 
 
    c->SaveAs("./plots/taumdm_1.pdf");
 }
