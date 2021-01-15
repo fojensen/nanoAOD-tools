@@ -35,7 +35,8 @@
 TFile * makeHists(const TString tag, const double weight=0.)
 {
    std::cout << tag << std::endl;
-   
+ 
+   // load in your input trees  
    TChain * t = new TChain("Events");
    if (tag=="SingleMuon") {
       t->Add("root://cmseos.fnal.gov///store/user/fojensen/ZLongExercise_1228200157/SingleMuon_2018A_1_Processed.root");
@@ -52,6 +53,7 @@ TFile * makeHists(const TString tag, const double weight=0.)
       t->Add(infile);
    }
 
+   // baseline cuts for the analysis, applied to all ABCD regions
    TCut baseline = "MuTau_HavePair>0 && (HLT_IsoMu24||HLT_IsoMu27)";
    baseline = baseline && TCut("ZProducer_EEHavePair==0 && ZProducer_MuMuHavePair==0");
    baseline = baseline && TCut("Sum$(Electron_pt>=10. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
@@ -59,11 +61,13 @@ TFile * makeHists(const TString tag, const double weight=0.)
    baseline = baseline && TCut("MuTau_mT<40.");
    baseline = baseline && TCut("JetProducer_nBJetT==0");
 
+   // special cuts to define the ABCD regions
    const TCut regionA = "MuTau_qq==-1 && Muon_pfIsoId[MuTau_MuIdx]>=4 && Muon_pfIsoId[MuTau_MuIdx]>=4 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) &&  (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
    const TCut regionB = "MuTau_qq==-1 && Muon_pfIsoId[MuTau_MuIdx]>=4 && Muon_pfIsoId[MuTau_MuIdx]>=4 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
    const TCut regionC = "MuTau_qq==+1 && Muon_pfIsoId[MuTau_MuIdx]>=2 && Muon_pfIsoId[MuTau_MuIdx]<4  && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) &&  (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
    const TCut regionD = "MuTau_qq==+1 && Muon_pfIsoId[MuTau_MuIdx]>=2 && Muon_pfIsoId[MuTau_MuIdx]<4  && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
- 
+
+   // create the cuts and strings with weights 
    char bufferA[1000], bufferB[1000], bufferC[1000], bufferD[1000];
    if (weight) {
       sprintf(bufferA, "%f * (%s)", weight, TString(baseline && regionA).Data());
@@ -77,6 +81,7 @@ TFile * makeHists(const TString tag, const double weight=0.)
       sprintf(bufferD, "%s", TString(baseline && regionD).Data());
    }
 
+   // define the histogram to visualize the data in
    const TString var = "MuTau_Mass";
    TH1D * h_A = new TH1D("h_A_"+tag, ";#mu+#tau_{h} visible mass [GeV];events / 10 GeV", 15, 60., 210.);
    //TH1D * h_A = new TH1D("h_A_"+tag, ";#mu+#tau_{h} visible mass [GeV];events / 10 GeV", 25, 0., 250.);
@@ -84,11 +89,13 @@ TFile * makeHists(const TString tag, const double weight=0.)
    TH1D * h_C = (TH1D*)h_A->Clone("h_C_"+tag);
    TH1D * h_D = (TH1D*)h_A->Clone("h_D_"+tag);
 
+   // fill the histograms
    const int n_A = t->Project(h_A->GetName(), var, bufferA);
    const int n_B = t->Project(h_B->GetName(), var, bufferB);
    const int n_C = t->Project(h_C->GetName(), var, bufferC);
    const int n_D = t->Project(h_D->GetName(), var, bufferD);
 
+   // get the inclusive yields
    const double i_A = h_A->Integral();
    const double i_B = h_B->Integral();
    const double i_C = h_C->Integral();
@@ -100,6 +107,7 @@ TFile * makeHists(const TString tag, const double weight=0.)
    std::cout << "   C " << i_C << " " << n_C << std::endl;
    std::cout << "   D " << i_D << " " << n_D << std::endl;
 
+   //save those histograms
    TFile * f_out = new TFile("./outputHists/"+tag+".root", "RECREATE");
    h_A->Write("h_A");
    h_B->Write("h_B");
@@ -136,6 +144,7 @@ TFile * makeQCDHists()
       h_D[i] = (TH1D*)f->Get("h_D");
    }
 
+   // subtract the mc from the data in the BCD regions
    for (int i = 0; i < nmc; ++i) {
       data_B->Add(h_B[i], -1.);
       data_C->Add(h_C[i], -1.);
@@ -154,9 +163,11 @@ TFile * makeQCDHists()
    const double errBCoD = BCoD * sqrt((Berr/B)*(Berr/B)+(CoDerr/CoD)*(CoDerr/CoD));
    std::cout << "inclusive transfer factor: " << CoD << " +- " << CoDerr << std::endl;
 
+   // calculate the C/D transfer factor
    TH1D * h_CoD = (TH1D*)data_C->Clone("h_CoD");
    h_CoD->Divide(data_D);
 
+   // multiply the transfer factor to get the prediction
    TH1D * h_QCD = (TH1D*)data_B->Clone("h_QCD");
    //h_QCD->Scale(CoD);
    h_QCD->Multiply(h_CoD);
@@ -170,6 +181,7 @@ TFile * makeQCDHists()
    h_CoD->SetMarkerStyle(20);
    c->SaveAs("./plots/CoD.pdf");
  
+   // save those histograms to a root file
    TFile * f_qcd = new TFile("./outputHists/QCD.root", "RECREATE");
    h_QCD->Write("h_A");
    data_B->Write("h_B");
@@ -220,6 +232,7 @@ void plotControlRegions()
    colz[2] = 4;
    colz[3] = 5;
 
+   // extract histograms from the root file
    TH1D *h_mc_B[nmc], *h_mc_C[nmc], *h_mc_D[nmc];
    for (int i = 0; i < nmc; ++i) {
       TFile * f = TFile::Open("./outputHists/"+mctags[i]+".root");
@@ -288,6 +301,7 @@ void yields_ZTauTau()
    const double ymin = 1.;
    const double ymax = 1.e6;
 
+   //calculate cross section weights
    int nmc = 4;
    double xsweight[nmc];
    const double lumi = 59725.419;
@@ -313,11 +327,14 @@ void yields_ZTauTau()
    colz[2] = 4;
    colz[3] = 5;
 
+   //fill the ABCD histograms for data
    makeHists("SingleMuon");
+
    TFile *f_SingleMuon = TFile::Open("./outputHists/SingleMuon.root");
    TH1D * h_SingleMuon = (TH1D*)f_SingleMuon->Get("h_A");
    h_SingleMuon->SetMarkerStyle(20);
    
+   //fill the ABCD histograms for MC
    for (int i = 0; i < nmc; ++i) makeHists(mctags[i], xsweight[i]);
    double samplesum = 0.;
 
