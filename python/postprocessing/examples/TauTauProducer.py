@@ -25,6 +25,7 @@ class TauTauProducer(Module):
         self.out.branch("TauTau_Mass", "F")
         self.out.branch("TauTau_Pt", "F")
         self.out.branch("TauTau_DeltaR", "F")
+        self.out.branch("TauTau_Trigger", "O")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -59,17 +60,39 @@ class TauTauProducer(Module):
             if i in goodTauIdx:
                 for j, tau1 in enumerate(taus):
                     if j in goodTauIdx:
-                        if deltaR(tau0, tau1)>=0.4:
-                             if (tau0.idDeepTau2017v2p1VSjet>=maxtau0iso) and (tau1.idDeepTau2017v2p1VSjet>=maxtau1iso):
-                                 DeltaR = deltaR(tau0, tau1)
-                                 qq = tau0.charge*tau1.charge
-                                 Tau0Idx = i
-                                 Tau1Idx = j
-                                 Mass = (tau0.p4()+tau1.p4()).M()
-                                 Pt =  (tau0.p4()+tau1.p4()).Pt()
-                                 HavePair = HavePair + 1
-                                 maxtau0iso0 = tau0.idDeepTau2017v2p1VSjet
-                                 maxatau1iso = tau1.idDeepTau2017v2p1VSjet
+                        if i>j:
+                            if deltaR(tau0, tau1)>=0.4:
+                                 if (tau0.idDeepTau2017v2p1VSjet>=maxtau0iso) and (tau1.idDeepTau2017v2p1VSjet>=maxtau1iso):
+                                     DeltaR = deltaR(tau0, tau1)
+                                     qq = tau0.charge*tau1.charge
+                                     Tau0Idx = i
+                                     Tau1Idx = j
+                                     Mass = (tau0.p4()+tau1.p4()).M()
+                                     Pt =   (tau0.p4()+tau1.p4()).Pt()
+                                     HavePair = HavePair + 1
+                                     maxtau0iso0 = tau0.idDeepTau2017v2p1VSjet
+                                     maxatau1iso = tau1.idDeepTau2017v2p1VSjet
+
+
+        Trigger = False
+
+        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg"):         Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_eta2p1_Reg"):         Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg"):  Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_eta2p1_Reg"):          Trigger = Trigger or  event.HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg"):  Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_eta2p1_Reg"):          Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_eta2p1_Reg
+
+        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTau35_Trk1_eta2p1_Reg"):         Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTau35_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTau40_Trk1_eta2p1_Reg"):         Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTau40_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg"):  Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg"):          Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg"):  Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg"):          Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
 
         self.out.fillBranch("TauTau_HavePair", HavePair)
         self.out.fillBranch("TauTau_qq", qq)
@@ -78,6 +101,7 @@ class TauTauProducer(Module):
         self.out.fillBranch("TauTau_Mass", Mass)
         self.out.fillBranch("TauTau_Pt", Pt)
         self.out.fillBranch("TauTau_DeltaR", DeltaR)
+        self.out.fillBranch("TauTau_Trigger", Trigger)
         return True, Tau0Idx, Tau1Idx
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed

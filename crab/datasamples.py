@@ -64,21 +64,21 @@ data['people'].append({
     'name': 'Tau_Run2018A',
     'inputDataset': '/Tau/Run2018A-02Apr2020-v1/NANOAOD',
     'lumiMask': lumiMask, 
-    'nFiles': '',
+    'nFiles': '76',
 })
 
 data['people'].append({
     'name': 'Tau_Run2018B',
     'inputDataset': '/Tau/Run2018B-02Apr2020-v1/NANOAOD',
     'lumiMask': lumiMask, 
-    'nFiles': '',
+    'nFiles': '45',
 })
 
 data['people'].append({
     'name': 'Tau_Run2018C',
     'inputDataset': '/Tau/Run2018C-02Apr2020-v1/NANOAOD',
     'lumiMask': lumiMask, 
-    'nFiles': '',
+    'nFiles': '39',
 })
 
 data['people'].append({

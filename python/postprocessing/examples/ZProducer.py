@@ -29,7 +29,7 @@ class ZProducer(Module):
 
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html#Electron
         EEHavePair = 0
-        EEMass = 0
+        EEMass = 0.
         electrons = Collection(event, "Electron")
         for i, e1 in enumerate(electrons):
             for j, e2 in enumerate(electrons):
@@ -46,7 +46,7 @@ class ZProducer(Module):
 
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html#Muon
         MuMuHavePair = 0
-        MuMuMass = 0
+        MuMuMass = 0.
         muons = Collection(event, "Muon")
         for i, mu1 in enumerate(muons):
             for j, mu2 in enumerate(muons):
