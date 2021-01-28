@@ -68,14 +68,14 @@ void eff(const bool isSig=true)
          if (Tau_genPartFlav[j]==tauMatch) {
             const bool tauID = (32&Tau_idDeepTau2017v2p1VSjet[j]) && (32&Tau_idDeepTau2017v2p1VSe[j]) && !(Tau_decayMode[j]==5||Tau_decayMode[j]==6);
             if (Tau_pt[j]>=20. && TMath::Abs(Tau_eta[j])<2.3 && tauID) {
-               h_denom->Fill(Tau_pt[j]);
+               h_denom->Fill(Tau_eta[j]);
                ++ndenom;
                for (int k = 0; k < 4; ++k) {
                   const int mask = 1<<k;
                   //std::cout << mask << std::endl;
                   const bool passid = mask&Tau_idDeepTau2017v2p1VSmu[j];
                   if (passid) {
-                     h_num[k]->Fill(Tau_pt[j]);
+                     h_num[k]->Fill(Tau_eta[j]);
                   } else {
                      break;
                   }

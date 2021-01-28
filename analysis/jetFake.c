@@ -194,7 +194,7 @@ TFile * bkgSubtractedData()
 void jetFake()
 {
    std::cout << "jetFake()" << std::endl;
-   TH1D * h = new TH1D("h", ";#tau_{h} p_{T} [GeV];events / 10 GeV", 10, 20., 120.);
+   TH1D * h = new TH1D("h", ";#tau_{h} p_{T} [GeV];events / 20 GeV", 5, 20., 120.);
    const TString var = "Tau_pt[MuTauProducer_TauIdx]";
 
    runPoint("SingleMuon_2018D", h, var);

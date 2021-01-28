@@ -56,6 +56,7 @@ TFile * makeHists(const TString tag, const TString cuttag, const std::vector<TSt
    var = "ElTau_Mass";
    xtitle = "e+#tau_{h} visible mass [GeV]";
    baseline = "ElTau_HavePair>0 && JetProducer_nBJetM==0";
+   //baseline = baseline && TCut("ElTau_Mass>=60. && ElTau_Mass<120.");
    baseline = baseline && TCut("ZProducer_EEHavePair==0 && ZProducer_MuMuHavePair==0");
    baseline = baseline && TCut("HLT_Ele32_WPTight_Gsf && Electron_mvaFall17V2Iso_WP80[ElTau_ElIdx]");
    baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP80)==1");
@@ -72,6 +73,7 @@ TFile * makeHists(const TString tag, const TString cuttag, const std::vector<TSt
    var = "MuTau_Mass";
    xtitle = "#mu+#tau_{h} visible mass [GeV]";
    baseline = "MuTau_HavePair>0 && JetProducer_nBJetM==0";
+   baseline = baseline && TCut("MuTau_Mass>=60. && MuTau_Mass<120.");
    baseline = baseline && TCut("ZProducer_EEHavePair==0 && ZProducer_MuMuHavePair==0");
    baseline = baseline && TCut("(HLT_IsoMu24||HLT_IsoMu27) && Muon_pfIsoId[MuTau_MuIdx]>=4");
    baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP80)==0");
@@ -88,14 +90,15 @@ TFile * makeHists(const TString tag, const TString cuttag, const std::vector<TSt
    var = "TauTau_Mass";
    xtitle = "#tau_{h}+#tau_{h} visible mass [GeV]";
    baseline = "TauTau_HavePair>0 && JetProducer_nBJetM==0";
+   //baseline = baseline && TCut("TauTau_Mass>=60. && TauTau_Mass<120.");
    baseline = baseline && TCut("ZProducer_EEHavePair==0 && ZProducer_MuMuHavePair==0");
    baseline = baseline && TCut("TauTau_Trigger");
    baseline = baseline && TCut("Tau_pt[TauTau_Tau0Idx]>=35. && TMath::Abs(Tau_eta[TauTau_Tau0Idx])<2.1 && Tau_pt[TauTau_Tau1Idx]>=35. && TMath::Abs(Tau_eta[TauTau_Tau1Idx])<2.1");
-   baseline = baseline && TCut("Sum$(Electon_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP80)==0");
+   baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP80)==0");
    baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==0");
-   const TCut tau0pass = "32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx]";
+   const TCut tau0pass = "(8&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx]) &&  (32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx])";
    const TCut tau0fail = "(8&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx]) && !(32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx])";
-   const TCut tau1pass = "32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau1Idx]";
+   const TCut tau1pass = "(8&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau1Idx]) &&  (32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau1Idx])";
    const TCut tau1fail = "(8&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau1Idx]) && !(32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau1Idx])";
    regionA = TCut("TauTau_qq==-1") &&  (tau0pass&&tau1pass);
    regionB = TCut("TauTau_qq==-1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass));
@@ -133,16 +136,17 @@ TFile * makeHists(const TString tag, const TString cuttag, const std::vector<TSt
    const int n_D = t->Project(h_D->GetName(), var, bufferD);
 
    // get the inclusive yields
-   const double i_A = h_A->Integral();
-   const double i_B = h_B->Integral();
-   const double i_C = h_C->Integral();
-   const double i_D = h_D->Integral();
+   double e_A, e_B, e_C, e_D;
+   const double i_A = h_A->IntegralAndError(1, h->GetNbinsX()+1, e_A);
+   const double i_B = h_B->IntegralAndError(1, h->GetNbinsX()+1, e_B);
+   const double i_C = h_C->IntegralAndError(1, h->GetNbinsX()+1, e_C);
+   const double i_D = h_D->IntegralAndError(1, h->GetNbinsX()+1, e_D);
 
-   std::cout << "   region | yield | mc events" << std::endl; 
-   std::cout << "   A " << i_A << " " << n_A << std::endl;
-   std::cout << "   B " << i_B << " " << n_B << std::endl;
-   std::cout << "   C " << i_C << " " << n_C << std::endl;
-   std::cout << "   D " << i_D << " " << n_D << std::endl;
+   std::cout << "   region; yield; mc events, 1/sqrt" << std::endl; 
+   std::cout << "   A; " << i_A << "+-" << e_A << "; " << n_A << ", " << 1./sqrt(n_A) << std::endl;
+   std::cout << "   B; " << i_B << "+-" << e_B << "; " << n_B << ", " << 1./sqrt(n_B) << std::endl;
+   std::cout << "   C; " << i_C << "+-" << e_C << "; " << n_C << ", " << 1./sqrt(n_C) << std::endl;
+   std::cout << "   D; " << i_D << "+-" << e_D << "; " << n_D << ", " << 1./sqrt(n_D) << std::endl;
 
    //save those histograms
    TFile * f_out = new TFile("./outputHists/"+tag+"."+cuttag+".root", "RECREATE");
@@ -190,14 +194,19 @@ TFile * makeQCDHists(const TString datatag)
       data_D->Add(h_D[i], -1.);
    }
 
-   const double B = data_B->GetEntries();
-   const double C = data_C->GetEntries();
-   const double D = data_D->GetEntries();
-   const double CoD = C/D;
-   const double CoDerr = CoD * sqrt((1./B)+(1./C));
-   const double BCoD = B * CoD;
-   const double BCoDerr = BCoD * sqrt( (1./B) + (CoDerr/CoD)*(CoDerr/CoD) );
+   double Berr, Cerr, Derr;
+   const double Bin = data_B->IntegralAndError(1, data_B->GetNbinsX()+1, Berr);
+   const double Cin = data_C->IntegralAndError(1, data_C->GetNbinsX()+1, Cerr);
+   const double Din = data_D->IntegralAndError(1, data_D->GetNbinsX()+1, Derr);
+   std::cout << "inclusive B: " << Bin << "+-" << Berr << std::endl;
+   std::cout << "inclusive C: " << Cin << "+-" << Cerr << std::endl;
+   std::cout << "inclusive D: " << Din << "+-" << Derr << std::endl;
+
+   const double CoD = Cin/Din;
+   const double CoDerr = CoD * sqrt( (Cerr/Cin)*(Cerr/Cin) + (Derr/Din)*(Derr/Din) );
    std::cout << "inclusive transfer factor: " << CoD << " +- " << CoDerr << std::endl;
+   const double BCoD = Bin * CoD;
+   const double BCoDerr = BCoD * sqrt( (Berr/Bin)*(Berr/Bin) + (CoDerr/CoD)*(CoDerr/CoD) );
    std::cout << "inclusive prediction: " << BCoD << " +- " << BCoDerr << std::endl;
 
    // calculate the C/D transfer factor
@@ -206,10 +215,10 @@ TFile * makeQCDHists(const TString datatag)
    h_CoD->GetYaxis()->SetTitle("C / D");
 
    // multiply the transfer factor to get the prediction
-   TH1D * h_QCD = (TH1D*)data_B->Clone("h_QCD");
-   h_QCD->Scale(CoD);
-   //h_QCD->Multiply(h_CoD);
-   h_QCD->GetYaxis()->SetTitle("B * ( C / D )");
+   TH1D * h_BCoD = (TH1D*)data_B->Clone("h_BCoD");
+   h_BCoD->Scale(CoD);
+   //h_BCoD->Multiply(h_CoD);
+   h_BCoD->GetYaxis()->SetTitle("B * ( C / D )");
 
    TCanvas * c = new TCanvas("c_makeQCDHists", datatag, 400, 400);
    h_CoD->Draw("PE");
@@ -222,10 +231,10 @@ TFile * makeQCDHists(const TString datatag)
  
    // save those histograms to a root file
    TFile * f_qcd = new TFile("./outputHists/QCD."+datatag+".root", "RECREATE");
-   h_QCD->Write("h_A");
    data_B->Write("h_B");
    data_C->Write("h_C");
    data_D->Write("h_D");
+   h_BCoD->Write("h_A");
    h_CoD->Write("h_CoD");
    f_qcd->Close();
    return f_qcd;
@@ -265,7 +274,7 @@ void plotControlRegions(const TString datatag)
    int colz[nmc];
    colz[0] = 28;
    colz[1] = 9;
-   colz[2] = 224;
+   colz[2] = 46;
    colz[3] = 224;
    colz[4] = 78;
    colz[5] = 92;
@@ -369,7 +378,7 @@ void yields_ZTauTau(const TString datatag="SingleMuon")
    int colz[nmc];
    colz[0] = 28;
    colz[1] = 9;
-   colz[2] = 224;
+   colz[2] = 46;
    colz[3] = 224;
    colz[4] = 78;
    colz[5] = 92;
@@ -386,11 +395,11 @@ void yields_ZTauTau(const TString datatag="SingleMuon")
    if (datatag=="Tau") {
       dataset.push_back("Tau_A"); dataset.push_back("Tau_B"); dataset.push_back("Tau_C"); dataset.push_back("Tau_D");
    }
-   
+
    makeHists(datatag, datatag, dataset, false);
    TFile *f_data = TFile::Open("./outputHists/"+datatag+"."+datatag+".root");
    TH1D * h_data = (TH1D*)f_data->Get("h_A");
-   
+
    //fill the ABCD histograms for MC
    for (int i = 0; i < nmc; ++i) makeHists(mctag[i], datatag, filelists[i], true);
    double samplesum = 0.;
@@ -400,7 +409,7 @@ void yields_ZTauTau(const TString datatag="SingleMuon")
       TFile * f = TFile::Open("./outputHists/"+mctag[i]+"."+datatag+".root");
       h_mc[i] = (TH1D*)f->Get("h_A");
       h_mc[i]->SetFillColor(colz[i]);
-      samplesum += h_mc[i]->Integral();
+      samplesum += h_mc[i]->Integral(1, h_mc[i]->GetNbinsX()+1);
    }
 
    makeQCDHists(datatag);
@@ -410,27 +419,39 @@ void yields_ZTauTau(const TString datatag="SingleMuon")
    
    TFile * f_QCD = TFile::Open("./outputHists/QCD."+datatag+".root");
    TH1D * h_QCD = (TH1D*)f_QCD->Get("h_A");
-   samplesum += h_QCD->Integral();
-   h_QCD->SetFillColor(6);   
+   samplesum += h_QCD->Integral(1, h_QCD->GetNbinsX()+1);
+   h_QCD->SetFillColor(6);
 
    TH1D * r = (TH1D*)h_QCD->Clone("r");
    for (int i = 0; i < nmc; ++i) {
       r->Add(h_mc[i]);
    }
    r->Divide(h_data, r);
-   
+
    for (int i = 0; i < nmc; ++i) {
       std::cout << mctag[i] << std::endl;
-      std::cout << "   Integral(): " << h_mc[i]->Integral() << "; fraction of total:" << h_mc[i]->Integral()/samplesum << std::endl;
+      double mcerr = 0.;
+      const double mcint = h_mc[i]->IntegralAndError(1, h_mc[i]->GetNbinsX()+1, mcerr);
+      std::cout << "   IntegralAndError(): " << mcint << "+-" << mcerr << "; ferr=" << mcerr/mcint << std::endl;
+      std::cout << "   fraction of total:" << mcint/samplesum << std::endl;
       std::cout << "   GetEntries(): " << h_mc[i]->GetEntries() << std::endl;
+      std::cout << "   whole histogram Integral(): " << h_mc[i]->Integral() << std::endl;
    }
+
    std::cout << "QCD" << std::endl;
-   std::cout << "   Integral(): " << h_QCD->Integral() << "; fraction of total: " << h_QCD->Integral()/samplesum << std::endl;
+   double qcderr = 0;
+   const double qcdint = h_QCD->IntegralAndError(1, h_QCD->GetNbinsX()+1, qcderr);
+   std::cout << "   IntegralAndError(): " << qcdint << "+-" << qcderr << "; ferr=" << qcderr/qcdint << std::endl;
+   std::cout << "   fraction of total: " << qcdint/samplesum << std::endl;
    std::cout << "   GetEntries(): " << h_QCD->GetEntries() << std::endl;
+   std::cout << "   whole histogram Integral(): " << h_QCD->Integral() << std::endl;
  
    std::cout << "Data" << std::endl;
-   std::cout << "   Integral(): " << h_data->Integral() << std::endl;
-   std::cout << "   GetEntries(): " << h_data->GetEntries() << std::endl;
+   double dataerr = 0;
+   const double dataint = h_data->IntegralAndError(1, h_data->GetNbinsX(), dataerr);
+   std::cout << "   IntegralAndError(): " << dataint << "+-" << dataerr << "; ferr=" << dataerr/dataint << std::endl;
+   std::cout << "   GetEntries() +- sqrt(): " << h_data->GetEntries() << "+-" << sqrt(h_data->GetEntries()) << std::endl;
+   std::cout << "   whole histogram Integral(): " << h_data->Integral() << std::endl;
 
    THStack * s = new THStack("s", "");
    s->SetTitle(h_data->GetTitle());
