@@ -10,8 +10,9 @@
 void eff(const bool isSig=true)
 {
    const TString tag = "WJetsToLNu";
-   const TString infile = "root://cmseos.fnal.gov//store/user/cmsdas/2021/short_exercises/Tau/WJetsToLNu__A0A48A5A-15B8-914B-8DC7-E407797D4539.root";
+   //const TString infile = "root://cmseos.fnal.gov//store/user/cmsdas/2021/short_exercises/Tau/WJetsToLNu__A0A48A5A-15B8-914B-8DC7-E407797D4539.root";
    //const TString infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv7/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/70000/A0A48A5A-15B8-914B-8DC7-E407797D4539.root";
+   const TString infile = "E0FBA990-ABF5-3C4D-BCB3-9FCB6F0FFCB3.root";
 
    //const TString tag = "DYJetsToLL";
    //const TString infile = "root://cmseos.fnal.gov//store/user/cmsdas/2021/short_exercises/Tau/DYJetsToLL_M-50__51C9FDF1-F122-4943-87BA-6EFE4459F867.root";
@@ -30,10 +31,13 @@ void eff(const bool isSig=true)
 
    TFile * f = TFile::Open(infile);
    TTree * t = (TTree*)f->Get("Events");
-  
-   TH1D *h_denom = new TH1D("h_denom", ";#tau_{h} p_{T} [GeV];#tau_{h} / 10 GeV", 10, 20., 120.);
-   TH1D *h_num[4];
-   for (int i = 0; i < 4; ++i) {
+ 
+   const int nwp = 8;
+ 
+   const double x[5] = {18., 20., 30., 40., 50.};
+   TH1D *h_denom = new TH1D("h_denom", ";#tau_{h} p_{T} [GeV];#tau_{h} / bin", 4, x);
+   TH1D *h_num[nwp];
+   for (int i = 0; i < nwp; ++i) {
       h_num[i] = (TH1D*)h_denom->Clone("h_num_"+TString::Itoa(i, 10));
    }
  
@@ -66,16 +70,16 @@ void eff(const bool isSig=true)
       t->GetEntry(i);
       for (unsigned int j = 0; j < nTau; ++j) {
          if (Tau_genPartFlav[j]==tauMatch) {
-            const bool tauID = (32&Tau_idDeepTau2017v2p1VSjet[j]) && (32&Tau_idDeepTau2017v2p1VSe[j]) && !(Tau_decayMode[j]==5||Tau_decayMode[j]==6);
-            if (Tau_pt[j]>=20. && TMath::Abs(Tau_eta[j])<2.3 && tauID) {
-               h_denom->Fill(Tau_eta[j]);
+            const bool tauID = (1&Tau_idDeepTau2017v2p1VSmu[j]) && (1&Tau_idDeepTau2017v2p1VSe[j]) && !(Tau_decayMode[j]==5||Tau_decayMode[j]==6);
+            if (Tau_pt[j]>=18. && TMath::Abs(Tau_eta[j])<2.3 && tauID) {
+               h_denom->Fill(Tau_pt[j]);
                ++ndenom;
-               for (int k = 0; k < 4; ++k) {
+               for (int k = 0; k < nwp; ++k) {
                   const int mask = 1<<k;
                   //std::cout << mask << std::endl;
-                  const bool passid = mask&Tau_idDeepTau2017v2p1VSmu[j];
+                  const bool passid = mask&Tau_idDeepTau2017v2p1VSjet[j];
                   if (passid) {
-                     h_num[k]->Fill(Tau_eta[j]);
+                     h_num[k]->Fill(Tau_pt[j]);
                   } else {
                      break;
                   }
@@ -86,12 +90,13 @@ void eff(const bool isSig=true)
       if (ndenom>=10000) break;
    }
 
-   TGraphAsymmErrors *g[4];
+   TGraphAsymmErrors *g[nwp];
    TLegend * l = new TLegend(0.25, 0.175, 0.875, 0.3);
    l->SetNColumns(2);
    l->SetBorderSize(0);
-   const TString labels[4] = {"VLoose" ,"Loose", "Medium", "Tight"};
-   for (int i = 0; i < 4; ++i) {    
+   //const TString labels[4] = {"VLoose" ,"Loose", "Medium", "Tight"};
+   const TString labels[nwp] = {"a", "b", "c", "d", "e", "f", "g", "h"};
+   for (int i = 0; i < nwp; ++i) {    
       g[i] = new TGraphAsymmErrors();
       g[i]->Divide(h_num[i], h_denom);
       g[i]->SetLineColor(i+2);
@@ -113,7 +118,7 @@ void eff(const bool isSig=true)
       g[0]->SetMaximum(1.);
       c->SetLogy();
    }
-   for (int i = 1; i < 4; ++i) g[i]->Draw("PE, SAME");
+   for (int i = 1; i < nwp; ++i) g[i]->Draw("PE, SAME");
    l->Draw();
    if (isSig) {
       c->SaveAs("./plots/eff."+tag+".sig.pdf");

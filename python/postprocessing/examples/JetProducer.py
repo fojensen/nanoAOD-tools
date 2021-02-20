@@ -30,6 +30,7 @@ class JetProducer(Module):
         taus = Collection(event, "Tau")
         muons = Collection(event, "Muon")
         electrons = Collection(event, "Electron")
+        photons = Collection(event, "Photon")
         jets = Collection(event, "Jet")
 
         JetProducer_nJet = 0
@@ -39,21 +40,27 @@ class JetProducer(Module):
 
         for jet in jets:
             if jet.pt>=20. and abs(jet.eta)<2.5 and (4&jet.jetId):
-                dr_1 = dr_2 = 9
+                dr_1 = dr_2 = dr_3 = 9
 
                 if event.MuTau_MuIdx>=0 and event.MuTau_TauIdx>=0:
                     dr_1 = deltaR(jet, muons[event.MuTau_MuIdx])
                     dr_2 = deltaR(jet, taus[event.MuTau_TauIdx])
+                    if event.MuTau_PhotonIdx>=0:
+                        dr_3 = deltaR(jet, photons[event.MuTau_PhotonIdx])
 
                 if event.ElTau_ElIdx>=0 and event.ElTau_TauIdx>=0:
                     dr_1 = deltaR(jet, electrons[event.ElTau_ElIdx])
-                    dr_2 = deltaR(jet, taus[event.ElTau_TauIdx]) 
+                    dr_2 = deltaR(jet, taus[event.ElTau_TauIdx])
+                    if event.ElTau_PhotonIdx>=0:
+                        dr_3 = deltaR(jet, photons[event.ElTau_PhotonIdx])
 
                 if event.TauTau_Tau0Idx>=0 and event.TauTau_Tau1Idx>=0:
                     dr_1 = deltaR(jet, taus[event.TauTau_Tau0Idx])
                     dr_2 = deltaR(jet, taus[event.TauTau_Tau1Idx])
+                    if event.TauTau_PhotonIdx>=0:
+                        dr_3 = deltaR(jet, photons[event.TauTau_PhotonIdx])
 
-                if dr_1>=0.4 and dr_2>=0.4:
+                if dr_1>=0.4 and dr_2>=0.4 and dr_3>=0.4:
                     JetProducer_nJet = JetProducer_nJet + 1
                     JetProducer_HT += jet.pt
                     if jet.btagDeepB>=0.1241:

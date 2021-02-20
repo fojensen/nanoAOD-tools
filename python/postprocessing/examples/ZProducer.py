@@ -4,7 +4,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
-from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR
+from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR, deltaPhi
 
 class ZProducer(Module):
     def __init__(self):
@@ -38,9 +38,10 @@ class ZProducer(Module):
                     if e1.pt>=12. and abs(e1.eta)<2.5 and e1Id:
                         e2Id = e2.mvaFall17V2Iso_WP90
                         if e2.pt>=12. and abs(e2.eta)<2.5 and e2Id:
-                            if (e1.charge*e2.charge<0 and deltaR(e1, e2)>=0.1):
-                                EEMass = (e1.p4()+e2.p4()).M()
-                                EEHavePair = EEHavePair+1
+                            if e1.charge*e2.charge<0:
+                                if abs(deltaPhi(e1, e2))>=0.28284271 and abs(e1.eta-e2.eta)>=0.28284271:
+                                    EEMass = (e1.p4()+e2.p4()).M()
+                                    EEHavePair = EEHavePair+1
         if EEMass>=50.:
             return False
 
@@ -55,9 +56,10 @@ class ZProducer(Module):
                     if mu1.pt>=8. and abs(mu1.eta)<2.4 and mu1Id:
                         mu2Id = mu2.mediumId and mu2.pfIsoId>=2
                         if mu2.pt>=8. and abs(mu2.eta)<2.4 and mu2Id:
-                            if (mu1.charge*mu2.charge<0 and deltaR(mu1, mu2)>=0.1):
-                                MuMuMass = (mu1.p4()+mu2.p4()).M()
-                                MuMuHavePair = MuMuHavePair+1
+                            if mu1.charge*mu2.charge<0:
+                                if abs(deltaPhi(mu1, mu2))>=0.28284271 and abs(mu1.eta-mu2.eta)>=0.28284271:
+                                    MuMuMass = (mu1.p4()+mu2.p4()).M()
+                                    MuMuHavePair = MuMuHavePair+1
         if MuMuMass>=50.:
              return False
 

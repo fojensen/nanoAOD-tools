@@ -1,6 +1,6 @@
 username = "fojensen"
-runfile = "./python/postprocessing/examples/example_postproc.py"
-#runfile = "./crab/crab_script.py"
+#runfile = "./python/postprocessing/examples/example_postproc.py"
+runfile = "./crab/crab_script.py"
 
 import json
 import os
@@ -13,7 +13,7 @@ ui = int(a.strftime('%d%H%M%S'))
 condordir = "condor_project_%s" % ui
 if not os.path.isdir(condordir):
     os.system("mkdir %s" % condordir)
-    os.system("eos root://cmseos.fnal.gov mkdir /store/user/%s/ZLongExercise_%s" % (username, ui))
+    os.system("eos root://cmseos.fnal.gov mkdir /store/user/%s/processedEmbedded_%s" % (username, ui))
 else :
     print("directory %s exists" % condordir)
     exit()
@@ -24,17 +24,16 @@ os.chdir("%s/src" % os.getenv("CMSSW_BASE"))
 cmdtar = "tar -zcvf PhysicsTools_%s.tgz --exclude='*.root' --exclude='*.pdf' --exclude='*.pyc' --exclude='PhysicsTools/NanoAODTools/crab/crab_projects' --exclude='PhysicsTools/NanoAODTools/.git' --exclude='PhysicsTools/NanoAODTools/condor' PhysicsTools" % ui
 os.system(cmdtar)
 #copy it to eos
-cmdeos = "xrdcp -f PhysicsTools_%s.tgz root://cmseos.fnal.gov//store/user/%s/ZLongExercise_%s" % (ui, username, ui)
+cmdeos = "xrdcp -f PhysicsTools_%s.tgz root://cmseos.fnal.gov//store/user/%s/processedEmbedded_%s" % (ui, username, ui)
 os.system(cmdeos)
 #move it to your projects directory
 cmdmv = "mv PhysicsTools_%s.tgz ./PhysicsTools/NanoAODTools/condor/%s" % (ui, condordir)
 os.system(cmdmv)
 os.chdir("%s/src/PhysicsTools/NanoAODTools/condor" % os.getenv("CMSSW_BASE"))
 
-inputDatasets = ['DYJetsToTauTau_M50', 'DYJetsToEEMuMu_M50', 'TTJets', 'WJetsToLNu', 'QCD_Pt20toInf_MuEnrichedPt15']
-inputDatasets += ['SingleMuon_2018A_0', 'SingleMuon_2018A_1', 'SingleMuon_2018B_0', 'SingleMuon_2018B_1', 'SingleMuon_2018C_0', 'SingleMuon_2018C_1', 'SingleMuon_2018D_0', 'SingleMuon_2018D_1']
-inputDatasets += ['EGamma_2018A_0', 'EGamma_2018A_1', 'EGamma_2018A_2', 'EGamma_2018B_0', 'EGamma_2018B_1', 'EGamma_2018B_2', 'EGamma_2018C_0', 'EGamma_2018C_1', 'EGamma_2018C_2', 'EGamma_2018D_0', 'EGamma_2018D_1', 'EGamma_2018D_2', 'EGamma_2018D_3', 'EGamma_2018D_4']
-inputDatasets += ['Tau_2018A_0', 'Tau_2018A_1', 'Tau_2018B_0', 'Tau_2018B_1', 'Tau_2018C_0', 'Tau_2018C_1', 'Tau_2018D_0', 'Tau_2018D_1', 'Tau_2018D_2']
+inputDatasets  = ['Embedding2018A_ElTauFinalState', 'Embedding2018B_ElTauFinalState', 'Embedding2018C_ElTauFinalState', 'Embedding2018D_ElTauFinalState_0', 'Embedding2018D_ElTauFinalState_1', 'Embedding2018D_ElTauFinalState_2']
+inputDatasets += ['Embedding2018A_MuTauFinalState', 'Embedding2018B_MuTauFinalState', 'Embedding2018C_MuTauFinalState', 'Embedding2018D_MuTauFinalState_0', 'Embedding2018D_MuTauFinalState_1', 'Embedding2018D_MuTauFinalState_2']
+inputDatasets += ['Embedding2018A_TauTauFinalState', 'Embedding2018B_TauTauFinalState', 'Embedding2018C_TauTauFinalState', 'Embedding2018D_TauTauFinalState_0', 'Embedding2018D_TauTauFinalState_1', 'Embedding2018D_TauTauFinalState_2']
 
 for dataset in inputDatasets:
     print("%s_%s" % (dataset, ui))
@@ -48,18 +47,25 @@ for dataset in inputDatasets:
     f_bash.write('scramv1 project CMSSW CMSSW_10_6_19 # cmsrel is an alias not on the workers\n')
     f_bash.write('cd CMSSW_10_6_19/src/\n')
     f_bash.write('eval `scramv1 runtime -sh` # cmsenv is an alias not on the workers\n')
-    f_bash.write('xrdcp -s root://cmseos.fnal.gov//store/user/%s/ZLongExercise_%s/PhysicsTools_%s.tgz .\n' % (username, ui, ui))
+    #f_bash.write('should be in src; pwd, ls:\n')
+    #f_bash.write('pwd\n')
+    #f_bash.write('ls\n')
+    f_bash.write('xrdcp -s root://cmseos.fnal.gov//store/user/%s/processedEmbedded_%s/PhysicsTools_%s.tgz .\n' % (username, ui, ui))
     f_bash.write('tar -xvf PhysicsTools_%s.tgz\n' % ui)
     f_bash.write('cd PhysicsTools/NanoAODTools\n')
     f_bash.write('scram b\n')
-    f_bash.write('python %s root://cmseos.fnal.gov//store/user/fojensen/cmsdasskims/%s.root\n' % (runfile, dataset))
-    f_bash.write('xrdcp -f tree.root root://cmseos.fnal.gov//store/user/%s/ZLongExercise_%s/%s_Processed.root\n' % (username, ui, dataset))
+    #f_bash.write('should be in NanoAODTools; pwd, ls:\n')
+    #f_bash.write('pwd\n')
+    #f_bash.write('ls\n')
+    f_bash.write('python %s root://cmseos.fnal.gov//store/user/fojensen/embeddedSamples/%s.root\n' % (runfile, dataset))
+    f_bash.write('xrdcp -f tree.root root://cmseos.fnal.gov//store/user/%s/processedEmbedded_%s/%s_Processed.root\n' % (username, ui, dataset))
     f_bash.write('echo "Ending condor job on " `date` #Date/time of end of job\n')
     f_bash.close()
 
     f_jdl = open("%s/condor_%s_%s.jdl" % (condordir, dataset, ui), "w+")
     f_jdl.write('universe = vanilla\n')
     f_jdl.write('Executable = %s/condor_%s_%s.sh\n' % (condordir, dataset, ui))
+    f_jdl.write('request_memory = 5000\n')
     f_jdl.write('should_transfer_files = YES\n')
     f_jdl.write('when_to_transfer_output = ON_EXIT\n')
     f_jdl.write('Output = %s/condor_%s_%s.stdout\n' % (condordir, dataset, ui))

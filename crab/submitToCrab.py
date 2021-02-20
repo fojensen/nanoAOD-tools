@@ -1,8 +1,9 @@
 import json
 import os
 
-#infile = 'datasamples.json'
-infile = 'mcsamples.json'
+infile = 'datasamples.json'
+#infile = 'mcsamples.json'
+#infile = 'embeddedsamples.json'
 
 with open(infile) as json_file:
 
@@ -19,7 +20,7 @@ with open(infile) as json_file:
         f.write("\n")
 
         f.write("config.section_('General')\n")
-        f.write("config.General.requestName = 'cmsdas_tautrig_"+p['name']+"'\n")
+        f.write("config.General.requestName = '"+p['name']+"'\n")
         f.write("config.General.workArea = 'crab_projects'\n")
         f.write("config.General.transferOutputs = True\n")
         f.write("config.General.transferLogs = True\n")
@@ -34,20 +35,27 @@ with open(infile) as json_file:
                 w = eval(p['xs'])/eval(p['nEvents'])
                 tempstring = "['arg1=True', 'arg2=%s']" % w
                 f.write("config.JobType.scriptArgs = " + tempstring + "\n")
-        f.write("config.JobType.inputFiles = ['keep_and_drop.txt', 'crab_script.py', '../scripts/haddnano.py']\n")
+        #f.write("config.JobType.inputFiles = ['keep_and_drop.txt', 'crab_script.py', '../scripts/haddnano.py']\n")
+        f.write("config.JobType.inputFiles = ['crab_script.py']\n")
         f.write("config.JobType.sendPythonFolder = True\n")
         f.write("config.JobType.allowUndistributedCMSSW = True\n")
         f.write("\n")
 
         f.write("config.section_('Data')\n")
-        if 'lumiMask' in p:
-            f.write("config.Data.lumiMask='"+p['lumiMask']+"'\n")
+        #if 'lumiMask' in p:
+        #    f.write("config.Data.lumiMask='"+p['lumiMask']+"'\n")
         f.write("config.Data.inputDataset = '"+p['inputDataset']+"'\n")
-        f.write("config.Data.inputDBS='global'\n")
+        if 'isEmb' in p:
+            if str(p['isEmb'])=="True":
+                f.write("config.Data.inputDBS = 'phys03'\n")
+            else: 
+                f.write("config.Data.inputDBS = 'global'\n")
+        else:
+            f.write("config.Data.inputDBS = 'global'\n")
         #f.write("config.Data.splitting='Automatic'\n")
         f.write("config.Data.splitting = 'FileBased'\n")
         f.write("config.Data.unitsPerJob = 1\n")
-        f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_19012020/'\n")
+        f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_19022020/'\n")
         f.write("config.Data.publication = False\n")
         f.write("\n")
 

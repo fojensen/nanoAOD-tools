@@ -5,7 +5,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR, deltaPhi
-#from ROOT import TLorentzVector
+from ROOT import TLorentzVector
 import math
 
 class MuTauProducer(Module):
@@ -23,8 +23,13 @@ class MuTauProducer(Module):
         self.out.branch("MuTau_TauIdx", "I")
         self.out.branch("MuTau_mT", "F")
         self.out.branch("MuTau_Mass", "F")
+        self.out.branch("MuTau_CollMass", "F")
         self.out.branch("MuTau_Pt", "F")
         self.out.branch("MuTau_DeltaR", "F")
+        self.out.branch("MuTau_HaveTriplet", "I")
+        self.out.branch("MuTau_PhotonIdx", "I")
+        self.out.branch("MuTau_MuCollMass", "F")
+        self.out.branch("MuTau_TauCollMass", "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -41,34 +46,43 @@ class MuTauProducer(Module):
         Mass = 0
         Pt = 0
         DeltaR = 0
- 
+        HaveTriplet = 0
+        PhotonIdx = -1
+        TauCollMass = MuCollMass = CollMass = 0
+
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html
         muons = Collection(event, "Muon")
         taus = Collection(event, "Tau")
- 
+        photons = Collection(event, "Photon")
+
         #https://twiki.cern.ch/CMS/SWGuideMuonIdRun2 
         goodMuonIdx = []
         for i, mu in enumerate(muons):
-            muonID = mu.tightId
+            muonID = mu.mediumId
             if mu.pt>=27. and abs(mu.eta)<2.4 and muonID:
                 goodMuonIdx.append(i)
-        nGoodMuon = len(goodMuonIdx)
 
         #https://twiki.cern.ch/CMS/TauIDRecommendationForRun2
         goodTauIdx = []
         for i, tau in enumerate(taus):
-            tauID = (1&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu) and (128&tau.idDeepTau2017v2p1VSe) and not (tau.decayMode==5 or tau.decayMode==6)
+            tauID = (1&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu) and (4&tau.idDeepTau2017v2p1VSe) and not (tau.decayMode==5 or tau.decayMode==6)
             if tau.pt>=20. and abs(tau.eta)<2.3 and tauID:
                 goodTauIdx.append(i)
-        nGoodTau = len(goodTauIdx)
+
+        goodPhotonIdx = []
+        for i, photon in enumerate(photons):
+            photonID = photon.electronVeto and photon.mvaID_WP90 and (photon.isScEtaEB or photon.isScEtaEE)
+            if abs(photon.eta)<2.5 and photonID:
+                goodPhotonIdx.append(i)
 
         maxtauiso = 0
         maxmuiso = 0
+        maxphotonpt = 0
         for i, mu in enumerate(muons):
             if i in goodMuonIdx:
                 for j, tau in enumerate(taus):
                     if j in goodTauIdx:
-                        if deltaR(mu, tau)>=0.4:
+                        if abs(deltaPhi(mu, tau))>=0.28284271 and abs(mu.eta-tau.eta)>=0.28284271:
                              if (mu.pfIsoId>=maxmuiso) and (tau.idDeepTau2017v2p1VSjet>=maxtauiso):
                                  DeltaR = deltaR(mu, tau)
                                  qq = mu.charge*tau.charge
@@ -77,20 +91,49 @@ class MuTauProducer(Module):
                                  Mass = (mu.p4()+tau.p4()).M()
                                  Pt =  (mu.p4()+tau.p4()).Pt()
                                  HavePair = HavePair + 1
-                                 mT = 2. * event.MET_pt * mu.pt * (1-math.cos(deltaPhi(event.MET_phi, mu.phi)))
+                                 mT = 2. * event.MET_pt * mu.pt * (1.-math.cos(deltaPhi(event.MET_phi, mu.phi)))
                                  mT = math.sqrt(mT)
                                  maxtauiso = tau.idDeepTau2017v2p1VSjet
                                  maxmuiso = mu.pfIsoId
+
+                                 #collinear approximation 
+                                 nu0 = TLorentzVector()
+                                 nu1 = TLorentzVector()
+                                 cos0M = math.cos(deltaPhi(tau.phi, event.MET_phi))
+                                 cos1M = math.cos(deltaPhi(mu.phi, event.MET_phi))
+                                 cos01 = math.cos(deltaPhi(tau.phi, mu.phi))
+                                 nu0mag = event.MET_pt * (cos0M-cos1M*cos01) / (1.-cos01*cos01)
+                                 nu1mag = (event.MET_pt*cos1M) - (nu0mag*cos01)
+                                 nu0.SetPtEtaPhiM(nu0mag, tau.eta, tau.phi, 0.)
+                                 nu1.SetPtEtaPhiM(nu1mag, mu.eta, mu.phi, 0.)
+                                 CollMass = (mu.p4()+tau.p4()+nu0+nu1).M()
+ 
+                                 for k, photon in enumerate(photons):
+                                     if k in goodPhotonIdx:
+                                         if abs(deltaPhi(mu, photon))>=0.28284271 and abs(deltaPhi(tau, photon))>=0.28284271:
+                                             if abs(mu.eta-photon.eta)>=0.28284271 and abs(tau.eta-photon.eta)>=0.28284271:
+                                                 if photon.pt>=maxphotonpt:
+                                                     HaveTriplet = HaveTriplet+1
+                                                     maxphotonpt = photon.pt
+                                                     PhotonIdx = k
+                                                     TauCollMass = (tau.p4()+nu0+photon.p4()).M()
+                                                     MuCollMass = (mu.p4()+nu1+photon.p4()).M()
 
         self.out.fillBranch("MuTau_HavePair", HavePair)
         self.out.fillBranch("MuTau_qq", qq)
         self.out.fillBranch("MuTau_MuIdx", MuIdx)
         self.out.fillBranch("MuTau_TauIdx", TauIdx)
         self.out.fillBranch("MuTau_mT", mT)
+        self.out.fillBranch("MuTau_CollMass", CollMass)
         self.out.fillBranch("MuTau_Mass", Mass)
         self.out.fillBranch("MuTau_Pt", Pt)
         self.out.fillBranch("MuTau_DeltaR", DeltaR)
-        return True, MuIdx, TauIdx
+        self.out.fillBranch("MuTau_HaveTriplet", HaveTriplet)
+        self.out.fillBranch("MuTau_PhotonIdx", PhotonIdx)
+        self.out.fillBranch("MuTau_TauCollMass", TauCollMass)
+        self.out.fillBranch("MuTau_MuCollMass", MuCollMass)
+ 
+        return True, MuIdx, TauIdx, PhotonIdx
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
