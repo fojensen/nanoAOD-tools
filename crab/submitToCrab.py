@@ -3,7 +3,8 @@ import os
 
 infile = 'datasamples.json'
 #infile = 'mcsamples.json'
-#infile = 'embeddedsamples.json'
+#infile = 'embeddedsamples.json
+#infile = 'sigsamples.json'
 
 with open(infile) as json_file:
 
@@ -35,15 +36,16 @@ with open(infile) as json_file:
                 w = eval(p['xs'])/eval(p['nEvents'])
                 tempstring = "['arg1=True', 'arg2=%s']" % w
                 f.write("config.JobType.scriptArgs = " + tempstring + "\n")
-        #f.write("config.JobType.inputFiles = ['keep_and_drop.txt', 'crab_script.py', '../scripts/haddnano.py']\n")
-        f.write("config.JobType.inputFiles = ['crab_script.py']\n")
+        f.write("config.JobType.inputFiles = ['keep_and_drop.txt', 'crab_script.py', '../scripts/haddnano.py']\n")
+        #f.write("config.JobType.inputFiles = ['keep_and_drop.txt', 'crab_script.py']\n")
+        #f.write("config.JobType.inputFiles = ['crab_script.py']\n")
         f.write("config.JobType.sendPythonFolder = True\n")
         f.write("config.JobType.allowUndistributedCMSSW = True\n")
         f.write("\n")
 
         f.write("config.section_('Data')\n")
-        #if 'lumiMask' in p:
-        #    f.write("config.Data.lumiMask='"+p['lumiMask']+"'\n")
+        if 'lumiMask' in p:
+            f.write("config.Data.lumiMask='"+p['lumiMask']+"'\n")
         f.write("config.Data.inputDataset = '"+p['inputDataset']+"'\n")
         if 'isEmb' in p:
             if str(p['isEmb'])=="True":
@@ -55,7 +57,7 @@ with open(infile) as json_file:
         #f.write("config.Data.splitting='Automatic'\n")
         f.write("config.Data.splitting = 'FileBased'\n")
         f.write("config.Data.unitsPerJob = 1\n")
-        f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_19022020/'\n")
+        f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_25022020/'\n")
         f.write("config.Data.publication = False\n")
         f.write("\n")
 

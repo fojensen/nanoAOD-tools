@@ -30,6 +30,8 @@ class ElTauProducer(Module):
         self.out.branch("ElTau_PhotonIdx", "I")
         self.out.branch("ElTau_ElCollMass", "F")
         self.out.branch("ElTau_TauCollMass", "F")
+        self.out.branch("ElTau_ElGammaDeltaR", "F")
+        self.out.branch("ElTau_TauGammaDeltaR", "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -49,6 +51,7 @@ class ElTauProducer(Module):
         HaveTriplet = 0
         PhotonIdx = -1
         TauCollMass = ElCollMass = CollMass = 0
+        ElGammaDeltaR = TauGammaDeltaR = 0
  
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html
         electrons = Collection(event, "Electron")
@@ -71,7 +74,8 @@ class ElTauProducer(Module):
 
         goodPhotonIdx = []
         for i, photon in enumerate(photons):
-            photonID = photon.electronVeto and photon.mvaID_WP90 and (photon.isScEtaEB or photon.isScEtaEE)
+            photonID = photon.mvaID_WP90 and (photon.isScEtaEB or photon.isScEtaEE)
+            photonID = photonID and not photon.pixelSeed
             if abs(photon.eta)<2.5 and photonID:
                 goodPhotonIdx.append(i)
 
@@ -118,6 +122,8 @@ class ElTauProducer(Module):
                                                      PhotonIdx = k
                                                      TauCollMass = (tau.p4()+nu0+photon.p4()).M()
                                                      ElCollMass = (el.p4()+nu1+photon.p4()).M()
+                                                     ElGammaDeltaR = deltaR(el, photon)
+                                                     TauGammaDeltaR = deltaR(tau, photon)
 
         self.out.fillBranch("ElTau_HavePair", HavePair)
         self.out.fillBranch("ElTau_qq", qq)
@@ -132,6 +138,8 @@ class ElTauProducer(Module):
         self.out.fillBranch("ElTau_PhotonIdx", PhotonIdx)
         self.out.fillBranch("ElTau_TauCollMass", TauCollMass)
         self.out.fillBranch("ElTau_ElCollMass", ElCollMass)
+        self.out.fillBranch("ElTau_ElGammaDeltaR", ElGammaDeltaR)
+        self.out.fillBranch("ElTau_TauGammaDeltaR", TauGammaDeltaR)
         return True, ElIdx, TauIdx, PhotonIdx
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed

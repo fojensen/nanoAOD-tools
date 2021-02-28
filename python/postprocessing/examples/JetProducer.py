@@ -60,6 +60,12 @@ class JetProducer(Module):
                     if event.TauTau_PhotonIdx>=0:
                         dr_3 = deltaR(jet, photons[event.TauTau_PhotonIdx])
 
+                if event.MuMu_Mu1Idx>=0 and event.MuMu_Mu2Idx>=0:
+                    dr_1 = deltaR(jet, muons[event.MuMu_Mu1Idx])
+                    dr_2 = deltaR(jet, muons[event.MuMu_Mu2Idx])
+                    if event.MuMu_PhotonIdx>=0:
+                        dr_3 = deltaR(jet, photons[event.MuMu_PhotonIdx])
+
                 if dr_1>=0.4 and dr_2>=0.4 and dr_3>=0.4:
                     JetProducer_nJet = JetProducer_nJet + 1
                     JetProducer_HT += jet.pt
