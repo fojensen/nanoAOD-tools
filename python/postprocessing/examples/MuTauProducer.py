@@ -5,7 +5,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR, deltaPhi
-from ROOT import TLorentzVector
+from ROOT import TLorentzVector, TVector3
 import math
 
 class MuTauProducer(Module):
@@ -30,6 +30,7 @@ class MuTauProducer(Module):
         self.out.branch("MuTau_PhotonIdx", "I")
         self.out.branch("MuTau_MuCollMass", "F")
         self.out.branch("MuTau_TauCollMass", "F")
+        self.out.branch("MuTau_IsInside", "O")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -44,6 +45,7 @@ class MuTauProducer(Module):
         TauIdx = -1
         mT = 0
         Mass = 0
+        IsInside = False
         Pt = 0
         DeltaR = 0
         HaveTriplet = 0
@@ -58,8 +60,8 @@ class MuTauProducer(Module):
         #https://twiki.cern.ch/CMS/SWGuideMuonIdRun2 
         goodMuonIdx = []
         for i, mu in enumerate(muons):
-            muonID = mu.mediumId
-            if mu.pt>=27. and abs(mu.eta)<2.4 and muonID:
+            muonID = mu.tightId
+            if mu.pt>=24. and abs(mu.eta)<2.4 and muonID:
                 goodMuonIdx.append(i)
 
         #https://twiki.cern.ch/CMS/TauIDRecommendationForRun2
@@ -95,6 +97,20 @@ class MuTauProducer(Module):
                                  mT = math.sqrt(mT)
                                  maxtauiso = tau.idDeepTau2017v2p1VSjet
                                  maxmuiso = mu.pfIsoId
+   
+                                 Tauv3 = TVector3()
+                                 Tauv3.SetPtEtaPhi(tau.pt, 0., tau.phi)
+                                 METv3 = TVector3()
+                                 METv3.SetPtEtaPhi(event.MET_pt, 0., event.MET_phi)
+                                 Muv3 = TVector3()
+                                 Muv3.SetPtEtaPhi(mu.pt, 0., mu.phi)
+                                 IsInside = False
+                                 tauxmet = Tauv3.Cross(METv3)
+                                 tauxmu = Tauv3.Cross(Muv3)
+                                 muxmet = Muv3.Cross(METv3)
+                                 muxtau = Muv3.Cross(Tauv3)
+                                 if (tauxmet.Dot(tauxmu)>=0 and muxmet.Dot(muxtau)>=0):
+                                     IsInside = True
 
                                  #collinear approximation 
                                  nu0 = TLorentzVector()
@@ -127,6 +143,7 @@ class MuTauProducer(Module):
         self.out.fillBranch("MuTau_CollMass", CollMass)
         self.out.fillBranch("MuTau_Mass", Mass)
         self.out.fillBranch("MuTau_Pt", Pt)
+        self.out.fillBranch("MuTau_IsInside", IsInside)
         self.out.fillBranch("MuTau_DeltaR", DeltaR)
         self.out.fillBranch("MuTau_HaveTriplet", HaveTriplet)
         self.out.fillBranch("MuTau_PhotonIdx", PhotonIdx)

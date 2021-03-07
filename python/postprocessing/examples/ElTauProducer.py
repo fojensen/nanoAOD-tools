@@ -62,7 +62,7 @@ class ElTauProducer(Module):
         goodElectronIdx = []
         for i, el in enumerate(electrons):
             elID = 1>0
-            if el.pt>=32. and abs(el.eta)<2.5 and elID:
+            if el.pt>=27. and abs(el.eta)<2.5 and elID:
                 goodElectronIdx.append(i)
 
         #https://twiki.cern.ch/CMS/TauIDRecommendationForRun2

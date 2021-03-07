@@ -27,16 +27,34 @@ keep puWeight*
 keep xsWeight
 
 keep HLT_IsoMu24
+keep HLT_IsoTkMu24
 keep HLT_IsoMu27
+
 keep HLT_Mu50
+keep HLT_TkMu50
 keep HLT_OldMu100
 keep HLT_TkMu100
+keep HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL
+keep HLT_Mu17_TrkIsoVVL_TkMu8_TrkIsoVVL
+keep HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ
+keep HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass3p8
+keep HLT_Mu17_TrkIsoVVL_Mu8_TrkIsoVVL_DZ_Mass8
 
 keep HLT_Ele27_WPTight_Gsf
 keep HLT_Ele32_WPTight_Gsf
 keep HLT_Ele35_WPTight_Gsf
+
+keep HLT_Ele25_eta2p1_WPTight_Gsf
+keep HLT_Ele32_WPTight_Gsf
 keep HLT_Ele115_CaloIdVT_GsfTrkIdT
+keep HLT_Ele45_CaloIdVT_GsfTrkIdT_PFJet200_PFJet50
 keep HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165
+keep HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL_DZ
+keep HLT_DoublePhoton60
+keep HLT_Ele32_WPTight_Gsf_L1DoubleEG
+
+keep HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg
+keep HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg
 
 keep HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg
 keep HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg
