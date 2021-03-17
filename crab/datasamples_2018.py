@@ -6,54 +6,58 @@ data['people'] = []
 lumiMask = 'Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt'
 
 data['people'].append({
-   'name': 'SingleMuon_2018A',
+   'name': 'Muon_2018A',
    'inputDataset': '/SingleMuon/Run2018A-UL2018_MiniAODv1_NanoAODv2-v1/NANOAOD',
    'nFiles': '147',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleMuon_2018B',
+   'name': 'Muon_2018B',
    'inputDataset': '/SingleMuon/Run2018B-UL2018_MiniAODv1_NanoAODv2-v1/NANOAOD',
    'nFiles': '63',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleMuon_2018C',
+   'name': 'Muon_2018C',
    'inputDataset': '/SingleMuon/Run2018C-UL2018_MiniAODv1_NanoAODv2-v1/NANOAOD',
    'nFiles': '71',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleMuon_2018D',
+   'name': 'Muon_2018D',
    'inputDataset': '/SingleMuon/Run2018D-UL2018_MiniAODv1_NanoAODv2-v1/NANOAOD',
    'nFiles': '328',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-    'name': 'SingleElectron_2018A',
+    'name': 'Electron_2018A',
     'inputDataset': '/EGamma/Run2018A-UL2018_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '221',
     'lumiMask': lumiMask,
 })
 
 data['people'].append({
-    'name': 'SingleElectron_2018B',
+    'name': 'Electron_2018B',
     'inputDataset': '/EGamma/Run2018B-UL2018_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '82',
     'lumiMask': lumiMask, 
 })
 
 data['people'].append({
-    'name': 'SingleElectron_2018C',
+    'name': 'Electron_2018C',
     'inputDataset': '/EGamma/Run2018C-UL2018_MiniAODv1_NanoAODv2-v1/NANOAOD', #PRODUCTION
+    'nFiles': '68',
     'lumiMask': lumiMask,
 })
 
 data['people'].append({
-    'name': 'SingleElectron_2018D',
+    'name': 'Electron_2018D',
     'inputDataset': '/EGamma/Run2018D-UL2018_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '404', #396 jobs
     'lumiMask': lumiMask, 
 })
 

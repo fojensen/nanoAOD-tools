@@ -26,6 +26,7 @@ class ElTauProducer(Module):
         self.out.branch("ElTau_CollMass", "F")
         self.out.branch("ElTau_Pt", "F")
         self.out.branch("ElTau_DeltaR", "F")
+        self.out.branch("ElTau_Trigger", "O")
         self.out.branch("ElTau_HaveTriplet", "I")
         self.out.branch("ElTau_PhotonIdx", "I")
         self.out.branch("ElTau_ElCollMass", "F")
@@ -38,7 +39,7 @@ class ElTauProducer(Module):
    
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
-        #print "beginning MuTauProducer"
+        #print "beginning ElTauProducer"
 
         HavePair = 0
         qq = 0
@@ -76,6 +77,7 @@ class ElTauProducer(Module):
         for i, photon in enumerate(photons):
             photonID = photon.mvaID_WP90 and (photon.isScEtaEB or photon.isScEtaEE)
             photonID = photonID and not photon.pixelSeed
+            #photonID = photonID and photon.electronVeto
             if abs(photon.eta)<2.5 and photonID:
                 goodPhotonIdx.append(i)
 
@@ -125,6 +127,18 @@ class ElTauProducer(Module):
                                                      ElGammaDeltaR = deltaR(el, photon)
                                                      TauGammaDeltaR = deltaR(tau, photon)
 
+        Trigger = False
+        #2016
+        if hasattr(event, "HLT_Ele27_WPTight_Gsf"): Trigger = Trigger or event.HLT_Ele27_WPTight_Gsf
+        if hasattr(event, "HLT_Ele25_eta2p1_WPTight_Gsf"): Trigger = Trigger or event.HLT_Ele25_eta2p1_WPTight_Gsf
+        #2017
+        if hasattr(event, "HLT_Ele32_WPTight_Gsf_L1DoubleEG"): Trigger = Trigger or event.HLT_Ele32_WPTight_Gsf_L1DoubleEG
+        if hasattr(event, "HLT_Ele35_WPTight_Gsf"): Trigger = Trigger or event.HLT_Ele35_WPTight_Gsf
+        #if hasattr(event, "HLT_Ele27_WPTight_Gsf"): Trigger = Trigger or event.HLT_Ele27_WPTight_Gsf
+        if hasattr(event, "HLT_Ele32_WPTight_Gsf"): Trigger = Trigger or event.HLT_Ele32_WPTight_Gsf
+        #2018
+        #if hasattr(event, "HLT_Ele32_WPTight_Gsf"): Trigger = Trigger or event.HLT_Ele32_WPTight_Gsf
+
         self.out.fillBranch("ElTau_HavePair", HavePair)
         self.out.fillBranch("ElTau_qq", qq)
         self.out.fillBranch("ElTau_ElIdx", ElIdx)
@@ -134,6 +148,7 @@ class ElTauProducer(Module):
         self.out.fillBranch("ElTau_CollMass", CollMass)
         self.out.fillBranch("ElTau_Pt", Pt)
         self.out.fillBranch("ElTau_DeltaR", DeltaR)
+        self.out.fillBranch("ElTau_Trigger", Trigger)
         self.out.fillBranch("ElTau_HaveTriplet", HaveTriplet)
         self.out.fillBranch("ElTau_PhotonIdx", PhotonIdx)
         self.out.fillBranch("ElTau_TauCollMass", TauCollMass)

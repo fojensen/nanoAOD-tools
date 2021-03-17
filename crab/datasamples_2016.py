@@ -8,156 +8,176 @@ lumiMask = 'Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON.txt'
 #dataset dataset=/*/*UL2016_MiniAODv1_NanoAODv2*/NANOAOD status=*
 
 #data['people'].append({
-#    'name': 'SingleMuon_2016B',
+#    'name': 'Muon_2016B',
 #    'inputDataset': '/SingleMuon/Run2016B-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD', #INVALID
+#    'nFiles': '',
 #    'lumiMask': lumiMask,
 #})
 
 data['people'].append({
-    'name': 'SingleMuon_2016B_ver1_HIPM',
+    'name': 'Muon_2016B_ver1_HIPM',
     'inputDataset': '/SingleMuon/Run2016B-ver1_HIPM_UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD', #no lumis to process
     'nFiles': '6',
     'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleMuon_2016B_ver2_HIPM',
+   'name': 'Muon_2016B_ver2_HIPM',
    'inputDataset': '/SingleMuon/Run2016B-ver2_HIPM_UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
    'nFiles': '59',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleMuon_2016C',
+   'name': 'Muon_2016C',
    'inputDataset': '/SingleMuon/Run2016C-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
    'nFiles': '46',
    'lumiMask': lumiMask,
 })
 
 #data['people'].append({
-#   'name': 'SingleMuon_2016C',
+#   'name': 'Muon_2016C',
 #   'inputDataset': '/SingleMuon/Run2016C-UL2016_MiniAODv1_NanoAODv2-v2/NANOAOD', #INVALID
+#   'nFiles': '',
 #   'lumiMask': lumiMask,
 #}) 
 
 data['people'].append({
-   'name': 'SingleMuon_2016D',
+   'name': 'Muon_2016D',
    'inputDataset': '/SingleMuon/Run2016D-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
    'nFiles': '57',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleMuon_2016E',
+   'name': 'Muon_2016E',
    'inputDataset': '/SingleMuon/Run2016E-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
    'nFiles': '52',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-    'name': 'SingleMuon_2016F_HIPM',
+    'name': 'Muon_2016F_HIPM',
     'inputDataset': '/SingleMuon/Run2016F-HIPM_UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
     'nFiles': '28',
     'lumiMask': lumiMask,
 })
 
-data['people'].append({
-    'name': 'SingleMuon_2016F_v1',
-    'inputDataset': '/SingleMuon/Run2016F-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
-    'nFiles': '37',
-    'lumiMask': lumiMask,
-}) 
+#data['people'].append({
+#    'name': 'Muon_2016F_v1',
+#    'inputDataset': '/SingleMuon/Run2016F-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD', #INVALID
+#    'nFiles': '37',
+#    'lumiMask': lumiMask,
+#}) 
 
 #data['people'].append({
-#    'name': 'SingleMuon_2016F_v2',
+#    'name': 'Muon_2016F_v2',
 #    'inputDataset': '/SingleMuon/Run2016F-UL2016_MiniAODv1_NanoAODv2-v2/NANOAOD', #INVALID
+#    'nFiles': '',
 #    'lumiMask': lumiMask,
 #})
 
 #data['people'].append({
-#    'name': 'SingleMuon_2016F_v2',
+#    'name': 'Muon_2016F_v3',
 #    'inputDataset': '/SingleMuon/Run2016F-UL2016_MiniAODv1_NanoAODv2-v3/NANOAOD', #INVALID
+#    'nFiles': '',
 #    'lumiMask': lumiMask,
 #})
 
 data['people'].append({
-    'name': 'SingleMuon_2016F_v4',
+    'name': 'Muon_2016F_v4',
     'inputDataset': '/SingleMuon/Run2016F-UL2016_MiniAODv1_NanoAODv2-v4/NANOAOD',
     'nFiles': '8',
     'lumiMask': lumiMask,
 })
 
 data['people'].append({
-    'name': 'SingleMuon_2016G',
+    'name': 'Muon_2016G',
     'inputDataset': '/SingleMuon/Run2016G-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
     'nFiles': '86',
     'lumiMask': lumiMask, 
 })
 
 data['people'].append({
-    'name': 'SingleMuon_2016H',
+    'name': 'Muon_2016H',
     'inputDataset': '/SingleMuon/Run2016H-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
     'nFiles': '82',
     'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleElectron_2016B_ver1_HIPM',
-   'inputDataset': '/SingleElectron/Run2016B-ver1_HIPM_UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+   'name': 'Electron_2016B_ver1_HIPM',
+   'inputDataset': '/SingleElectron/Run2016B-ver1_HIPM_UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',#nojobsaftersplitting
+   'nFiles': '1',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleElectron_2016C',
+   'name': 'Electron_2016B_ver2_HIPM',
+   'inputDataset': '/SingleElectron/Run2016B-ver2_HIPM_UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+   'nFiles': '122',
+   'lumiMask': lumiMask,
+})
+
+data['people'].append({
+   'name': 'Electron_2016C',
    'inputDataset': '/SingleElectron/Run2016C-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+   'nFiles': '61',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleElectron_2016D',
+   'name': 'Electron_2016D',
    'inputDataset': '/SingleElectron/Run2016D-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+   'nFiles': '81',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleElectron_2016E',
+   'name': 'Electron_2016E',
    'inputDataset': '/SingleElectron/Run2016E-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+   'nFiles': '68',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-    'name': 'SingleElectron_2016F_HIPM',
+    'name': 'Electron_2016F_HIPM',
     'inputDataset': '/SingleElectron/Run2016F-HIPM_UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '41',
     'lumiMask': lumiMask,
 })
 
-data['people'].append({
-    'name': 'SingleElectron_2016F_v1',
-    'inputDataset': '/SingleElectron/Run2016F-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
-    'lumiMask': lumiMask,
-})
+#data['people'].append({
+#    'name': 'Electron_2016F_v1',
+#    'inputDataset': '/SingleElectron/Run2016F-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',#INVALID
+#    'nFiles': '35',
+#    'lumiMask': lumiMask,
+#})
 
 data['people'].append({
-    'name': 'SingleElectron_2016F_v2',
+    'name': 'Electron_2016F_v2',
     'inputDataset': '/SingleElectron/Run2016F-UL2016_MiniAODv1_NanoAODv2-v2/NANOAOD',
+    'nFiles': '6',
     'lumiMask': lumiMask,
 })
 
 data['people'].append({
-    'name': 'SingleElectron_2016G',
+    'name': 'Electron_2016G',
     'inputDataset': '/SingleElectron/Run2016G-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '70',
     'lumiMask': lumiMask, 
 })
 
 data['people'].append({
-    'name': 'SingleElectron_2016H',
+    'name': 'Electron_2016H',
     'inputDataset': '/SingleElectron/Run2016H-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '76',
     'lumiMask': lumiMask,
 })
 
 data['people'].append({
    'name': 'Tau_2016B_ver1_HIPM',
-   'inputDataset': '/Tau/Run2016B-ver1_HIPM_UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+   'inputDataset': '/Tau/Run2016B-ver1_HIPM_UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD', #nojobsafterlumi
    'nFiles': '1',
    'lumiMask': lumiMask,
 })
@@ -197,12 +217,12 @@ data['people'].append({
     'lumiMask': lumiMask,
 })
 
-data['people'].append({
-    'name': 'Tau_2016F_v1',
-    'inputDataset': '/Tau/Run2016F-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
-    'nFiles': '27',
-    'lumiMask': lumiMask,
-})
+#data['people'].append({
+#    'name': 'Tau_2016F_v1',
+#    'inputDataset': '/Tau/Run2016F-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',#INVALID
+#    'nFiles': '27',
+#    'lumiMask': lumiMask,
+#})
 
 data['people'].append({
     'name': 'Tau_2016F_v2',

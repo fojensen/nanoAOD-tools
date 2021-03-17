@@ -39,9 +39,9 @@ class EEProducer(Module):
                             if e1.charge*e2.charge<0:
                                 if abs(deltaPhi(e1, e2))>=0.28284271 and abs(e1.eta-e2.eta)>=0.28284271:
                                     Mass = (e1.p4()+e2.p4()).M()
+                                    if Mass>=50:
+                                        return False
                                     HavePair = HavePair+1
-        if Mass>=50.:
-            return False
 
         self.out.fillBranch("EE_HavePair", HavePair)
         self.out.fillBranch("EE_Mass", Mass)

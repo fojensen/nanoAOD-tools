@@ -6,108 +6,112 @@ data['people'] = []
 lumiMask = 'Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON.txt'
 
 data['people'].append({
-   'name': 'SingleMuon_2017B',
+   'name': 'Muon_2017B',
    'inputDataset': '/SingleMuon/Run2017B-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
    'nFiles': '110',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleMuon_2017C',
-   'inputDataset': '/SingleMuon/Run2017C-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD', #PRODUCTION
-   'nFiles': '137',
+   'name': 'Muon_2017C',
+   'inputDataset': '/SingleMuon/Run2017C-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
+   'nFiles': '139',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleMuon_2017D',
+   'name': 'Muon_2017D',
    'inputDataset': '/SingleMuon/Run2017D-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
    'nFiles': '58',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleMuon_2017E',
+   'name': 'Muon_2017E',
    'inputDataset': '/SingleMuon/Run2017E-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
    'nFiles': '124',
    'lumiMask': lumiMask,
 })
 
 #data['people'].append({
-#    'name': 'SingleMuon_2017F',
+#    'name': 'Muon_2017F',
 #    'inputDataset': '/SingleMuon/Run2017F-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD', #INVALID
-#     'nFiles': '',
+#    'nFiles': '',
 #    'lumiMask': lumiMask,
 #})
 
 data['people'].append({
-    'name': 'SingleMuon_2017F',
+    'name': 'Muon_2017F',
     'inputDataset': '/SingleMuon/Run2017F-UL2017_MiniAODv1_NanoAODv2-v2/NANOAOD',
     'nFiles': '174',
     'lumiMask': lumiMask,
 })
 
-data['people'].append({
-    'name': 'SingleMuon_2017G',
-    'inputDataset': '/SingleMuon/Run2017G-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
-    'nFiles': '174',
-    'lumiMask': lumiMask, 
-})
+#data['people'].append({
+#    'name': 'Muon_2017G',
+#    'inputDataset': '/SingleMuon/Run2017G-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD', #for what?
+#    'nFiles': '174',
+#    'lumiMask': lumiMask, 
+#})
+
+#data['people'].append({
+#    'name': 'Muon_2017H',
+#    'inputDataset': '/SingleMuon/Run2017H-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD', #for what?
+#    'nFiles': '35',
+#    'lumiMask': lumiMask,
+#})
 
 data['people'].append({
-    'name': 'SingleMuon_2017H',
-    'inputDataset': '/SingleMuon/Run2017H-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
-    'nFiles': '35',
-    'lumiMask': lumiMask,
-})
-
-data['people'].append({
-   'name': 'SingleElectron_2017B',
+   'name': 'Electron_2017B',
    'inputDataset': '/SingleElectron/Run2017B-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
-   'nFiles': '',
+   'nFiles': '53',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleElectron_2017C',
+   'name': 'Electron_2017C',
    'inputDataset': '/SingleElectron/Run2017C-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
-   'nFiles': '',
+   'nFiles': '96',
    'lumiMask': lumiMask,
 })
 
 #data['people'].append({
-#   'name': 'SingleElectron_2017C',
+#   'name': 'Electron_2017C',
 #   'inputDataset': '/SingleElectron/Run2017C-UL2017_MiniAODv1_NanoAODv2-v2/NANOAOD', #INVALID
 #   'lumiMask': lumiMask,
 #})
 
 #data['people'].append({
-#   'name': 'SingleElectron_2017C',
+#   'name': 'Electron_2017C',
 #   'inputDataset': '/SingleElectron/Run2017C-UL2017_MiniAODv1_NanoAODv2-v3/NANOAOD', #INVALID
 #   'lumiMask': lumiMask,
 #})
 
 data['people'].append({
-   'name': 'SingleElectron_2017D',
+   'name': 'Electron_2017D',
    'inputDataset': '/SingleElectron/Run2017D-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
+   'nFiles': '38',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-   'name': 'SingleElectron_2017E',
+   'name': 'Electron_2017E',
    'inputDataset': '/SingleElectron/Run2017E-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
+   'nFiles': '90',
    'lumiMask': lumiMask,
 })
 
 data['people'].append({
-    'name': 'SingleElectron_2017F',
+    'name': 'Electron_2017F',
     'inputDataset': '/SingleElectron/Run2017F-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '117',
     'lumiMask': lumiMask,
 })
 
 #data['people'].append({
-#    'name': 'SingleElectron_2017F',
+#    'name': 'Electron_2017F',
 #    'inputDataset': '/SingleElectron/Run2017F-UL2017_MiniAODv1_NanoAODv2-v2/NANOAOD', #INVALID
+#    'nFiles': '',
 #    'lumiMask': lumiMask,
 #})
 

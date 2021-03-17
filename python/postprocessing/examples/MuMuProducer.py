@@ -34,7 +34,7 @@ class MuMuProducer(Module):
         Mass = 0.
         Mu1Idx = Mu2Idx = -1
         HaveTriplet = 0
-        GammaMass = 0.
+        MuMuGammaMass = 0.
         PhotonIdx = -1
 
         muons = Collection(event, "Muon")
@@ -55,9 +55,10 @@ class MuMuProducer(Module):
                         mu2Id = mu2.mediumId and mu2.pfIsoId>=2
                         if mu2.pt>=8. and abs(mu2.eta)<2.4 and mu2Id:
                             if mu1.charge*mu2.charge<0:
-                                mumudr = abs(deltaPhi(mu1, mu2))>=0.28284271 and abs(mu1.eta-mu2.eta)>=0.28284271
-                                if mumudr:
+                                if abs(deltaPhi(mu1, mu2))>=0.28284271 and abs(mu1.eta-mu2.eta)>=0.28284271:
                                     Mass = (mu1.p4()+mu2.p4()).M()
+                                    if Mass>=50.:
+                                        return False
                                     HavePair = HavePair+1
                                     Mu1Idx = i
                                     Mu2Idx = j
@@ -72,13 +73,10 @@ class MuMuProducer(Module):
                                                     maxphotonpt = photon.pt
                                                     PhotonIdx = k
 
-        #if MuMuMass>=50.:
-        #    return False
-
         self.out.fillBranch("MuMu_HavePair", HavePair)
         self.out.fillBranch("MuMu_Mass", Mass)
         self.out.fillBranch("MuMu_HaveTriplet", HaveTriplet)
-        self.out.fillBranch("MuMu_MuMuGammaMass", GammaMass)
+        self.out.fillBranch("MuMu_MuMuGammaMass", MuMuGammaMass)
         self.out.fillBranch("MuMu_PhotonIdx", PhotonIdx)
         self.out.fillBranch("MuMu_Mu1Idx", Mu1Idx)
         self.out.fillBranch("MuMu_Mu2Idx", Mu2Idx)

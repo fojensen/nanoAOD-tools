@@ -1,10 +1,17 @@
 import json
 import os
 
-infile = 'datasamples.json'
-#infile = 'mcsamples.json'
-#infile = 'embeddedsamples.json
-#infile = 'sigsamples.json'
+infile = 'datasamples_2016.json'
+#infile = 'datasamples_2017.json'
+#infile = 'datasamples_2018.json'
+
+#infile = 'mcsamples_2016.json'
+#infile = 'mcsamples_2017.json'
+#infile = 'mcsamples_2018.json'
+
+#infile = 'sigsamples_2016.json'
+#infile = 'sigsamples_2017.json'
+#infile = 'sigsamples_2018.json'
 
 with open(infile) as json_file:
 
@@ -57,7 +64,7 @@ with open(infile) as json_file:
         #f.write("config.Data.splitting='Automatic'\n")
         f.write("config.Data.splitting = 'FileBased'\n")
         f.write("config.Data.unitsPerJob = 1\n")
-        f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_25022020/'\n")
+        f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_16032020/'\n")
         f.write("config.Data.publication = False\n")
         f.write("\n")
 
@@ -68,5 +75,5 @@ with open(infile) as json_file:
         f.close()
 
         #actually submit jobs or not
-        os.system("crab submit -c " + f.name)
+        #os.system("crab submit -c " + f.name)
 

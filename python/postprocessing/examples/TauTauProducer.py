@@ -113,8 +113,8 @@ class TauTauProducer(Module):
 
         Trigger = False
         #
-        if hasattr(event, "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg"):         Trigger = Trigger or HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg
-        if hasattr(event, "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg"): Trigger = Trigger or HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg 
+        if hasattr(event, "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg"):         Trigger = Trigger or event.HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg
         #
         if hasattr(event, "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg
         if hasattr(event, "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg"):         Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg

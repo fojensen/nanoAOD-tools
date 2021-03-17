@@ -26,6 +26,7 @@ class MuTauProducer(Module):
         self.out.branch("MuTau_CollMass", "F")
         self.out.branch("MuTau_Pt", "F")
         self.out.branch("MuTau_DeltaR", "F")
+        self.out.branch("MuTau_Trigger", "O")
         self.out.branch("MuTau_HaveTriplet", "I")
         self.out.branch("MuTau_PhotonIdx", "I")
         self.out.branch("MuTau_MuCollMass", "F")
@@ -135,6 +136,17 @@ class MuTauProducer(Module):
                                                      TauCollMass = (tau.p4()+nu0+photon.p4()).M()
                                                      MuCollMass = (mu.p4()+nu1+photon.p4()).M()
 
+        Trigger = False
+        #2016
+        if hasattr(event, "HLT_IsoMu24"): Trigger = Trigger or event.HLT_IsoMu24
+        if hasattr(event, "HLT_IsoTkMu24"): Trigger = Trigger or event.HLT_IsoTkMu24
+        #2017
+        if hasattr(event, "HLT_IsoMu27"): Trigger = Trigger or event.HLT_IsoMu27
+        #if hasattr(event, "HLT_IsoMu24"): Trigger = Trigger or event.HLT_IsoMu24
+        #2018
+        #if hasattr(event, "HLT_IsoMu27"): Trigger = Trigger or event.HLT_IsoMu27
+        #if hasattr(event, "HLT_IsoMu24"): Trigger = Trigger or event.HLT_IsoMu24
+
         self.out.fillBranch("MuTau_HavePair", HavePair)
         self.out.fillBranch("MuTau_qq", qq)
         self.out.fillBranch("MuTau_MuIdx", MuIdx)
@@ -145,6 +157,7 @@ class MuTauProducer(Module):
         self.out.fillBranch("MuTau_Pt", Pt)
         self.out.fillBranch("MuTau_IsInside", IsInside)
         self.out.fillBranch("MuTau_DeltaR", DeltaR)
+        self.out.fillBranch("MuTau_Trigger", Trigger)
         self.out.fillBranch("MuTau_HaveTriplet", HaveTriplet)
         self.out.fillBranch("MuTau_PhotonIdx", PhotonIdx)
         self.out.fillBranch("MuTau_TauCollMass", TauCollMass)
