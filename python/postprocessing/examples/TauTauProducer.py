@@ -31,6 +31,8 @@ class TauTauProducer(Module):
         self.out.branch("TauTau_PhotonIdx", "I")
         self.out.branch("TauTau_Tau0CollMass", "F")
         self.out.branch("TauTau_Tau1CollMass", "F")
+        self.out.branch("TauTau_MinCollMass", "F")
+        self.out.branch("TauTau_MaxCollMass", "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -50,6 +52,7 @@ class TauTauProducer(Module):
         HaveTriplet = 0
         PhotonIdx = -1
         Tau0CollMass = Tau1CollMass = CollMass = 0
+        MinCollMass = MaxCollMass = 0
  
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html
         taus = Collection(event, "Tau")
@@ -110,6 +113,8 @@ class TauTauProducer(Module):
                                                          PhotonIdx = k
                                                          Tau0CollMass = (tau0.p4()+nu0+photon.p4()).M()
                                                          Tau1CollMass = (tau1.p4()+nu1+photon.p4()).M()
+                                                         MinCollMass = min(Tau0CollMass, Tau1CollMass)
+                                                         MaxCollMass = max(Tau0CollMass, Tau1CollMass)
 
         Trigger = False
         #
@@ -147,6 +152,8 @@ class TauTauProducer(Module):
         self.out.fillBranch("TauTau_PhotonIdx", PhotonIdx)
         self.out.fillBranch("TauTau_Tau0CollMass", Tau0CollMass)
         self.out.fillBranch("TauTau_Tau1CollMass", Tau1CollMass)
+        self.out.fillBranch("TauTau_MinCollMass", MinCollMass)
+        self.out.fillBranch("TauTau_MaxCollMass", MaxCollMass)
         return True, Tau0Idx, Tau1Idx, PhotonIdx
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed

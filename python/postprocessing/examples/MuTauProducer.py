@@ -31,6 +31,8 @@ class MuTauProducer(Module):
         self.out.branch("MuTau_PhotonIdx", "I")
         self.out.branch("MuTau_MuCollMass", "F")
         self.out.branch("MuTau_TauCollMass", "F")
+        self.out.branch("MuTau_MinCollMass", "F")
+        self.out.branch("MuTau_MaxCollMass", "F")
         self.out.branch("MuTau_IsInside", "O")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
@@ -52,6 +54,7 @@ class MuTauProducer(Module):
         HaveTriplet = 0
         PhotonIdx = -1
         TauCollMass = MuCollMass = CollMass = 0
+        MinCollMass = MaxCollMass = 0
 
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html
         muons = Collection(event, "Muon")
@@ -135,6 +138,8 @@ class MuTauProducer(Module):
                                                      PhotonIdx = k
                                                      TauCollMass = (tau.p4()+nu0+photon.p4()).M()
                                                      MuCollMass = (mu.p4()+nu1+photon.p4()).M()
+                                                     MinCollMass = min(TauCollMass, MuCollMass)
+                                                     MaxCollMass = max(TauCollMass, MuCollMass)
 
         Trigger = False
         #2016
@@ -162,6 +167,8 @@ class MuTauProducer(Module):
         self.out.fillBranch("MuTau_PhotonIdx", PhotonIdx)
         self.out.fillBranch("MuTau_TauCollMass", TauCollMass)
         self.out.fillBranch("MuTau_MuCollMass", MuCollMass)
+        self.out.fillBranch("MuTau_MinCollMass", MinCollMass)
+        self.out.fillBranch("MuTau_MaxCollMass", MaxCollMass)
  
         return True, MuIdx, TauIdx, PhotonIdx
 

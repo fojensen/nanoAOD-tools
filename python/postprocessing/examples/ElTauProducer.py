@@ -31,6 +31,8 @@ class ElTauProducer(Module):
         self.out.branch("ElTau_PhotonIdx", "I")
         self.out.branch("ElTau_ElCollMass", "F")
         self.out.branch("ElTau_TauCollMass", "F")
+        self.out.branch("ElTau_MinCollMass", "F")
+        self.out.branch("ElTau_MaxCollMass", "F")
         self.out.branch("ElTau_ElGammaDeltaR", "F")
         self.out.branch("ElTau_TauGammaDeltaR", "F")
 
@@ -53,6 +55,7 @@ class ElTauProducer(Module):
         PhotonIdx = -1
         TauCollMass = ElCollMass = CollMass = 0
         ElGammaDeltaR = TauGammaDeltaR = 0
+        MinCollMass = MaxCollMass = 0
  
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html
         electrons = Collection(event, "Electron")
@@ -124,6 +127,8 @@ class ElTauProducer(Module):
                                                      PhotonIdx = k
                                                      TauCollMass = (tau.p4()+nu0+photon.p4()).M()
                                                      ElCollMass = (el.p4()+nu1+photon.p4()).M()
+                                                     MinCollMass = min(TauCollMass, ElCollMass)
+                                                     MaxCollMass = max(TauCollMass, ElCollMass)
                                                      ElGammaDeltaR = deltaR(el, photon)
                                                      TauGammaDeltaR = deltaR(tau, photon)
 
@@ -153,6 +158,8 @@ class ElTauProducer(Module):
         self.out.fillBranch("ElTau_PhotonIdx", PhotonIdx)
         self.out.fillBranch("ElTau_TauCollMass", TauCollMass)
         self.out.fillBranch("ElTau_ElCollMass", ElCollMass)
+        self.out.fillBranch("ElTau_MinCollMass", MinCollMass)
+        self.out.fillBranch("ElTau_MaxCollMass", MaxCollMass)
         self.out.fillBranch("ElTau_ElGammaDeltaR", ElGammaDeltaR)
         self.out.fillBranch("ElTau_TauGammaDeltaR", TauGammaDeltaR)
         return True, ElIdx, TauIdx, PhotonIdx

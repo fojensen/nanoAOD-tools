@@ -24,27 +24,38 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
 
    char hname[100];
    sprintf(hname, "h_%s_%s_%d", sampletag.Data(), channel.Data(), year);
-   TH1D * h = new TH1D(hname, ";min collinear mass;events / 250 GeV", 4, 0., 1000.);
+   TH1D * h = new TH1D(hname, ";min collinear mass;events / 200 GeV", 5, 0., 1000.);
    h->Sumw2();
    TString var;
-   if (channel=="Electron") var = "TMath::Min(ElTau_ElCollMass, ElTau_TauCollMass)";
-   if (channel=="Muon")     var = "TMath::Min(MuTau_MuCollMass, MuTau_TauCollMass)";
-   if (channel=="Tau")      var = "TMath::Min(TauTau_Tau0CollMass, TauTau_Tau1CollMass)";
+   TString titletag;
+   if (channel=="Electron") {
+      var = "TMath::Min(ElTau_ElCollMass, ElTau_TauCollMass)";
+      titletag = "e + #tau_{h}";
+   }  
+   if (channel=="Muon") {
+      var = "TMath::Min(MuTau_MuCollMass, MuTau_TauCollMass)";
+      titletag = "#mu + #tau_{h}";
+   }
+   if (channel=="Tau") {
+      var = "TMath::Min(TauTau_Tau0CollMass, TauTau_Tau1CollMass)";
+      titletag = "#tau_{h} + #tau_{h}";
+   }
 
    TH1D * h_A = (TH1D*)h->Clone(TString(h->GetName())+"_A");
-   h_A->SetTitle("A");
+   h_A->SetTitle("A; " + titletag);
    TH1D * h_B = (TH1D*)h->Clone(TString(h->GetName())+"_B");
-   h_B->SetTitle("B");
+   h_B->SetTitle("B; " + titletag);
    TH1D * h_C = (TH1D*)h->Clone(TString(h->GetName())+"_C");
-   h_C->SetTitle("C");
+   h_C->SetTitle("C; " + titletag);
    TH1D * h_D = (TH1D*)h->Clone(TString(h->GetName())+"_D");
-   h_D->SetTitle("D");
+   h_D->SetTitle("D; " + titletag);
 
    if (f) {
 
    TCut baseline, regionA, regionB, regionC, regionD; 
    baseline = "MuMu_HavePair==0||(MuMu_HavePair==1&&MuMu_Mass<50.)";
    baseline = baseline && TCut("EE_HavePair==0||(EE_HavePair==1&&EE_Mass<50.)");
+   baseline = baseline && TCut("JetProducer_nBJetT==0");
 
    if (sampletag=="DYJetsToTauTau_M50"||sampletag=="DYJetsToEEMuMu_M50") {
      const TCut tautau = "Sum$(TMath::Abs(GenPart_pdgId)==15 && GenPart_genPartIdxMother>=0 && GenPart_pdgId[GenPart_genPartIdxMother]==23)>=2";
@@ -55,7 +66,7 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    if (channel=="Muon") {
       baseline = baseline && TCut("MuTau_HaveTriplet>0");
       baseline = baseline && TCut("Photon_pt[MuTau_PhotonIdx]>=100.");
-      baseline = baseline && TCut("MuTau_Mass>=100. && JetProducer_nBJetM==0");;
+      baseline = baseline && TCut("MuTau_Mass>=100.");
       baseline = baseline && TCut("MuTau_Trigger");
       baseline = baseline && TCut("Muon_pfIsoId[MuTau_MuIdx]>=4");
       if (year==2016) baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=26.");
@@ -71,7 +82,7 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    if (channel=="Tau") {
       baseline = baseline && TCut("TauTau_HaveTriplet>0");
       baseline = baseline && TCut("Photon_pt[TauTau_PhotonIdx]>=100.");
-      baseline = baseline && TCut("TauTau_Mass>=100. && JetProducer_nBJetM==0");
+      baseline = baseline && TCut("TauTau_Mass>=100.");
       baseline = baseline && TCut("TauTau_Trigger");
       baseline = baseline && TCut("Tau_pt[TauTau_Tau0Idx]>=35. && TMath::Abs(Tau_eta[TauTau_Tau0Idx])<2.1");
       baseline = baseline && TCut("Tau_pt[TauTau_Tau1Idx]>=35. && TMath::Abs(Tau_eta[TauTau_Tau1Idx])<2.1");
@@ -89,7 +100,7 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    if (channel=="Electron") {
       baseline = baseline && TCut("ElTau_HaveTriplet>0");
       baseline = baseline && TCut("Photon_pt[ElTau_PhotonIdx]>=100.");
-      baseline = baseline && TCut("ElTau_Mass>=100. && JetProducer_nBJetM==0");
+      baseline = baseline && TCut("ElTau_Mass>=100.");
       baseline = baseline && TCut("ElTau_Trigger");
       baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElTau_ElIdx]");
       if (year==2016) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=29.");
@@ -281,7 +292,7 @@ TFile * makeABCDHists(const TString channel, const int year=0)
    data_D->Write("h_D");
    h_BCoD->Write("h_A");
    h_CoD->Write("h_CoD");
-   f_qcd->Close();
+   //f_qcd->Close();
    return f_qcd;
 }
 
@@ -312,7 +323,7 @@ void plotControlRegions(const TString channel, const int year=0)
    TString siglabels[nsig];
    siglabels[0] = "#tau* 375";
    siglabels[1] = "#tau* 750";
-   int sigcolz[nsig] = {178, 200};
+   const int sigcolz[nsig] = {95, 95};
    TH1D *h_sig_A[nsig], *h_sig_B[nsig], *h_sig_C[nsig], *h_sig_D[nsig];
    for (int i = 0; i < nsig; ++i) {
       char infmc[100];
@@ -331,7 +342,7 @@ void plotControlRegions(const TString channel, const int year=0)
       h_sig_B[i]->SetLineColor(sigcolz[i]);
       h_sig_B[i]->SetLineStyle(2);
       h_sig_C[i]->SetLineColor(sigcolz[i]);
-      h_sig_B[i]->SetLineStyle(2);
+      h_sig_C[i]->SetLineStyle(2);
       h_sig_D[i]->SetLineColor(sigcolz[i]);
       h_sig_D[i]->SetLineStyle(2);
    }
@@ -515,8 +526,7 @@ void makeAllHists(const TString channel="Electron", const int year=2018)
          runPoint("MuonC", channel, year, false, blindA);
          runPoint("MuonD", channel, year, false, blindA);
          runPoint("MuonE", channel, year, false, blindA);
-         runPoint("MuonF_HIPM", channel, year, false, blindA);
-         runPoint("MuonF_v4", channel, year, false, blindA);
+         runPoint("MuonF", channel, year, false, blindA);
          runPoint("MuonG", channel, year, false, blindA);
          runPoint("MuonH", channel, year, false, blindA);
       }
@@ -540,8 +550,7 @@ void makeAllHists(const TString channel="Electron", const int year=2018)
          runPoint("ElectronC", channel, year, false, blindA);
          runPoint("ElectronD", channel, year, false, blindA);
          runPoint("ElectronE", channel, year, false, blindA);
-         runPoint("ElectronF_HIPM", channel, year, false, blindA);
-         runPoint("ElectronF_v2", channel, year, false, blindA);
+         runPoint("ElectronF", channel, year, false, blindA);
          runPoint("ElectronG", channel, year, false, blindA);
          runPoint("ElectronH", channel, year, false, blindA);
       }
@@ -565,8 +574,7 @@ void makeAllHists(const TString channel="Electron", const int year=2018)
          runPoint("TauC", channel, year, false, blindA);
          runPoint("TauD", channel, year, false, blindA);
          runPoint("TauE", channel, year, false, blindA);
-         runPoint("TauF_HIPM", channel, year, false, blindA);
-         runPoint("TauF_v2", channel, year, false, blindA);
+         runPoint("TauF", channel, year, false, blindA);
          runPoint("TauG", channel, year, false, blindA);
          runPoint("TauH", channel, year, false, blindA);
       }
