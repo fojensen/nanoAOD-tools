@@ -8,7 +8,7 @@ data['people'].append({
     'name': 'DYJetsToLL_M50_2016',
     'inputDataset': '/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
     'nEvents': '68830677',
-    'nFiles': '52',
+    'nFiles': '52',#PRODUCTION
     'isMC': isMC_,
     'xs': '6077.22',
 })
@@ -128,6 +128,15 @@ data['people'].append({
     'nFiles': '',
     'isMC': isMC_,
     'xs': '16.523', #ra2b: 16.523;
+})
+
+data['people'].append({
+   'name' : 'WJetsToLNu_2016',
+   'inputDataset': '/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
+   'nEvents': '88463979',
+   'nFiles': '62',
+   'isMC': isMC_,
+   'xs': '61526.7',
 })
 
 #data['people'].append({

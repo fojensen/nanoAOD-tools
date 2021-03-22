@@ -121,6 +121,15 @@ data['people'].append({
     'xs': '47.13', #ra2b:47.13; 
 })
 
+data['people'].append({
+   'name' : 'WJetsToLNu_2017',
+   'inputDataset': '/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM',
+   'nEvents': '81254459',
+   'nFiles': '42',
+   'isMC': isMC_,
+   'xs': '61526.7',
+})
+
 #data['people'].append({
 #    'name': 'ZZ_2017',
 #    'inputDataset': '',

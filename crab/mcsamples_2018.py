@@ -33,7 +33,7 @@ data['people'].append({
 
 data['people'].append({
     'name': 'DY3JetsToLL_M50_2018',
-    'inputDataset': '/DY3JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM ',
+    'inputDataset': '/DY3JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
     'nEvents': '19021176',
     'nFiles': '18',
     'isMC': isMC_,
@@ -153,6 +153,24 @@ data['people'].append({
 #    'isMC': isMC_,
 #    'xs': '0.2',
 #})
+
+data['people'].append({
+    'name': 'QCD_Mu15_2018',
+    'inputDataset': '/QCD_Pt-20toInf_MuEnrichedPt15_TuneCP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '22165320',
+    'nFiles': '38',
+    'isMC': isMC_,
+    'xs': '239400.0',
+})
+
+data['people'].append({
+   'name' : 'WJetsToLNu_2018',
+   'inputDataset': '/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
+   'nEvents': '83009353',
+   'nFiles': '45',
+   'isMC': isMC_,
+   'xs': '61526.7',
+})
 
 with open('mcsamples_2018.json', 'w') as outfile:
    json.dump(data, outfile)

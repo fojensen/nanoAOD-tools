@@ -35,6 +35,7 @@ class ElTauProducer(Module):
         self.out.branch("ElTau_MaxCollMass", "F")
         self.out.branch("ElTau_ElGammaDeltaR", "F")
         self.out.branch("ElTau_TauGammaDeltaR", "F")
+        self.out.branch("ElTau_ETGCollMass", "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
@@ -56,6 +57,7 @@ class ElTauProducer(Module):
         TauCollMass = ElCollMass = CollMass = 0
         ElGammaDeltaR = TauGammaDeltaR = 0
         MinCollMass = MaxCollMass = 0
+        ETGCollMass = 0
  
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html
         electrons = Collection(event, "Electron")
@@ -131,6 +133,7 @@ class ElTauProducer(Module):
                                                      MaxCollMass = max(TauCollMass, ElCollMass)
                                                      ElGammaDeltaR = deltaR(el, photon)
                                                      TauGammaDeltaR = deltaR(tau, photon)
+                                                     ETGCollMass = (tau.p4()+nu0+el.p4()+nu1+photon.p4()).M()
 
         Trigger = False
         #2016
@@ -162,6 +165,7 @@ class ElTauProducer(Module):
         self.out.fillBranch("ElTau_MaxCollMass", MaxCollMass)
         self.out.fillBranch("ElTau_ElGammaDeltaR", ElGammaDeltaR)
         self.out.fillBranch("ElTau_TauGammaDeltaR", TauGammaDeltaR)
+        self.out.fillBranch("ElTau_ETGCollMass", ETGCollMass)
         return True, ElIdx, TauIdx, PhotonIdx
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed

@@ -29,8 +29,6 @@ keep LHEPart_*
 keep MuTau_*
 keep ElTau_*
 keep TauTau_*
-keep EE_*
-keep MuMu_*
 keep puWeight*
 keep xsWeight
 
