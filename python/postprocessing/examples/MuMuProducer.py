@@ -57,8 +57,6 @@ class MuMuProducer(Module):
                             if mu1.charge*mu2.charge<0:
                                 if abs(deltaPhi(mu1, mu2))>=0.28284271 and abs(mu1.eta-mu2.eta)>=0.28284271:
                                     Mass = (mu1.p4()+mu2.p4()).M()
-                                    if Mass>=50.:
-                                        return False
                                     HavePair = HavePair+1
                                     Mu1Idx = i
                                     Mu2Idx = j

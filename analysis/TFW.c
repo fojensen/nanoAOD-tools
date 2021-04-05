@@ -12,7 +12,7 @@ void TFW()
    h->SetStats(0);
    h->SetLineWidth(2);
 
-   const TString fname_2016 = "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_20032021/WJetsToLNu_2016.root";
+   const TString fname_2016 = "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_22032021/WJetsToLNu_2016.root";
    TFile * f_2016 = TFile::Open(fname_2016);
    TTree * t_2016;
    if (f_2016) {
@@ -22,7 +22,7 @@ void TFW()
    }
    TH1D * h_2016[4];
 
-   const TString fname_2017 = "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_20032021/WJetsToLNu_2017.root";
+   const TString fname_2017 = "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_22032021/WJetsToLNu_2017.root";
    TFile * f_2017 = TFile::Open(fname_2017);
    TTree * t_2017;
    if (f_2017) {
@@ -32,7 +32,7 @@ void TFW()
    }
    TH1D * h_2017[4];
 
-   const TString fname_2018 = "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_20032021/WJetsToLNu_2018.root";
+   const TString fname_2018 = "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_22032021/WJetsToLNu_2018.root";
    TFile * f_2018 = TFile::Open(fname_2018);
    TTree * t_2018;
    if (f_2018) {
@@ -46,7 +46,7 @@ void TFW()
    //baseline = baseline && TCut("JetProducer_nBJetT==0");
    //baseline = baseline && TCut("Photon_pt[MuTau_PhotonIdx]>=100.");
    //baseline = baseline && TCut("MuTau_Mass>=100.");
-   baseline = baseline && TCut("MuTau_Trigger");
+   //baseline = baseline && TCut("MuTau_Trigger");
    baseline = baseline && TCut("Muon_pfIsoId[MuTau_MuIdx]>=4");
    const TCut pt2016 = TCut("Muon_pt[MuTau_MuIdx]>=26.");
    const TCut pt2017 = TCut("Muon_pt[MuTau_MuIdx]>=29.");

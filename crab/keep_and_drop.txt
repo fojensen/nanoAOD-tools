@@ -22,10 +22,13 @@ keep L1_*EG*
 keep nTrigObj
 keep TrigObj*
 
+keep Flag*
+
 keep LHE_*
 keep nLHEPart
 keep LHEPart_*
 
+keep MuMu_*
 keep MuTau_*
 keep ElTau_*
 keep TauTau_*

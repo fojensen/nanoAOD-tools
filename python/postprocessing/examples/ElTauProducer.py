@@ -4,7 +4,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
-from PhysicsTools.NanoAODTools.postprocessing.tools import deltaR, deltaPhi
+from PhysicsTools.NanoAODTools.postprocessing.tools import deltaPhi, deltaR
 from ROOT import TLorentzVector
 import math
 

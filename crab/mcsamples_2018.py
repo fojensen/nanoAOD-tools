@@ -3,6 +3,7 @@ import json
 data = {}
 data['people'] = []
 isMC_ = True
+year = "2018"
 
 data['people'].append({
     'name': 'DYJetsToLL_M50_2018',
@@ -11,6 +12,7 @@ data['people'].append({
     'nFiles': '53',
     'isMC': isMC_,
     'xs': '6077.22',
+    'year': year
 })
 
 data['people'].append({
@@ -19,7 +21,8 @@ data['people'].append({
     'nEvents': '65679725',
     'nFiles': '41',
     'isMC': isMC_,
-    'xs': '1178.3',
+    'xs': '1112.14',
+    'year': year
 })
 
 data['people'].append({
@@ -28,7 +31,8 @@ data['people'].append({
     'nEvents': '28280407',
     'nFiles': '22',
     'isMC': isMC_,
-    'xs': '387.3',
+    'xs': '344.987',
+    'year': year
 })
 
 data['people'].append({
@@ -37,7 +41,8 @@ data['people'].append({
     'nEvents': '19021176',
     'nFiles': '18',
     'isMC': isMC_,
-    'xs': '118.4',
+    'xs': '102.468',
+    'year': year
 })
 
 data['people'].append({
@@ -46,7 +51,8 @@ data['people'].append({
     'nEvents': '7581874',
     'nFiles': '12',
     'isMC': isMC_,
-    'xs': '63.7',
+    'xs': '48.8496',
+    'year': year
 })
 
 data['people'].append({
@@ -56,6 +62,7 @@ data['people'].append({
     'nFiles' : '465',
     'isMC': isMC_,
     'xs': '365.34',
+    'year': year
 })
 
 data['people'].append({
@@ -65,6 +72,7 @@ data['people'].append({
     'nFiles' : '181',
     'isMC': isMC_,
     'xs': '88.29',
+    'year': year
 })
 
 data['people'].append({
@@ -73,7 +81,8 @@ data['people'].append({
     'nEvents': '9125752',
     'nFiles': '10',
     'isMC': isMC_,
-    'xs': '19.02828375', #https://arxiv.org/pdf/1805.07399.pdf 
+    'xs': '19.02828375', #https://arxiv.org/pdf/1805.07399.pdf
+    'year': year
 })
 
 data['people'].append({
@@ -83,6 +92,7 @@ data['people'].append({
     'nFiles': '13',
     'isMC': isMC_,
     'xs': '19.02828375', #https://arxiv.org/pdf/1805.07399.pdf 35.85 * (1-(1-3*0.105)**2)
+    'year': year
 })
 
 data['people'].append({
@@ -92,6 +102,7 @@ data['people'].append({
     'nFiles': '7',
     'isMC': isMC_,
     'xs': '136.0', #https://arxiv.org/pdf/1812.10514.pdf 35.85 * (1-(1-3*0.105)**2)
+    'year': year
 })
 
 data['people'].append({
@@ -101,6 +112,7 @@ data['people'].append({
     'nFiles': '5',
     'isMC': isMC_,
     'xs': '81.0', #https://arxiv.org/pdf/1812.10514.pdf
+    'year': year
 })
 
 data['people'].append({
@@ -110,6 +122,7 @@ data['people'].append({
     'nFiles' : '21',
     'isMC': isMC_,
     'xs': '51.723', #ra2b:51.723
+    'year': year
 })
 
 data['people'].append({
@@ -118,7 +131,8 @@ data['people'].append({
     'nEvents': '7986000',
     'nFiles': '21',
     'isMC': isMC_,
-    'xs': '47.13', #ra2b:47.13; 
+    'xs': '47.13', #ra2b:47.13
+    'year': year
 })
 
 data['people'].append({
@@ -127,7 +141,68 @@ data['people'].append({
     'nEvents': '2000000',
     'nFiles': '4',
     'isMC': isMC_,
-    'xs': '16.523', #ra2b: 16.523;
+    'xs': '16.523', #ra2b: 16.523
+    'year': year
+})
+
+data['people'].append({
+    'name': 'QCD_Mu15_2018',
+    'inputDataset': '/QCD_Pt-20toInf_MuEnrichedPt15_TuneCP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '22165320',
+    'nFiles': '38',
+    'isMC': isMC_,
+    'xs': '239400.0',
+    'year': year
+})
+
+data['people'].append({
+   'name' : 'WJetsToLNu_2018',
+   'inputDataset': '/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
+   'nEvents': '83009353',
+   'nFiles': '45',
+   'isMC': isMC_,
+   'xs': '61526.7',
+   'year': year
+})
+
+data['people'].append({
+   'name' : 'W1JetsToLNu_2018',
+   'inputDataset': '/W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
+   'nEvents': '47698594',
+   'nFiles': '47',
+   'isMC': isMC_,
+   'xs': '10432.3',
+   'year': year
+})
+
+data['people'].append({
+   'name' : 'W2JetsToLNu_2018',
+   'inputDataset': '/W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
+   'nEvents': '27570500',
+   'nFiles': '34',
+   'isMC': isMC_,
+   'xs': '3191.76',
+   'year': year
+})
+
+data['people'].append({
+   'name' : 'W3JetsToLNu_2018',
+   'inputDataset': '/W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
+   'nEvents': '14932443',
+   'nFiles': '15',
+   'isMC': isMC_,
+   'xs': '948.761',
+   'year': year
+})
+
+data['people'].append({
+   'name' : 'W4JetsToLNu_2018',
+   'inputDataset': '/W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
+   'nEvents': '12416620',
+   'nFiles': '17',
+   'isMC': isMC_,
+   'xs': '448.896',
+   'year': year
 })
 
 #data['people'].append({
@@ -153,24 +228,6 @@ data['people'].append({
 #    'isMC': isMC_,
 #    'xs': '0.2',
 #})
-
-data['people'].append({
-    'name': 'QCD_Mu15_2018',
-    'inputDataset': '/QCD_Pt-20toInf_MuEnrichedPt15_TuneCP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
-    'nEvents': '22165320',
-    'nFiles': '38',
-    'isMC': isMC_,
-    'xs': '239400.0',
-})
-
-data['people'].append({
-   'name' : 'WJetsToLNu_2018',
-   'inputDataset': '/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
-   'nEvents': '83009353',
-   'nFiles': '45',
-   'isMC': isMC_,
-   'xs': '61526.7',
-})
 
 with open('mcsamples_2018.json', 'w') as outfile:
    json.dump(data, outfile)

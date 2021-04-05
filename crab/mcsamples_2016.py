@@ -3,6 +3,7 @@ import json
 data = {}
 data['people'] = []
 isMC_ = True
+year = '2016'
 
 data['people'].append({
     'name': 'DYJetsToLL_M50_2016',
@@ -11,6 +12,7 @@ data['people'].append({
     'nFiles': '52',#PRODUCTION
     'isMC': isMC_,
     'xs': '6077.22',
+    'year': year
 })
 
 data['people'].append({
@@ -19,7 +21,8 @@ data['people'].append({
     'nEvents': '65712864',
     'nFiles': '50',
     'isMC': isMC_,
-    'xs': '1178.3',
+    'xs': '1112.14',
+    'year': year
 })
 
 data['people'].append({
@@ -28,7 +31,8 @@ data['people'].append({
     'nEvents': '28446811',
     'nFiles': '30',
     'isMC': isMC_,
-    'xs': '387.3',
+    'xs': '344.987',
+    'year': year
 })
 
 data['people'].append({
@@ -37,7 +41,8 @@ data['people'].append({
     'nEvents': '18845701',
     'nFiles': '21',
     'isMC': isMC_,
-    'xs': '118.4',
+    'xs': '102.468',
+    'year': year
 })
 
 data['people'].append({
@@ -46,7 +51,8 @@ data['people'].append({
     'nEvents': '7538537',
     'nFiles': '13',
     'isMC': isMC_,
-    'xs': '63.7',
+    'xs': '48.8496',
+    'year': year
 })
 
 data['people'].append({
@@ -56,6 +62,7 @@ data['people'].append({
     'nFiles': '266',
     'isMC': isMC_,
     'xs': '365.34',
+    'year': year
 })
 
 data['people'].append({
@@ -65,6 +72,7 @@ data['people'].append({
     'nFiles': '202',
     'isMC': isMC_,
     'xs': '88.29',
+    'year': year
 })
 
 data['people'].append({
@@ -73,7 +81,8 @@ data['people'].append({
     'nEvents': '3800996',
     'nFiles': '23',
     'isMC': isMC_,
-    'xs': '19.02828375', #https://arxiv.org/pdf/1805.07399.pdf 
+    'xs': '19.02828375', #https://arxiv.org/pdf/1805.07399.pdf
+    'year': year
 })
 
 data['people'].append({
@@ -83,6 +92,7 @@ data['people'].append({
     'nFiles': '4',
     'isMC': isMC_,
     'xs': '19.02828375', #https://arxiv.org/pdf/1805.07399.pdf 35.85 * (1-(1-3*0.105)**2)
+    'year': year
 })
 
 data['people'].append({
@@ -92,6 +102,7 @@ data['people'].append({
     'nFiles': '',
     'isMC': isMC_,
     'xs': '136.0', #https://arxiv.org/pdf/1812.10514.pdf 35.85 * (1-(1-3*0.105)**2)
+    'year': year
 })
 
 data['people'].append({
@@ -101,6 +112,7 @@ data['people'].append({
     'nFiles': '22',
     'isMC': isMC_,
     'xs': '81.0', #https://arxiv.org/pdf/1812.10514.pdf
+    'year': year
 })
 
 data['people'].append({
@@ -110,6 +122,7 @@ data['people'].append({
     'nFiles': '36',
     'isMC': isMC_,
     'xs': '51.723', #ra2b:51.723
+    'year': year
 })
 
 data['people'].append({
@@ -118,16 +131,18 @@ data['people'].append({
     'nEvents': '7768000',
     'nFiles': '22',
     'isMC': isMC_,
-    'xs': '47.13', #ra2b:47.13; 
+    'xs': '47.13', #ra2b:47.13
+    'year': year
 })
 
 data['people'].append({
     'name': 'ZZ_2016',
     'inputDataset': '/ZZ_TuneCP5_13TeV-pythia8/RunIISummer19UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
     'nEvents': '1986500',
-    'nFiles': '',
+    'nFiles': '8',
     'isMC': isMC_,
-    'xs': '16.523', #ra2b: 16.523;
+    'xs': '16.523', #ra2b: 16.523
+    'year': year
 })
 
 data['people'].append({
@@ -137,6 +152,47 @@ data['people'].append({
    'nFiles': '62',
    'isMC': isMC_,
    'xs': '61526.7',
+   'year': year
+})
+
+data['people'].append({
+   'name' : 'W1JetsToLNu_2016',
+   'inputDataset': '/W1JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
+   'nEvents': '48443131',
+   'nFiles': '34',
+   'isMC': isMC_,
+   'xs': '10432.3',
+   'year': year
+})
+
+data['people'].append({
+   'name' : 'W2JetsToLNu_2016',
+   'inputDataset': '/W2JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
+   'nEvents': '28745846',
+   'nFiles': '23',
+   'isMC': isMC_,
+   'xs': '3191.76',
+   'year': year
+})
+
+data['people'].append({
+   'name' : 'W3JetsToLNu_2016',
+   'inputDataset': '/W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
+   'nEvents': '18859350',
+   'nFiles': '17',
+   'isMC': isMC_,
+   'xs': '948.761',
+   'year': year
+})
+
+data['people'].append({
+   'name' : 'W4JetsToLNu_2016',
+   'inputDataset': '/W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
+   'nEvents': '9216091',
+   'nFiles': '10',
+   'isMC': isMC_,
+   'xs': '448.896',
+   'year': year
 })
 
 #data['people'].append({

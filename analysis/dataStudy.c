@@ -4,302 +4,315 @@
 #include <TCut.h>
 #include <TCanvas.h>
 #include <TLegend.h>
+#include <TH2D.h>
 #include <TH1D.h>
-#include "addOverflow.c"
+#include "addOverflow.h"
 
-TFile * makeHists(const TString datatag, const TString year, const TString shorttag)
+TFile * makeHists(const TString datatag, const int year, const TString channel)
 {
-   std::cout << "makeHists() " << datatag << " " << year << std::endl;
+   std::cout << "*** makeHists() " << datatag << ", " << year << ", " << channel << std::endl;
    char finname[200];
-   sprintf(finname, "root://131.225.204.161:1094//store/user/fojensen/cmsdas_08032020/%s.root", datatag.Data());
+   sprintf(finname, "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_22032021/%s.root", datatag.Data());
    TFile * infile = TFile::Open(finname);
    TTree * t = (TTree*)infile->Get("Events");
    std::cout << "   entries in tree: " << t->GetEntries() << std::endl;
 
-   TCut baseline = "MuMu_HavePair==0||(MuMu_HavePair==1&&MuMu_Mass<50.)";
-   baseline = baseline && TCut("EE_HavePair==0||(EE_HavePair==1&&EE_Mass<50.)");
-   baseline = baseline && TCut("JetProducer_nBJetM==0");
+   TCut baseline = "1>0";
    TCut regionA, regionB, regionC, regionD;
-   TString var;
+   TString var, varmin, varmax;
+   TString title;
 
-   if (shorttag=="Muon") {
-      var = "Photon_pt[MuTau_PhotonIdx]";
+   if (channel=="Muon") {
+      title = "#mu + #tau_{h}";
+      var = "MuTau_MaxCollMass:MuTau_MinCollMass";
+      varmin = "MuTau_MinCollMass";
+      varmax = "MuTau_MaxCollMass";
       baseline = baseline && TCut("MuTau_HaveTriplet>0");
-      baseline = baseline && TCut("MuTau_Mass>=100.");
+      baseline = baseline && TCut("JetProducer_nBJetT==0");
+      baseline = baseline && TCut("Photon_pt[MuTau_PhotonIdx]>=100.");
+      baseline = baseline && TCut("MuTau_Mass>=91.1876");
       baseline = baseline && TCut("MuTau_Trigger");
       baseline = baseline && TCut("Muon_pfIsoId[MuTau_MuIdx]>=4");
-      if (year=="2016") baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=26.");
-      if (year=="2017") baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=29.");
-      if (year=="2018") baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=29.");
+      if (year==2016) baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=26.");
+      if (year==2017) baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=29.");
+      if (year==2018) baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=29.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==1");
-      regionA = "MuTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) &&  (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
-      regionA = regionA && TCut("Photon_pt[MuTau_PhotonIdx]<50.");
+      regionA = "MuTau_qq==-1 && (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
       regionB = "MuTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
-      regionC = "MuTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) &&  (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
+      regionC = "MuTau_qq==+1 && (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
       regionD = "MuTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
+      regionA = regionA && TCut("Photon_pt[MuTau_PhotonIdx]<50.");
    }
-   if (shorttag=="Tau") {
-      var = "Photon_pt[TauTau_PhotonIdx]";
+   if (channel=="Tau") {
+      title = "#tau_{h} + #tau_{h}";
+      var = "TauTau_MaxCollMass:TauTau_MinCollMass";
+      varmin = "TauTau_MinCollMass";
+      varmax = "TauTau_MaxCollMass";
       baseline = baseline && TCut("TauTau_HaveTriplet>0");
-      baseline = baseline && TCut("TauTau_Mass>=100.");
+      baseline = baseline && TCut("JetProducer_nBJetT==0");
+      baseline = baseline && TCut("Photon_pt[TauTau_PhotonIdx]>=100.");
+      baseline = baseline && TCut("TauTau_Mass>=91.1876");
       baseline = baseline && TCut("TauTau_Trigger");
       baseline = baseline && TCut("Tau_pt[TauTau_Tau0Idx]>=35. && TMath::Abs(Tau_eta[TauTau_Tau0Idx])<2.1");
       baseline = baseline && TCut("Tau_pt[TauTau_Tau1Idx]>=35. && TMath::Abs(Tau_eta[TauTau_Tau1Idx])<2.1");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==0");
-      const TCut tau0pass = "(8&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx]) &&  (32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx])";
+      const TCut tau0pass = "(32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx])";
       const TCut tau0fail = "(8&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx]) && !(32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx])";
-      const TCut tau1pass = "(8&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau1Idx]) &&  (32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau1Idx])";
+      const TCut tau1pass = "(32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau1Idx])";
       const TCut tau1fail = "(8&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau1Idx]) && !(32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau1Idx])";
       regionA = TCut("TauTau_qq==-1") &&  (tau0pass&&tau1pass);
-      regionA = regionA && TCut("Photon_pt[TauTau_PhotonIdx]<50.");
       regionB = TCut("TauTau_qq==-1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass));
       regionC = TCut("TauTau_qq==+1") &&  (tau0pass&&tau1pass);
       regionD = TCut("TauTau_qq==+1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass));
+      regionA = regionA && TCut("Photon_pt[TauTau_PhotonIdx]<50.");
    }
-   if (shorttag=="Electron") {
-      var = "Photon_pt[ElTau_PhotonIdx]";
+   if (channel=="Electron") {
+      title = "e + #tau_{h}";
+      var = "ElTau_MaxCollMass:ElTau_MinCollMass";
+      varmin = "ElTau_MinCollMass";
+      varmax = "ElTau_MaxCollMass";
       baseline = baseline && TCut("ElTau_HaveTriplet>0");
-      baseline = baseline && TCut("ElTau_Mass>=100.");
+      baseline = baseline && TCut("JetProducer_nBJetT==0");
+      baseline = baseline && TCut("Photon_pt[ElTau_PhotonIdx]>=100.");
+      baseline = baseline && TCut("ElTau_Mass>=91.1876");
       baseline = baseline && TCut("ElTau_Trigger");
       baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElTau_ElIdx]");
-      if (year=="2016") baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=29.");
-      if (year=="2017") baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
-      if (year=="2018") baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
+      if (year==2016) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=29.");
+      if (year==2017) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
+      if (year==2018) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==1");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==0");
-      regionA = "ElTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) &&  (32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
-      regionA = regionA && TCut("Photon_pt[ElTau_PhotonIdx]<50.");
+      regionA = "ElTau_qq==-1 && (32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
       regionB = "ElTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
-      regionC = "ElTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) &&  (32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
+      regionC = "ElTau_qq==+1 && (32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
       regionD = "ElTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
+      regionA = regionA && TCut("Photon_pt[ElTau_PhotonIdx]<50.");
    }
 
    const TCut cuts[4] = {baseline&&regionA, baseline&&regionB, baseline&&regionC, baseline&&regionD};
+   const TString titles[4] = {"A", "B", "C", "D"};
 
-   TH1D h_temp("h_temp", ";photon p_{T} [GeV];events / 10 GeV", 11, 0., 110.);
-   h_temp.SetLineWidth(2);
-   h_temp.SetStats(0);
+   TH2D h2_temp("h2_temp", ";min collinear mass [GeV];max collinear mass [GeV]", 1000, 0., 1000., 1000, 0., 1000.);
+   h2_temp.SetTitle(title);
+   h2_temp.SetStats(0);
+
+   TH1D h1_temp("h1_temp", ";collinear mass [GeV];events / 100 GeV", 10, 0., 1000.);
+   h1_temp.SetLineWidth(2);
+   h1_temp.SetStats(0);
 
    char foutname[200];
-   sprintf(foutname, "./outputHists/%s.root", datatag.Data());
+   sprintf(foutname, "./dataStudyOutput/%s_%d.root", datatag.Data(), year);
    TFile * outfile = new TFile(foutname, "RECREATE");
-   TH1D *h[4];
-   const TString titles[4] = {"A", "B", "C", "D"};
+   
+   TH2D *h2[4];
+   TH1D *h1_min[4], *h1_max[4];
+
    for (int i = 0; i < 4; ++i) {
+      if (i==0) continue;
       std::cout << "   filling region " << titles[i] << std::endl;
-      char hname[100];
-      sprintf(hname, "h_%s", titles[i].Data());
-      h[i] = (TH1D*)h_temp.Clone(hname);
-      h[i]->SetTitle(titles[i]);
-      const int n = t->Project(h[i]->GetName(), var, cuts[i]);
-      std::cout << "   # of events in projection: " << n << std::endl;
-      addOverflow(h[i]);
+      //2d
+      char h2name[100];
+      sprintf(h2name, "h2_%s", titles[i].Data());
+      h2[i] = (TH2D*)h2_temp.Clone(h2name);
+      //h2[i]->SetTitle(titles[i]);
+      const int n = t->Project(h2[i]->GetName(), var, cuts[i]);
+      std::cout << "      " << n << " entries" << std::endl;
+      //1d min
+      char h1minname[100];
+      sprintf(h1minname, "h1min_%s", titles[i].Data());
+      h1_min[i] = (TH1D*)h1_temp.Clone(h1minname);
+      char buffer[100];
+      sprintf(buffer, "%s: %s", titles[i].Data(), title.Data());
+      h1_min[i]->SetTitle(buffer);
+      t->Project(h1_min[i]->GetName(), varmin, cuts[i]);
+      addOverflow(h1_min[i]);
+      //1d max
+      char h1maxname[100];
+      sprintf(h1maxname, "h1max_%s", titles[i].Data());
+      h1_max[i] = (TH1D*)h1_temp.Clone(h1maxname);
+      h1_max[i]->SetTitle(buffer);
+      t->Project(h1_max[i]->GetName(), varmax, cuts[i]);
+      addOverflow(h1_max[i]);
    }
-   h[0]->Write("h_A");
-   h[1]->Write("h_B");
-   h[2]->Write("h_C");
-   h[3]->Write("h_D");
-   //outfile->Close();
+   
+   outfile->Write();
+   outfile->Close();
    return outfile;
 }
 
-void dataStudy(const TString shorttag)
+void fillAllHists(const TString channel)
 {
-   TH1D h_temp("h_temp", ";photon p_{T} [GeV];events / 10 GeV", 11, 0., 110.);
-   h_temp.SetLineWidth(2);
-   h_temp.SetStats(0);
-
-   const TString letters_2016[7] = {"B", "C", "D", "E", "F_v1", "G", "H"};
-   const double lumi_2016[7] = {5746.010/1000., 2572.903/1000., 4242.292/1000., 4025.228/1000., 3104.509/1000., 7575.579/1000., 8650.628/1000.};
-   const double lumitot_2016 = 35917.149/1000.;
-
-   const TString letters_2017[7] = {"B", "C", "D", "E", "F"};
-   const double lumi_2017[5] = {4.823, 9.664, 4.252, 9.278, 13.540};
-   const double lumitot_2017 = 4.823+9.664+4.252+9.278+13.540;
-
-   const TString letters_2018[7] = {"A", "B", "C", "D"};
-   const double lumi_2018[4] = {14.00, 7.10, 6.94, 31.93};
-   const double lumitot_2018 = 14.00+7.10+6.94+31.93;
-
-   TFile *f_2018[4];
-   TH1D *h_2018A[4], *h_2018B[4], *h_2018C[4], *h_2018D[4];
-   TH1D * h_sumA2018 = (TH1D*)h_temp.Clone("h_sumA2018");
-   TH1D * h_sumB2018 = (TH1D*)h_temp.Clone("h_sumB2018");
-   TH1D * h_sumC2018 = (TH1D*)h_temp.Clone("h_sumC2018");
-   TH1D * h_sumD2018 = (TH1D*)h_temp.Clone("h_sumD2018");
+   const TString letters_2018[4] = {"A", "B", "C", "D"};
    for (int i = 0; i < 4; ++i) {
       char buffer[100];
-      sprintf(buffer, "%s_2018%s", shorttag.Data(), letters_2018[i].Data());
-      f_2018[i] = makeHists(buffer, "2018", shorttag);
-      //f_2018[i] = TFile::Open("./outputHists/"+tag_2018[i]+".root");
-      h_2018A[i] = (TH1D*)f_2018[i]->Get("h_A");
-      h_2018B[i] = (TH1D*)f_2018[i]->Get("h_B");
-      h_2018C[i] = (TH1D*)f_2018[i]->Get("h_C");
-      h_2018D[i] = (TH1D*)f_2018[i]->Get("h_D");
-      h_sumA2018->Add(h_2018A[i]);
-      h_sumB2018->Add(h_2018B[i]);
-      h_sumC2018->Add(h_2018C[i]);
-      h_sumD2018->Add(h_2018D[i]);
+      sprintf(buffer, "%s%s_2018", channel.Data(), letters_2018[i].Data());
+      makeHists(buffer, 2018, channel);
    }
+   char cmd2018[1000];
+   sprintf(cmd2018, "hadd -f ./dataStudyOutput/%s_2018_full.root ./dataStudyOutput/%s*_2018.root", channel.Data(), channel.Data());
+   system(cmd2018);
 
-   TFile *f_2017[5];
-   TH1D *h_2017A[5], *h_2017B[5], *h_2017C[5], *h_2017D[5];
-   TH1D * h_sumA2017 = (TH1D*)h_temp.Clone("h_sumA2017");
-   TH1D * h_sumB2017 = (TH1D*)h_temp.Clone("h_sumB2017");
-   TH1D * h_sumC2017 = (TH1D*)h_temp.Clone("h_sumC2017");
-   TH1D * h_sumD2017 = (TH1D*)h_temp.Clone("h_sumD2017");
+   const TString letters_2017[5] = {"B", "C", "D", "E", "F"};
    for (int i = 0; i < 5; ++i) {
       char buffer[100];
-      sprintf(buffer, "%s_2017%s", shorttag.Data(), letters_2017[i].Data());
-      f_2017[i] = makeHists(buffer, "2017", shorttag);
-      //f_2017[i] = TFile::Open("./outputHists/"+tag_2017[i]+".root");
-      h_2017A[i] = (TH1D*)f_2017[i]->Get("h_A");
-      h_2017B[i] = (TH1D*)f_2017[i]->Get("h_B");
-      h_2017C[i] = (TH1D*)f_2017[i]->Get("h_C");
-      h_2017D[i] = (TH1D*)f_2017[i]->Get("h_D");
-      h_sumA2017->Add(h_2017A[i]);
-      h_sumB2017->Add(h_2017B[i]);
-      h_sumC2017->Add(h_2017C[i]);
-      h_sumD2017->Add(h_2017D[i]);  
+      sprintf(buffer, "%s%s_2017", channel.Data(), letters_2017[i].Data());
+      makeHists(buffer, 2017, channel);
    }
-
-   TFile *f_2016[7];
-   TH1D *h_2016A[7], *h_2016B[7], *h_2016C[7], *h_2016D[7];
-   TH1D * h_sumA2016 = (TH1D*)h_temp.Clone("h_sumA2016");
-   TH1D * h_sumB2016 = (TH1D*)h_temp.Clone("h_sumB2016");
-   TH1D * h_sumC2016 = (TH1D*)h_temp.Clone("h_sumC2016");
-   TH1D * h_sumD2016 = (TH1D*)h_temp.Clone("h_sumD2016");
+   char cmd2017[1000];
+   sprintf(cmd2017, "hadd -f ./dataStudyOutput/%s_2017_full.root ./dataStudyOutput/%s*_2017.root", channel.Data(), channel.Data());
+   system(cmd2017);
+ 
+   const TString letters_2016[7] = {"B", "C", "D", "E", "F", "G", "H"};
    for (int i = 0; i < 7; ++i) {
       char buffer[100];
-      sprintf(buffer, "%s_2016%s", shorttag.Data(), letters_2016[i].Data());
-      f_2016[i] = makeHists(buffer, "2016", shorttag);
-      //f_2016[i] = TFile::Open("./outputHists/"+tag_2016[i]+".root");
-      h_2016A[i] = (TH1D*)f_2016[i]->Get("h_A");
-      h_2016B[i] = (TH1D*)f_2016[i]->Get("h_B");
-      h_2016C[i] = (TH1D*)f_2016[i]->Get("h_C");
-      h_2016D[i] = (TH1D*)f_2016[i]->Get("h_D");
-      h_sumA2016->Add(h_2016A[i]);
-      h_sumB2016->Add(h_2016B[i]);
-      h_sumC2016->Add(h_2016C[i]);
-      h_sumD2016->Add(h_2016D[i]);
+      sprintf(buffer, "%s%s_2016", channel.Data(), letters_2016[i].Data());
+      makeHists(buffer, 2016, channel);
+   }
+   char cmd2016[1000];
+   sprintf(cmd2016, "hadd -f ./dataStudyOutput/%s_2016_full.root ./dataStudyOutput/%s*_2016.root", channel.Data(), channel.Data());
+   system(cmd2016);
+}
+
+void yieldCompare(const TString channel)
+{
+   const int years[3] = {2016, 2017, 2018};
+   const double lumi[3] = {19.5+16.5, 41.48, 59.83};
+   int nB[3] = {0, 0, 0};
+   int nC[3] = {0, 0, 0};
+   int nD[3] = {0, 0, 0};
+   double eB[3] = {0., 0., 0.};
+   double eC[3] = {0., 0., 0.};
+   double eD[3] = {0., 0., 0.};
+   double errB[3] = {0., 0., 0.};
+   double errC[3] = {0., 0., 0.};
+   double errD[3] = {0., 0., 0.};
+
+   for (int i = 0; i < 3; ++i) {
+      char infile[100];
+      sprintf(infile, "./dataStudyOutput/%s_%d_full.root", channel.Data(), years[i]);
+      TFile * f = TFile::Open(infile);
+      //B
+      TH2D * hB = (TH2D*)f->Get("h2_B");
+      nB[i] = hB->GetEntries();
+      if (nB[i]!=hB->Integral()) {
+         std::cout << "overflow: " << "B, " << years[i] << std::endl;
+         std::cout << nB[i] << " " << hB->Integral() << std::endl;
+      }
+      eB[i] = double(nB[i])/lumi[i];
+      errB[i] = sqrt(double(nB[i]))/lumi[i];
+      //C
+      TH2D * hC = (TH2D*)f->Get("h2_C");
+      nC[i] = hC->GetEntries();
+      if (nC[i]!=hC->Integral()) {
+         std::cout << "overflow: " << "C, " << years[i] << std::endl;
+         std::cout << nC[i] << " " << hC->Integral() << std::endl;
+      }
+      eC[i] = double(nC[i])/lumi[i];
+      errC[i] = sqrt(double(nC[i]))/lumi[i];
+      //D
+      TH2D * hD = (TH2D*)f->Get("h2_D");
+      nD[i] = hD->GetEntries();
+      if (nD[i]!=hD->Integral()) {
+         std::cout << "overflow: " << "D, " << years[i] << std::endl;
+         std::cout << nD[i] << " " << hD->Integral() << std::endl;
+      }
+      eD[i] = double(nD[i])/lumi[i];
+      errD[i] = sqrt(double(nD[i]))/lumi[i];
    }
 
-   TH1D * h_sumA = (TH1D*)h_sumA2016->Clone("h_sumA");
-   h_sumA->Add(h_sumA2017);
-   h_sumA->Add(h_sumA2018);
+   std::cout << "region B" << std::endl;
+   for (int i = 0; i < 3; ++i) {
+      std::cout << "   " << years[i] << ": " << eB[i] << "+-" << errB[i] << std::endl;
+   }
+   std::cout << "region C" << std::endl;
+   for (int i = 0; i < 3; ++i) {
+      std::cout << "   " << years[i] << ": " << eC[i] << "+-" << errC[i] << std::endl;
+   }  
+   std::cout << "region D" << std::endl;
+   for (int i = 0; i < 3; ++i) {
+      std::cout << "   " << years[i] << ": " << eD[i] << "+-" << errD[i] << std::endl;
+   }
+}
 
-   TH1D * h_sumB = (TH1D*)h_sumB2016->Clone("h_sumB");
-   h_sumB->Add(h_sumB2017);
-   h_sumB->Add(h_sumB2018);
+void plotStuff(const TString channel)
+{
+   char cmd[100];
+   sprintf(cmd, "hadd -f ./dataStudyOutput/%s.root ./dataStudyOutput/%s_2018_full.root ./dataStudyOutput/%s_2017_full.root ./dataStudyOutput/%s_2016_full.root", channel.Data(), channel.Data(), channel.Data(), channel.Data());
+   system(cmd);
+   
+   char infile[100];
+   sprintf(infile, "./dataStudyOutput/%s.root", channel.Data());
+   TFile *f = TFile::Open(infile);
+   TH2D * h2_B = (TH2D*)f->Get("h2_B");
+   h2_B->SetMarkerColor(6);
+   h2_B->SetMarkerStyle(20);
+   TH2D * h2_C = (TH2D*)f->Get("h2_C");
+   h2_C->SetMarkerColor(7);
+   h2_C->SetMarkerStyle(20);
+   TH2D * h2_D = (TH2D*)f->Get("h2_D");
+   h2_D->SetMarkerColor(8);
+   h2_D->SetMarkerStyle(20);
 
-   TH1D * h_sumC = (TH1D*)h_sumC2016->Clone("h_sumC");
-   h_sumC->Add(h_sumC2017);
-   h_sumC->Add(h_sumC2018);
+   TH1D *h1_minB = (TH1D*)f->Get("h1min_B");
+   TH1D *h1_maxB = (TH1D*)f->Get("h1max_B");
+   h1_minB->SetLineColor(6);
+   h1_maxB->SetLineColor(7);
 
-   TH1D * h_sumD = (TH1D*)h_sumD2016->Clone("h_sumD");
-   h_sumD->Add(h_sumD2017);
-   h_sumD->Add(h_sumD2018);
+   TH1D *h1_minC = (TH1D*)f->Get("h1min_C");
+   TH1D *h1_maxC = (TH1D*)f->Get("h1max_C");
+   h1_minC->SetLineColor(6);
+   h1_maxC->SetLineColor(7);
 
-   TCanvas * c1 = new TCanvas("c1", shorttag, 800, 800);
-   c1->Divide(2, 2);
+   TH1D *h1_minD = (TH1D*)f->Get("h1min_D");
+   TH1D *h1_maxD = (TH1D*)f->Get("h1max_D");
+   h1_minD->SetLineColor(6);
+   h1_maxD->SetLineColor(7);
 
-   TPad * p11 = (TPad*)c1->cd(1);
-   h_sumA->Draw("HIST");
-   h_sumA->SetMinimum(0.1);
-   h_sumA->SetMaximum(100000.);
-   p11->SetLogy();
+   TLegend * leg1 = new TLegend(0.6, 0.7, 0.875, 0.875);
+   leg1->SetBorderSize(0);
+   leg1->AddEntry(h1_minB, "min", "L");
+   leg1->AddEntry(h1_maxB, "max", "L");
 
-   TPad * p12 = (TPad*)c1->cd(2);
-   h_sumB->Draw("HIST");
-   h_sumB->SetMinimum(0.1);
-   h_sumB->SetMaximum(100000.);
-   p12->SetLogy();
+   TLegend * leg2 = new TLegend(0.5, 0.7, 0.875, 0.875);
+   leg2->SetBorderSize(0);
+   leg2->AddEntry(h2_B, "B: " + TString::Itoa(h2_B->GetEntries(), 10) + " entries", "P");
+   leg2->AddEntry(h2_C, "C: " + TString::Itoa(h2_C->GetEntries(), 10) + " entries", "P");
+   leg2->AddEntry(h2_D, "D: " + TString::Itoa(h2_D->GetEntries(), 10) + " entries", "P");
 
-   TPad * p13 = (TPad*)c1->cd(3);
-   h_sumC->Draw("HIST");
-   h_sumC->SetMinimum(0.1);
-   h_sumC->SetMaximum(100000.);
-   p13->SetLogy();
+   TCanvas * c = new TCanvas("c", channel, 800, 800);
+   c->Divide(2, 2);
 
-   TPad * p14 = (TPad*)c1->cd(4);
-   h_sumD->Draw("HIST");
-   h_sumD->SetMinimum(0.1);
-   h_sumD->SetMaximum(100000.);
-   p14->SetLogy();
+   c->cd(1);
+   h2_B->Draw("");
+   //h2_B->SetTitle("");
+   h2_C->Draw("SAME");
+   h2_D->Draw("SAME");
+   leg2->Draw();
 
-   c1->SaveAs("./plots/"+shorttag+".collmass.pdf");
+   c->cd(2);
+   h1_minB->Draw("HIST");
+   h1_maxB->Draw("HIST, SAME");
+   leg1->Draw();
 
-   TCanvas * c2 = new TCanvas("c2", shorttag, 800, 800);
-   c2->Divide(2, 2);
+   c->cd(3);
+   h1_minC->Draw("HIST");
+   h1_maxC->Draw("HIST, SAME");
+   leg1->Draw();
 
-   TPad * p21 = (TPad*)c2->cd(1);
-   h_sumA2016->Scale(1./lumitot_2016);
-   h_sumA2017->Scale(1./lumitot_2017);
-   h_sumA2018->Scale(1./lumitot_2018);
-   h_sumA2016->Draw("HIST, E");
-   h_sumA2016->SetMinimum(0.01);
-   h_sumA2016->SetMaximum(1000.);
-   h_sumA2017->Draw("HIST, E, SAME");
-   h_sumA2018->Draw("HIST, E, SAME");
-   h_sumA2016->SetLineColor(6);
-   h_sumA2017->SetLineColor(7);
-   h_sumA2018->SetLineColor(8);
-   p21->SetLogy();
+   c->cd(4);
+   h1_minD->Draw("HIST");
+   h1_maxD->Draw("HIST, SAME");
+   leg1->Draw();
 
-   TLegend * l = new TLegend(0.5, 0.75, 0.875, 0.875);
-   l->SetBorderSize(0);
-   l->AddEntry(h_sumA2016, "2016", "L");
-   l->AddEntry(h_sumA2017, "2017", "L");
-   l->AddEntry(h_sumA2018, "2018", "L");
-   l->Draw();
+   c->SaveAs("./plots/dataStudy."+channel+".pdf");
+}
 
-   TPad * p22 = (TPad*)c2->cd(2);
-   h_sumB2016->Scale(1./lumitot_2016);
-   h_sumB2017->Scale(1./lumitot_2017);
-   h_sumB2018->Scale(1./lumitot_2018);
-   h_sumB2016->Draw("HIST, E");
-   h_sumB2016->SetMinimum(0.01);
-   h_sumB2016->SetMaximum(1000.);
-   h_sumB2017->Draw("HIST, E, SAME");
-   h_sumB2018->Draw("HIST, E, SAME");
-   h_sumB2016->SetLineColor(6);
-   h_sumB2017->SetLineColor(7);
-   h_sumB2018->SetLineColor(8);
-   l->Draw();
-   p22->SetLogy();
-
-   TPad * p23 = (TPad*)c2->cd(3);
-   h_sumC2016->Scale(1./lumitot_2016);
-   h_sumC2017->Scale(1./lumitot_2017);
-   h_sumC2018->Scale(1./lumitot_2018);
-   h_sumC2016->Draw("HIST, E");
-   h_sumC2016->SetMinimum(0.01);
-   h_sumC2016->SetMaximum(100.);
-   h_sumC2017->Draw("HIST, E, SAME");
-   h_sumC2018->Draw("HIST, E, SAME");
-   h_sumC2016->SetLineColor(6);
-   h_sumC2017->SetLineColor(7);
-   h_sumC2018->SetLineColor(8);
-   l->Draw();
-   p23->SetLogy();
-
-   TPad * p24 = (TPad*)c2->cd(4);
-   h_sumD2016->Scale(1./lumitot_2016);
-   h_sumD2017->Scale(1./lumitot_2017);
-   h_sumD2018->Scale(1./lumitot_2018);
-   h_sumD2016->Draw("HIST, E");
-   h_sumD2016->SetMinimum(0.01);
-   h_sumD2016->SetMaximum(1000.);
-   h_sumD2017->Draw("HIST, E, SAME");
-   h_sumD2018->Draw("HIST, E, SAME");
-   h_sumD2016->SetLineColor(6);
-   h_sumD2017->SetLineColor(7);
-   h_sumD2018->SetLineColor(8);
-   l->Draw();
-   p24->SetLogy();
-
-   c2->SaveAs("./plots/"+shorttag+"_norm.pdf");
+void dataStudy(const TString channel)
+{
+   fillAllHists(channel);
+   yieldCompare(channel);
+   plotStuff(channel); 
 }
 

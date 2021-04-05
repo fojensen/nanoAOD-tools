@@ -3,7 +3,7 @@ import json
 data = {}
 data['people'] = []
 isMC_ = True
-year_ = "2018"
+year = 2018
 
 data['people'].append({
     'name': 'Taustar_m250_2018',
@@ -12,6 +12,7 @@ data['people'].append({
     'nFiles': '1',
     'isMC': isMC_,
     'xs': '0.02135',
+    'year': year
 })
 
 data['people'].append({
@@ -21,6 +22,7 @@ data['people'].append({
     'nFiles': '7',
     'isMC': isMC_,
     'xs': '0.01546',
+    'year': year
 })
 
 data['people'].append({
@@ -30,6 +32,7 @@ data['people'].append({
     'nFiles': '8',
     'isMC': isMC_,
     'xs': '0.01177',
+    'year': year
 })
 
 data['people'].append({
@@ -39,6 +42,7 @@ data['people'].append({
     'nFiles': '2',
     'isMC': isMC_,
     'xs': '0.009072',
+    'year': year
 })
 
 data['people'].append({
@@ -48,6 +52,7 @@ data['people'].append({
     'nFiles': '5',
     'isMC': isMC_,
     'xs': '0.007024',
+    'year': year
 })
 
 data['people'].append({
@@ -57,6 +62,7 @@ data['people'].append({
     'nFiles': '5',
     'isMC': isMC_,
     'xs': '0.004236',
+    'year': year
 })
 
 data['people'].append({
@@ -66,7 +72,7 @@ data['people'].append({
     'nFiles': '3',
     'isMC': isMC_,
     'xs': '0.002554',
-    'year': year_,
+    'year': year
 })
 
 data['people'].append({
@@ -76,6 +82,7 @@ data['people'].append({
     'nFiles': '3',
     'isMC': isMC_,
     'xs': '0.001522',
+    'year': year
 })
 
 data['people'].append({
@@ -85,6 +92,7 @@ data['people'].append({
     'nFiles': '3',
     'isMC': isMC_,
     'xs': '0.0009048',
+    'year': year
 })
 
 data['people'].append({
@@ -94,6 +102,7 @@ data['people'].append({
     'nFiles': '9',
     'isMC': isMC_,
     'xs': '0.0005328',
+    'year': year
 })
 
 data['people'].append({
@@ -103,6 +112,7 @@ data['people'].append({
     'nFiles': '6',
     'isMC': isMC_,
     'xs': '1.178e-06',
+    'year': year
 })
 
 with open('sigsamples_2018.json', 'w') as outfile:
