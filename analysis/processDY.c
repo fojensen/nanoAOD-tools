@@ -362,7 +362,7 @@ void processDY(const TString process, const int year)
    }
    if (process=="WJetsToLNu") {
       char inname[100];
-      sprintf(inname, "WJetsToLNuFull_%d.root", year);
+      sprintf(inname, "WJetsToLNu_%d.root", year);
       addBranch("WJetsToLNu", year, inname);
    }
    validate(process, year);

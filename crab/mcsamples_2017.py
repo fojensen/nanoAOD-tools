@@ -141,7 +141,8 @@ data['people'].append({
     'nEvents': '2708000',
     'nFiles': '3',
     'isMC': isMC_,
-    'xs': '16.523', #ra2b: 16.523;
+    'xs': '16.523', #ra2b: 16.523
+    'year': year
 })
 
 data['people'].append({
