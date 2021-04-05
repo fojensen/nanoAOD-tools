@@ -728,11 +728,11 @@ void yields_ZTauTau(const TString channel, const bool blindA)
 {
    std::cout << "yields_ZTauTau()" << std::endl;
    std::cout << "   channel: " << channel << ", blindA: " << blindA << std::endl;
-   //makeAllHists(channel, 2018, blindA);
-   //makeAllHists(channel, 2017, blindA);
-   //makeAllHists(channel, 2016, blindA);
-   //combineHistogramsMC(channel);
-   //combineHistogramsData(channel);
+   makeAllHists(channel, 2018, blindA);
+   makeAllHists(channel, 2017, blindA);
+   makeAllHists(channel, 2016, blindA);
+   combineHistogramsMC(channel);
+   combineHistogramsData(channel);
    plotControlRegions(channel, blindA, 0);
    std::cout << "end yields_ZTauTau()" << std::endl;
 }

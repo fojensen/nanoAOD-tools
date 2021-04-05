@@ -135,13 +135,14 @@ data['people'].append({
     'year': year
 })
 
-#data['people'].append({
-#    'name': 'ZZ_2017',
-#    'inputDataset': '',
-#    'nEvents': '',
-#    'isMC': isMC_,
-#    'xs': '16.523', #ra2b: 16.523;
-#})
+data['people'].append({
+    'name': 'ZZ_2017',
+    'inputDataset': '/ZZ_TuneCP5_13TeV-pythia8/RunIISummer20UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM',
+    'nEvents': '2708000',
+    'nFiles': '3',
+    'isMC': isMC_,
+    'xs': '16.523', #ra2b: 16.523;
+})
 
 data['people'].append({
    'name' : 'WJetsToLNu_2017',
