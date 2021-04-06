@@ -45,4 +45,4 @@ xrdcp -f ElectronG_2016.root ${OUTPUTDIR}
 xrdcp -f ElectronH_2016.root ${OUTPUTDIR}
 rm Electron*_2016.root
 
-cd /uscms_data/d3/fojensen/excitedTau_28022021/CMSSW_10_6_20/src/PhysicsTools/NanoAODTools/analysis
+cd /uscms_data/d3/fojensen/excitedTau_06042021/CMSSW_10_6_20/src/PhysicsTools/NanoAODTools/analysis

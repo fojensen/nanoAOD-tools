@@ -49,4 +49,4 @@ python haddnano.py Taustar_m750_2016.root `xrdfsls -u /store/user/fojensen/cmsda
 xrdcp -f Taustar_m750_2016.root ${OUTPUTDIR}
 rm Taustar_m750_2016.root
 
-cd /uscms_data/d3/fojensen/excitedTau_28022021/CMSSW_10_6_20/src/PhysicsTools/NanoAODTools/analysis
+cd /uscms_data/d3/fojensen/excitedTau_06042021/CMSSW_10_6_20/src/PhysicsTools/NanoAODTools/analysis

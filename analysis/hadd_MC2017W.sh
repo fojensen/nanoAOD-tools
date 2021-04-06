@@ -33,4 +33,4 @@ rm W3JetsToLNu_2017.root
 rm W4JetsToLNu_2017.root
 rm WJetsToLNu_2017.root
 
-cd /uscms_data/d3/fojensen/excitedTau_28022021/CMSSW_10_6_20/src/PhysicsTools/NanoAODTools/analysis
+cd /uscms_data/d3/fojensen/excitedTau_06042021/CMSSW_10_6_20/src/PhysicsTools/NanoAODTools/analysis

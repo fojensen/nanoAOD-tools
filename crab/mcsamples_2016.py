@@ -6,6 +6,16 @@ isMC_ = True
 year = '2016'
 
 data['people'].append({
+    'name': 'DYJetsToLL_M10to50_2016',
+    'inputDataset': '/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
+    'nEvents': '13055644',
+    'nFiles': '9',
+    'isMC': isMC_,
+    'xs': '18610',
+    'year': year,
+})
+
+data['people'].append({
     'name': 'DYJetsToLL_M50_2016',
     'inputDataset': '/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
     'nEvents': '68830677',

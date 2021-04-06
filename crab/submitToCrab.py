@@ -2,10 +2,10 @@ import json
 import os
 
 #infile = 'datasamples_2016.json'
-infile = 'datasamples_2017.json'
+#infile = 'datasamples_2017.json'
 #infile = 'datasamples_2018.json'
 #infile = 'mcsamples_2016.json'
-#infile = 'mcsamples_2017.json'
+infile = 'mcsamples_2017.json'
 #infile = 'mcsamples_2018.json'
 #infile = 'sigsamples_2016.json'
 #infile = 'sigsamples_2017.json'
@@ -36,18 +36,13 @@ with open(infile) as json_file:
         f.write("config.JobType.pluginName = 'Analysis'\n")
         f.write("config.JobType.psetName = 'PSet.py'\n")
         f.write("config.JobType.scriptExe = 'crab_script.sh'\n")
-        #if 'isMC' in p:
         if ('xs' in p) and ('nEvents' in p):
-#            if str(p['isMC'])=="True":
-            #w = float(p['xs'])/int(p['nEvents'])
             w = eval(p['xs'])/eval(p['nEvents'])
             argstring = "['arg1=%d', 'arg2=%s']" % (int(p['year']), w)
         else :
              argstring = "['arg1=%d']" % int(p['year'])
         f.write("config.JobType.scriptArgs = " + argstring + "\n")
         f.write("config.JobType.inputFiles = ['keep_and_drop.txt', 'crab_script.py', '../scripts/haddnano.py']\n")
-        #f.write("config.JobType.inputFiles = ['keep_and_drop.txt', 'crab_script.py']\n")
-        #f.write("config.JobType.inputFiles = ['crab_script.py']\n")
         f.write("config.JobType.sendPythonFolder = True\n")
         f.write("config.JobType.allowUndistributedCMSSW = True\n")
         f.write("\n")
@@ -66,7 +61,7 @@ with open(infile) as json_file:
         #f.write("config.Data.splitting='Automatic'\n")
         f.write("config.Data.splitting = 'FileBased'\n")
         f.write("config.Data.unitsPerJob = 1\n")
-        f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_05042021test/'\n")
+        f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_22032021/'\n")
         f.write("config.Data.publication = False\n")
         f.write("\n")
 

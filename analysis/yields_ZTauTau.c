@@ -217,22 +217,19 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    return f_out;
 }
 
-void makeABCDHists(const TString channel, const int year)
+void makeABCDHists(const TString channel)
 {
    std::cout << "makeABCDHists()" << std::endl;
-   std::cout << "   channel: " << channel << ", year: " << year << std::endl;
+   std::cout << "   channel: " << channel << std::endl;
    char indata[100];
-   if (year==0) {
-      sprintf(indata, "./outputHists/%s.root", channel.Data());
-   } else {
-      sprintf(indata, "./outputHists/%s_%d.root", channel.Data(), year);
-   }
+   sprintf(indata, "./outputHists/%s.root", channel.Data());
+   
    TFile * f_data = TFile::Open(indata);
    TH1D * h_data_B = (TH1D*)((TH1D*)f_data->Get("h_B"))->Clone("h_data_B");
    TH1D * h_data_C = (TH1D*)((TH1D*)f_data->Get("h_C"))->Clone("h_data_C");
    TH1D * h_data_D = (TH1D*)((TH1D*)f_data->Get("h_D"))->Clone("h_data_D");
 
-   const int nmc = 13;
+   const int nmc = 14;
    TString mctag[nmc];
    mctag[0] = "VBFHToZG";
    mctag[1] = "GluGluHToZG";
@@ -245,17 +242,14 @@ void makeABCDHists(const TString channel, const int year)
    mctag[8] = "ST_tW_antitop";
    mctag[9] = "ST_t_channel_antitop";
    mctag[10] = "ST_t_channel_top";
-   mctag[11] = "DYJetsToEEMuMu";
-   mctag[12] = "DYJetsToTauTau";
+   mctag[11] = "DYJetsToLL_M10";
+   mctag[12] = "DYJetsToEEMuMu";
+   mctag[13] = "DYJetsToTauTau";
 
    TH1D *h_A[nmc], *h_B[nmc], *h_C[nmc], *h_D[nmc];
    for (int i = 0; i < nmc; ++i) {
       char fname[100];
-      if (year==0) {
-         sprintf(fname, "./outputHists/%s_%s.root", mctag[i].Data(), channel.Data());
-      } else {
-         sprintf(fname, "./outputHists/%s_%s_%d.root", mctag[i].Data(), channel.Data(), year);
-      }
+      sprintf(fname, "./outputHists/%s_%s.root", mctag[i].Data(), channel.Data());
       TFile * f = TFile::Open(fname);
       h_A[i] = (TH1D*)f->Get("h_A");
       h_B[i] = (TH1D*)f->Get("h_B");
@@ -366,11 +360,7 @@ void makeABCDHists(const TString channel, const int year)
  
    // save those histograms to a root file
    char outfname[100];
-   if (year==0) {
-      sprintf(outfname, "./outputHists/ABCD_%s.root", channel.Data());
-   } else {
-      sprintf(outfname, "./outputHists/ABCD_%s_%d.root", channel.Data(), year);
-   }
+   sprintf(outfname, "./outputHists/ABCD_%s.root", channel.Data());
    TFile * f_qcd = new TFile(outfname, "RECREATE");
    h_data_B->Write("h_B");
    h_data_C->Write("h_C");
@@ -382,17 +372,13 @@ void makeABCDHists(const TString channel, const int year)
    //return f_qcd;
 }
 
-void plotControlRegions(const TString channel, const bool blindA, const int year)
+void plotControlRegions(const TString channel, const bool blindA)
 {
    std::cout << "plotControlRegions()" << std::endl;
-   std::cout << "   channel: " << channel << ", blindA: " << blindA << ", year: " << year << std::endl;
+   std::cout << "   channel: " << channel << ", blindA: " << blindA << std::endl;
 
    char infdata[100];
-   if (year==0) {
-      sprintf(infdata, "./outputHists/%s.root", channel.Data());
-   } else {
-      sprintf(infdata, "./outputHists/%s_%d.root", channel.Data(), year);
-   }
+   sprintf(infdata, "./outputHists/%s.root", channel.Data());
    TFile *f_data = TFile::Open(infdata);
    TH1D * h_data_A;
    if (!blindA) h_data_A = (TH1D*)f_data->Get("h_A");
@@ -411,11 +397,7 @@ void plotControlRegions(const TString channel, const bool blindA, const int year
    TH1D *h_sig_A[nsig], *h_sig_B[nsig], *h_sig_C[nsig], *h_sig_D[nsig];
    for (int i = 0; i < nsig; ++i) {
       char infmc[100];
-      if (year==0) {
-         sprintf(infmc, "./outputHists/%s_%s.root", sigtag[i].Data(), channel.Data());
-      } else {
-         sprintf(infmc, "./outputHists/%s_%s_%d.root", sigtag[i].Data(), channel.Data(), year);
-      }
+      sprintf(infmc, "./outputHists/%s_%s.root", sigtag[i].Data(), channel.Data());
       TFile * f = TFile::Open(infmc);
       h_sig_A[i] = (TH1D*)f->Get("h_A");
       h_sig_B[i] = (TH1D*)f->Get("h_B");
@@ -431,7 +413,7 @@ void plotControlRegions(const TString channel, const bool blindA, const int year
       h_sig_D[i]->SetLineStyle(2);
    }
 
-   const int nmc = 13;
+   const int nmc = 14;
    TString mctag[nmc];
    mctag[0] = "VBFHToZG";
    mctag[1] = "GluGluHToZG";
@@ -444,8 +426,9 @@ void plotControlRegions(const TString channel, const bool blindA, const int year
    mctag[8] = "ST_tW_antitop";
    mctag[9] = "ST_t_channel_antitop";
    mctag[10] = "ST_t_channel_top";
-   mctag[11] = "DYJetsToEEMuMu";
-   mctag[12] = "DYJetsToTauTau";
+   mctag[11] = "DYJetsToLL_M10";
+   mctag[12] = "DYJetsToEEMuMu";
+   mctag[13] = "DYJetsToTauTau";
     
    TString labels[nmc];
    for (int i = 0; i < nmc; ++i) {
@@ -461,11 +444,7 @@ void plotControlRegions(const TString channel, const bool blindA, const int year
    TH1D *h_mc_A[nmc], *h_mc_B[nmc], *h_mc_C[nmc], *h_mc_D[nmc];
    for (int i = 0; i < nmc; ++i) {
       char infmc[100];
-      if (year==0) {
-         sprintf(infmc, "./outputHists/%s_%s.root", mctag[i].Data(), channel.Data());
-      } else {
-         sprintf(infmc, "./outputHists/%s_%s_%d.root", mctag[i].Data(), channel.Data(), year);
-      }
+      sprintf(infmc, "./outputHists/%s_%s.root", mctag[i].Data(), channel.Data());
       TFile * f = TFile::Open(infmc);
       h_mc_A[i] = (TH1D*)f->Get("h_A");
       h_mc_B[i] = (TH1D*)f->Get("h_B");
@@ -485,8 +464,6 @@ void plotControlRegions(const TString channel, const bool blindA, const int year
    THStack * s_A = new THStack("s_A", titleA);
    for (int i = 0; i < nmc; ++i) s_A->Add(h_mc_A[i]);
 
-   //TFile *f_ABCD = makeABCDHists(channel, year);
-   makeABCDHists(channel, year);
    char qcdin[100];
    sprintf(qcdin, "./outputHists/ABCD_%s.root", channel.Data());
    TFile *f_ABCD = TFile::Open(qcdin);
@@ -610,7 +587,7 @@ void makeAllHists(const TString channel, const int year, const bool blindA)
    std::cout << "makeAllHists()" << std::endl;
    std::cout << "   channel: " << channel << ", year: " << year << ", blindA: " << blindA << std::endl;
 
-   const int nmc = 16;
+   const int nmc = 17;
    TString mctag[nmc];
    mctag[0] = "VBFHToZG";
    mctag[1] = "GluGluHToZG";
@@ -623,11 +600,12 @@ void makeAllHists(const TString channel, const int year, const bool blindA)
    mctag[8] = "ST_tW_antitop";
    mctag[9] = "ST_t_channel_antitop";
    mctag[10] = "ST_t_channel_top";
-   mctag[11] = "DYJetsToEEMuMu";
-   mctag[12] = "DYJetsToTauTau";
-   mctag[13] = "Taustar_m375";
-   mctag[14] = "Taustar_m750";
-   mctag[15] = "WJetsToLNu";
+   mctag[11] = "DYJetsToLL_M10";
+   mctag[12] = "DYJetsToEEMuMu";
+   mctag[13] = "DYJetsToTauTau";
+   mctag[14] = "Taustar_m375";
+   mctag[15] = "Taustar_m750";
+   mctag[16] = "WJetsToLNu";
    for (int i = 0; i < nmc; ++i) {
       runPoint(mctag[i], channel, year, true, false);
    }
@@ -667,7 +645,7 @@ void combineHistogramsMC(const TString channel)
 {
    std::cout << "combineHistogramsMC()" << std::endl;
    std::cout << "   channel: " << channel << std::endl;
-   const int nmc = 16;
+   const int nmc = 17;
    TString mctag[nmc];
    mctag[0] = "VBFHToZG";
    mctag[1] = "GluGluHToZG";
@@ -680,11 +658,12 @@ void combineHistogramsMC(const TString channel)
    mctag[8] = "ST_tW_antitop";
    mctag[9] = "ST_t_channel_antitop";
    mctag[10] = "ST_t_channel_top";
-   mctag[11] = "DYJetsToEEMuMu";
-   mctag[12] = "DYJetsToTauTau";
-   mctag[13] = "Taustar_m375";
-   mctag[14] = "Taustar_m750";
-   mctag[15] = "WJetsToLNu";
+   mctag[11] = "DYJetsToLL_M10";
+   mctag[12] = "DYJetsToEEMuMu";
+   mctag[13] = "DYJetsToTauTau";
+   mctag[14] = "Taustar_m375";
+   mctag[15] = "Taustar_m750";
+   mctag[16] = "WJetsToLNu";
 
    for (int i = 0; i < nmc; ++i) {
       char cmd1[1000];
@@ -731,9 +710,10 @@ void yields_ZTauTau(const TString channel, const bool blindA)
    makeAllHists(channel, 2018, blindA);
    makeAllHists(channel, 2017, blindA);
    makeAllHists(channel, 2016, blindA);
+   makeABCDHists(channel);
    combineHistogramsMC(channel);
    combineHistogramsData(channel);
-   plotControlRegions(channel, blindA, 0);
+   plotControlRegions(channel, blindA);
    std::cout << "end yields_ZTauTau()" << std::endl;
 }
 

@@ -12,6 +12,7 @@ class JetProducer(Module):
         self.year__ = year_
         self.wp = [0, 0, 0]
         #print "chosen year %d" % self.year__
+        #https://twiki.cern.ch/CMS/BtagRecommendation2016Legacy
         if self.year__==2016:
             self.wp[0] = 0.2217
             self.wp[1] = 0.6321

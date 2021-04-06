@@ -7,6 +7,9 @@ cd /uscmst1b_scratch/lpc1/3DayLifetime/fojensen/DY2016
 
 setenv OUTPUTDIR "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_22032021/"
 
+python haddnano.py DYJetsToLLM10_2016.root `xrdfsls -u | grep \.root`
+xrdcp -f DYJetsToLL_M10_2016.root ${OUTPUTDIR}
+
 python haddnano.py DYJetsToLL_2016.root `xrdfsls -u /store/user/fojensen/cmsdas_22032021/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/crab_DYJetsToLL_M50_2016_rsb/210322_191543/0000/ | grep \.root`
 xrdcp -f DYJetsToLL_2016.root ${OUTPUTDIR}
 
@@ -25,9 +28,5 @@ xrdcp -f DY4JetsToLL_2016.root ${OUTPUTDIR}
 root -q 'processDY.c+("DYJetsToLL", 2016)'
 xrdcp -f DYJetsToTauTau_2016.root ${OUTPUTDIR}
 xrdcp -f DYJetsToEEMuMu_2016.root ${OUTPUTDIR}
-rm DYJetsToLL_2016.root
-rm DY1JetsToLL_2016.root
-rm DY2JetsToLL_2016.root
-rm DY3JetsToLL_2016.root
-rm DY4JetsToLL_2016.root
-cd /uscms_data/d3/fojensen/excitedTau_28022021/CMSSW_10_6_20/src/PhysicsTools/NanoAODTools/analysis
+rm *.root
+cd /uscms_data/d3/fojensen/excitedTau_06042021/CMSSW_10_6_20/src/PhysicsTools/NanoAODTools/analysis

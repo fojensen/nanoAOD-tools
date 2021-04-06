@@ -53,4 +53,4 @@ python haddnano.py QCD_Mu15_2018.root `xrdfsls -u /store/user/fojensen/cmsdas_22
 xrdcp -f QCD_Mu15_2018.root ${OUTPUTDIR}
 rm QCD_Mu15_2018.root
 
-cd /uscms_data/d3/fojensen/excitedTau_28022021/CMSSW_10_6_20/src/PhysicsTools/NanoAODTools/analysis
+cd /uscms_data/d3/fojensen/excitedTau_06042021/CMSSW_10_6_20/src/PhysicsTools/NanoAODTools/analysis

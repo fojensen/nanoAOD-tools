@@ -13,9 +13,9 @@ python haddnano.py WZ_2017.root `xrdfsls -u /store/user/fojensen/cmsdas_22032021
 xrdcp -f WZ_2017.root ${OUTPUTDIR}
 rm WZ_2017.root
 
-python haddnano.py ZZ_2017.root `xrdfsls -u | grep \.root`
-xrdcp -f ZZ_2017.root ${OUTPUTDIR}
-rm ZZ_2017.root
+#python haddnano.py ZZ_2017.root `xrdfsls -u | grep \.root`
+#xrdcp -f ZZ_2017.root ${OUTPUTDIR}
+#rm ZZ_2017.root
 
 python haddnano.py TTTo2L2Nu_2017.root `xrdfsls -u /store/user/fojensen/cmsdas_22032021/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/crab_TTTo2L2Nu_2017/210322_184720/0000/ | grep \.root`
 xrdcp -f TTTo2L2Nu_2017.root ${OUTPUTDIR}
@@ -53,4 +53,4 @@ python haddnano.py GluGluHToZG_2017.root `xrdfsls -u /store/user/fojensen/cmsdas
 xrdxp -f GluGluHToZG_2017.root ${OUTPUTDIR}
 rm GluGluHToZG_2017.root
 
-cd /uscms_data/d3/fojensen/excitedTau_28022021/CMSSW_10_6_20/src/PhysicsTools/NanoAODTools/analysis
+cd /uscms_data/d3/fojensen/excitedTau_06042021/CMSSW_10_6_20/src/PhysicsTools/NanoAODTools/analysis
