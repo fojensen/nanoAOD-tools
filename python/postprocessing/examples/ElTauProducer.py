@@ -25,16 +25,16 @@ class ElTauProducer(Module):
         self.out.branch("ElTau_Mass", "F")
         self.out.branch("ElTau_CollMass", "F")
         self.out.branch("ElTau_Pt", "F")
-        self.out.branch("ElTau_DeltaR", "F")
+        self.out.branch("ElTau_ElTauDR", "F")
         self.out.branch("ElTau_Trigger", "O")
         self.out.branch("ElTau_HaveTriplet", "I")
+        self.out.branch("ElTau_ElGammaDR", "F")
+        self.out.branch("ElTau_TauGammaDR", "F")
         self.out.branch("ElTau_PhotonIdx", "I")
         self.out.branch("ElTau_ElCollMass", "F")
         self.out.branch("ElTau_TauCollMass", "F")
         self.out.branch("ElTau_MinCollMass", "F")
         self.out.branch("ElTau_MaxCollMass", "F")
-        self.out.branch("ElTau_ElGammaDeltaR", "F")
-        self.out.branch("ElTau_TauGammaDeltaR", "F")
         self.out.branch("ElTau_ETGCollMass", "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
@@ -51,11 +51,11 @@ class ElTauProducer(Module):
         mT = 0
         Mass = 0
         Pt = 0
-        DeltaR = 0
+        ElTauDR = 0
         HaveTriplet = 0
+        ElGammaDR = TauGammaDR = 0
         PhotonIdx = -1
         TauCollMass = ElCollMass = CollMass = 0
-        ElGammaDeltaR = TauGammaDeltaR = 0
         MinCollMass = MaxCollMass = 0
         ETGCollMass = 0
  
@@ -95,7 +95,7 @@ class ElTauProducer(Module):
                     if j in goodTauIdx:
                         if abs(deltaPhi(el, tau))>=0.28284271 and abs(el.eta-tau.eta)>=0.28284271:
                              if el.mvaFall17V2Iso>=maxelectronid and tau.idDeepTau2017v2p1VSjet>=maxtauiso:
-                                 DeltaR = deltaR(el, tau)
+                                 ElTauDR = deltaR(el, tau)
                                  qq = el.charge*tau.charge
                                  ElIdx = i
                                  TauIdx = j
@@ -131,8 +131,8 @@ class ElTauProducer(Module):
                                                      ElCollMass = (el.p4()+nu1+photon.p4()).M()
                                                      MinCollMass = min(TauCollMass, ElCollMass)
                                                      MaxCollMass = max(TauCollMass, ElCollMass)
-                                                     ElGammaDeltaR = deltaR(el, photon)
-                                                     TauGammaDeltaR = deltaR(tau, photon)
+                                                     ElGammaDR = deltaR(el, photon)
+                                                     TauGammaDR = deltaR(tau, photon)
                                                      ETGCollMass = (tau.p4()+nu0+el.p4()+nu1+photon.p4()).M()
 
         Trigger = False
@@ -155,7 +155,7 @@ class ElTauProducer(Module):
         self.out.fillBranch("ElTau_Mass", Mass)
         self.out.fillBranch("ElTau_CollMass", CollMass)
         self.out.fillBranch("ElTau_Pt", Pt)
-        self.out.fillBranch("ElTau_DeltaR", DeltaR)
+        self.out.fillBranch("ElTau_ElTauDR", ElTauDR)
         self.out.fillBranch("ElTau_Trigger", Trigger)
         self.out.fillBranch("ElTau_HaveTriplet", HaveTriplet)
         self.out.fillBranch("ElTau_PhotonIdx", PhotonIdx)
@@ -163,8 +163,8 @@ class ElTauProducer(Module):
         self.out.fillBranch("ElTau_ElCollMass", ElCollMass)
         self.out.fillBranch("ElTau_MinCollMass", MinCollMass)
         self.out.fillBranch("ElTau_MaxCollMass", MaxCollMass)
-        self.out.fillBranch("ElTau_ElGammaDeltaR", ElGammaDeltaR)
-        self.out.fillBranch("ElTau_TauGammaDeltaR", TauGammaDeltaR)
+        self.out.fillBranch("ElTau_ElGammaDR", ElGammaDR)
+        self.out.fillBranch("ElTau_TauGammaDR", TauGammaDR)
         self.out.fillBranch("ElTau_ETGCollMass", ETGCollMass)
         return True, ElIdx, TauIdx, PhotonIdx
 

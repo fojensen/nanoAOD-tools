@@ -80,7 +80,9 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    //if (channel=="Electron") var = "TMath::Min(ElTau_ElCollMass, ElTau_TauCollMass)";
    //if (channel=="Muon") var = "TMath::Min(MuTau_MuCollMass, MuTau_TauCollMass)";
    //if (channel=="Tau") "TMath::Min(TauTau_Tau0CollMass, TauTau_Tau1CollMass)";
-   var = "MuTau_Mass";
+   if (channel=="Electron") var = "ElTau_Mass";
+   if (channel=="Muon") var = "MuTau_Mass";
+   if (channel=="Tau") var = "TauTau_Mass";
    
    TCut baseline = "1>0";
    TCut regionA, regionB, regionC, regionD; 
@@ -414,31 +416,32 @@ void plotControlRegions(const TString channel, const bool blindA)
    }
 
    const int nmc = 14;
+   int colz[14];
    TString mctag[nmc];
-   mctag[0] = "VBFHToZG";
-   mctag[1] = "GluGluHToZG";
-   mctag[2] = "WW";
-   mctag[3] = "WZ";
-   mctag[4] = "ZZ";
-   mctag[5] = "TTTo2L2Nu";
-   mctag[6] = "TTToSemiLeptonic";
-   mctag[7] = "ST_tW_top";
-   mctag[8] = "ST_tW_antitop";
-   mctag[9] = "ST_t_channel_antitop";
-   mctag[10] = "ST_t_channel_top";
-   mctag[11] = "DYJetsToLL_M10";
-   mctag[12] = "DYJetsToEEMuMu";
-   mctag[13] = "DYJetsToTauTau";
-    
+   mctag[0] = "VBFHToZG"; colz[0] = ;
+   mctag[1] = "GluGluHToZG"; colz[1] = ;
+   mctag[2] = "WW"; colz[2] = ;
+   mctag[3] = "WZ"; colz[3] = ;
+   mctag[4] = "ZZ"; colz[4] = ;
+   mctag[5] = "TTTo2L2Nu"; colz[5] = ;
+   mctag[6] = "TTToSemiLeptonic"; colz[6] = ;
+   mctag[7] = "ST_tW_top"; colz[7] = ;
+   mctag[8] = "ST_tW_antitop"; colz[8] = ;
+   mctag[9] = "ST_t_channel_antitop"; colz[9] = ;
+   mctag[10] = "ST_t_channel_top"; colz[10] = ;
+   mctag[11] = "DYJetsToLL_M10"; colz[11] = ;
+   mctag[12] = "DYJetsToEEMuMu"; colz[12] = ;
+   mctag[13] = "DYJetsToTauTau"; colz[13] = ;
+
    TString labels[nmc];
    for (int i = 0; i < nmc; ++i) {
       labels[i] = mctag[i];
    }
  
-   int colz[nmc];
-   for (int i = 0; i < nmc; ++i) {
-      colz[i] = i+2;
-   }
+   //int colz[nmc];
+   //for (int i = 0; i < nmc; ++i) {
+   //   colz[i] = i+2;
+   //}
 
    // extract histograms from the root file
    TH1D *h_mc_A[nmc], *h_mc_B[nmc], *h_mc_C[nmc], *h_mc_D[nmc];
@@ -506,7 +509,8 @@ void plotControlRegions(const TString channel, const bool blindA)
    max = TMath::Max(max, h_data_D->GetMaximum());
    if (!blindA) max = TMath::Max(max, h_data_A->GetMaximum());
    const double ymax = pow(10, ceil(log10(max))+1);
-   const double ymin = 1.;
+   double ymin = 1.;
+   if (max>=1000.) ymin = 10.;
 
    TCanvas * c = new TCanvas("c_plotControlRegions", channel, 800, 800);
    c->Divide(2, 2);
@@ -710,9 +714,9 @@ void yields_ZTauTau(const TString channel, const bool blindA)
    makeAllHists(channel, 2018, blindA);
    makeAllHists(channel, 2017, blindA);
    makeAllHists(channel, 2016, blindA);
-   makeABCDHists(channel);
    combineHistogramsMC(channel);
    combineHistogramsData(channel);
+   makeABCDHists(channel);
    plotControlRegions(channel, blindA);
    std::cout << "end yields_ZTauTau()" << std::endl;
 }

@@ -5,7 +5,7 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaPhi, deltaR
-from ROOT import TLorentzVector, TVector3
+from ROOT import TLorentzVector
 import math
 
 class MuTauProducer(Module):
@@ -25,15 +25,16 @@ class MuTauProducer(Module):
         self.out.branch("MuTau_Mass", "F")
         self.out.branch("MuTau_CollMass", "F")
         self.out.branch("MuTau_Pt", "F")
-        self.out.branch("MuTau_DeltaR", "F")
+        self.out.branch("MuTau_MuTauDR", "F")
         self.out.branch("MuTau_Trigger", "O")
         self.out.branch("MuTau_HaveTriplet", "I")
+        self.out.branch("MuTau_MuGammaDR", "F")
+        self.out.branch("MuTau_TauGammaDR", "F")
         self.out.branch("MuTau_PhotonIdx", "I")
         self.out.branch("MuTau_MuCollMass", "F")
         self.out.branch("MuTau_TauCollMass", "F")
         self.out.branch("MuTau_MinCollMass", "F")
         self.out.branch("MuTau_MaxCollMass", "F")
-        self.out.branch("MuTau_IsInside", "O")
         self.out.branch("MuTau_MTGCollMass", "F")
 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
@@ -49,10 +50,10 @@ class MuTauProducer(Module):
         TauIdx = -1
         mT = 0
         Mass = 0
-        IsInside = False
         Pt = 0
-        DeltaR = 0
+        MuTauDR = 0
         HaveTriplet = 0
+        MuGammaDR = TauGammaDR = 0
         PhotonIdx = -1
         TauCollMass = MuCollMass = CollMass = 0
         MinCollMass = MaxCollMass = 0
@@ -92,7 +93,7 @@ class MuTauProducer(Module):
                     if j in goodTauIdx:
                         if abs(deltaPhi(mu, tau))>=0.28284271 and abs(mu.eta-tau.eta)>=0.28284271:
                              if (mu.pfIsoId>=maxmuiso) and (tau.idDeepTau2017v2p1VSjet>=maxtauiso):
-                                 DeltaR = deltaR(mu, tau)
+                                 MuTauDR = deltaR(mu, tau)
                                  qq = mu.charge*tau.charge
                                  MuIdx = i
                                  TauIdx = j
@@ -103,20 +104,6 @@ class MuTauProducer(Module):
                                  mT = math.sqrt(mT)
                                  maxtauiso = tau.idDeepTau2017v2p1VSjet
                                  maxmuiso = mu.pfIsoId
-   
-                                 Tauv3 = TVector3()
-                                 Tauv3.SetPtEtaPhi(tau.pt, 0., tau.phi)
-                                 METv3 = TVector3()
-                                 METv3.SetPtEtaPhi(event.MET_pt, 0., event.MET_phi)
-                                 Muv3 = TVector3()
-                                 Muv3.SetPtEtaPhi(mu.pt, 0., mu.phi)
-                                 IsInside = False
-                                 tauxmet = Tauv3.Cross(METv3)
-                                 tauxmu = Tauv3.Cross(Muv3)
-                                 muxmet = Muv3.Cross(METv3)
-                                 muxtau = Muv3.Cross(Tauv3)
-                                 if (tauxmet.Dot(tauxmu)>=0 and muxmet.Dot(muxtau)>=0):
-                                     IsInside = True
 
                                  #collinear approximation 
                                  nu0 = TLorentzVector()
@@ -129,13 +116,15 @@ class MuTauProducer(Module):
                                  nu0.SetPtEtaPhiM(nu0mag, tau.eta, tau.phi, 0.)
                                  nu1.SetPtEtaPhiM(nu1mag, mu.eta, mu.phi, 0.)
                                  CollMass = (mu.p4()+tau.p4()+nu0+nu1).M()
- 
+
                                  for k, photon in enumerate(photons):
                                      if k in goodPhotonIdx:
                                          if abs(deltaPhi(mu, photon))>=0.28284271 and abs(deltaPhi(tau, photon))>=0.28284271:
                                              if abs(mu.eta-photon.eta)>=0.28284271 and abs(tau.eta-photon.eta)>=0.28284271:
                                                  if photon.pt>=maxphotonpt:
                                                      HaveTriplet = HaveTriplet+1
+                                                     MuGammaDR = deltaR(mu, photon)
+                                                     TauGammaDR = deltaR(tau, photon)
                                                      maxphotonpt = photon.pt
                                                      PhotonIdx = k
                                                      TauCollMass = (tau.p4()+nu0+photon.p4()).M()
@@ -163,10 +152,11 @@ class MuTauProducer(Module):
         self.out.fillBranch("MuTau_CollMass", CollMass)
         self.out.fillBranch("MuTau_Mass", Mass)
         self.out.fillBranch("MuTau_Pt", Pt)
-        self.out.fillBranch("MuTau_IsInside", IsInside)
-        self.out.fillBranch("MuTau_DeltaR", DeltaR)
+        self.out.fillBranch("MuTau_MuTauDR", MuTauDR)
         self.out.fillBranch("MuTau_Trigger", Trigger)
         self.out.fillBranch("MuTau_HaveTriplet", HaveTriplet)
+        self.out.fillBranch("MuTau_MuGammaDR", MuGammaDR)
+        self.out.fillBranch("MuTau_TauGammaDR", TauGammaDR)
         self.out.fillBranch("MuTau_PhotonIdx", PhotonIdx)
         self.out.fillBranch("MuTau_TauCollMass", TauCollMass)
         self.out.fillBranch("MuTau_MuCollMass", MuCollMass)

@@ -25,9 +25,11 @@ class TauTauProducer(Module):
         self.out.branch("TauTau_Mass", "F")
         self.out.branch("TauTau_CollMass", "F")
         self.out.branch("TauTau_Pt", "F")
-        self.out.branch("TauTau_DeltaR", "F")
+        self.out.branch("TauTau_TauTauDR", "F")
         self.out.branch("TauTau_Trigger", "O")
         self.out.branch("TauTau_HaveTriplet", "I")
+        self.out.branch("TauTau_Tau0GammaDR", "F")
+        self.out.branch("TauTau_Tau1GammaDR", "F")
         self.out.branch("TauTau_PhotonIdx", "I")
         self.out.branch("TauTau_Tau0CollMass", "F")
         self.out.branch("TauTau_Tau1CollMass", "F")
@@ -40,7 +42,7 @@ class TauTauProducer(Module):
    
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
-        #print "beginning MuTauProducer"
+        #print "beginning TauTauProducer"
 
         HavePair = 0
         qq = 0
@@ -49,8 +51,9 @@ class TauTauProducer(Module):
         mT = 0
         Mass = 0
         Pt = 0
-        DeltaR = 0
+        TauTauDR = 0
         HaveTriplet = 0
+        Tau0GammaDR = Tau1GammaDR = 0
         PhotonIdx = -1
         Tau0CollMass = Tau1CollMass = CollMass = 0
         MinCollMass = MaxCollMass = 0
@@ -83,7 +86,7 @@ class TauTauProducer(Module):
                         if i>j:
                             if abs(deltaPhi(tau0, tau1))>=0.28284271 and abs(tau0.eta-tau1.eta)>=0.28284271:
                                  if (tau0.idDeepTau2017v2p1VSjet>=maxtau0iso) and (tau1.idDeepTau2017v2p1VSjet>=maxtau1iso):
-                                     DeltaR = deltaR(tau0, tau1)
+                                     TauTauDR = deltaR(tau0, tau1)
                                      qq = tau0.charge*tau1.charge
                                      Tau0Idx = i
                                      Tau1Idx = j
@@ -110,6 +113,8 @@ class TauTauProducer(Module):
                                              if abs(deltaPhi(tau0, photon))>=0.28284271 and abs(deltaPhi(tau1, photon))>=0.28284271:
                                                  if abs(tau0.eta-photon.eta)>=0.28284271 and abs(tau1.eta-photon.eta)>=0.28284271:
                                                      if photon.pt>=maxphotonpt:
+                                                         Tau0GammaDR = deltaR(tau0, photon)
+                                                         Tau1GammaDR = deltaR(tau1, photon)
                                                          HaveTriplet = HaveTriplet+1
                                                          maxphotonpt = photon.pt
                                                          PhotonIdx = k
@@ -149,9 +154,11 @@ class TauTauProducer(Module):
         self.out.fillBranch("TauTau_Mass", Mass)
         self.out.fillBranch("TauTau_CollMass", CollMass)
         self.out.fillBranch("TauTau_Pt", Pt)
-        self.out.fillBranch("TauTau_DeltaR", DeltaR)
+        self.out.fillBranch("TauTau_TauTauDR", TauTauDR)
         self.out.fillBranch("TauTau_Trigger", Trigger)
         self.out.fillBranch("TauTau_HaveTriplet", HaveTriplet)
+        self.out.fillBranch("TauTau_Tau0GammaDR", Tau0GammaDR)
+        self.out.fillBranch("TauTau_Tau1GammaDR", Tau1GammaDR)
         self.out.fillBranch("TauTau_PhotonIdx", PhotonIdx)
         self.out.fillBranch("TauTau_Tau0CollMass", Tau0CollMass)
         self.out.fillBranch("TauTau_Tau1CollMass", Tau1CollMass)
