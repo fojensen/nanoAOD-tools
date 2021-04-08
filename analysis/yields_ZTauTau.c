@@ -133,6 +133,7 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
       //baseline = baseline && TCut("ElTau_Mass>=91.1876");
       baseline = baseline && TCut("ElTau_Trigger");
       baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElTau_ElIdx]");
+      baseline = baseline && TCut("128&Tau_idDeepTau2017v2p1VSe[ElTau_TauIdx]");
       if (year==2016) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=29.");
       if (year==2017) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
       if (year==2018) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
@@ -418,20 +419,20 @@ void plotControlRegions(const TString channel, const bool blindA)
    const int nmc = 14;
    int colz[14];
    TString mctag[nmc];
-   mctag[0] = "VBFHToZG"; colz[0] = ;
-   mctag[1] = "GluGluHToZG"; colz[1] = ;
-   mctag[2] = "WW"; colz[2] = ;
-   mctag[3] = "WZ"; colz[3] = ;
-   mctag[4] = "ZZ"; colz[4] = ;
-   mctag[5] = "TTTo2L2Nu"; colz[5] = ;
-   mctag[6] = "TTToSemiLeptonic"; colz[6] = ;
-   mctag[7] = "ST_tW_top"; colz[7] = ;
-   mctag[8] = "ST_tW_antitop"; colz[8] = ;
-   mctag[9] = "ST_t_channel_antitop"; colz[9] = ;
-   mctag[10] = "ST_t_channel_top"; colz[10] = ;
-   mctag[11] = "DYJetsToLL_M10"; colz[11] = ;
-   mctag[12] = "DYJetsToEEMuMu"; colz[12] = ;
-   mctag[13] = "DYJetsToTauTau"; colz[13] = ;
+   mctag[0] = "VBFHToZG"; colz[0] = 2;
+   mctag[1] = "GluGluHToZG"; colz[1] = 2;
+   mctag[2] = "WW"; colz[2] = 3;
+   mctag[3] = "WZ"; colz[3] = 3;
+   mctag[4] = "ZZ"; colz[4] = 3;
+   mctag[5] = "TTTo2L2Nu"; colz[5] = 4;
+   mctag[6] = "TTToSemiLeptonic"; colz[6] = 4;
+   mctag[7] = "ST_tW_top"; colz[7] = 6;
+   mctag[8] = "ST_tW_antitop"; colz[8] = 6;
+   mctag[9] = "ST_t_channel_antitop"; colz[9] = 6;
+   mctag[10] = "ST_t_channel_top"; colz[10] = 6;
+   mctag[11] = "DYJetsToLL_M10"; colz[11] = 7;
+   mctag[12] = "DYJetsToEEMuMu"; colz[12] = 8;
+   mctag[13] = "DYJetsToTauTau"; colz[13] = 9;
 
    TString labels[nmc];
    for (int i = 0; i < nmc; ++i) {

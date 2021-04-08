@@ -125,28 +125,40 @@ class TauTauProducer(Module):
                                                          TTGCollMass = (tau0.p4()+nu0+tau1.p4()+nu1+photon.p4()).M()
 
         Trigger = False
-        #
-        if hasattr(event, "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg"):         Trigger = Trigger or event.HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg
+        #2016B, 2016E
+        if hasattr(event, "HLT_DoubleMediumIsoPFTau32_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumIsoPFTau32_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumIsoPFTau35_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumIsoPFTau40_Trk1_eta2p1_Reg
+        #2016H
         if hasattr(event, "HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumCombinedIsoPFTau35_Trk1_eta2p1_Reg
-        #
-        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg
-        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg"):         Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg
-        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg
-        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_eta2p1_Reg"):         Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_eta2p1_Reg
-        if hasattr(event, "HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg"):  Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg
-        if hasattr(event, "HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_eta2p1_Reg"):          Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_eta2p1_Reg
-        if hasattr(event, "HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg"):  Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg
-        if hasattr(event, "HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_eta2p1_Reg"):          Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_eta2p1_Reg
-        #
+        if hasattr(event, "HLT_DoubleTightCombinedIsoPFTau35_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleTightCombinedIsoPFTau35_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumCombinedIsoPFTau40_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumCombinedIsoPFTau40_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightCombinedIsoPFTau40_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleTightCombinedIsoPFTau40_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumCombinedIsoPFTau40_Trk1_eta2p1"): Trigger = Trigger or event.HLT_DoubleMediumCombinedIsoPFTau40_Trk1_eta2p1
+        if hasattr(event, "HLT_DoubleTightCombinedIsoPFTau40_Trk1_eta2p1"): Trigger = Trigger or event.HLT_DoubleTightCombinedIsoPFTau40_Trk1_eta2p1
+        #2017B, 2017F, 2018A(lacks Loose)
+        if hasattr(event, "HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleLooseChargedIsoPFTau35_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleLooseChargedIsoPFTau40_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleLooseChargedIsoPFTau40_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTau35_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTau35_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTau40_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTau40_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleLooseChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleLooseChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
         if hasattr(event, "HLT_DoubleMediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg
-        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTau35_Trk1_eta2p1_Reg"):         Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTau35_Trk1_eta2p1_Reg
         if hasattr(event, "HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
-        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTau40_Trk1_eta2p1_Reg"):         Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTau40_Trk1_eta2p1_Reg
-        if hasattr(event, "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg"):  Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg
-        if hasattr(event, "HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg"):          Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTau35_Trk1_eta2p1_Reg
-        if hasattr(event, "HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg"):  Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
-        if hasattr(event, "HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg"):          Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTau40_Trk1_eta2p1_Reg
-
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTau35_Trk1_TightID_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTau40_Trk1_TightID_eta2p1_Reg
+        #2018D
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTauHPS35_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTauHPS35_Trk1_TightID_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleMediumChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg
+        if hasattr(event, "HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg"): Trigger = Trigger or event.HLT_DoubleTightChargedIsoPFTauHPS40_Trk1_TightID_eta2p1_Reg
+ 
         self.out.fillBranch("TauTau_HavePair", HavePair)
         self.out.fillBranch("TauTau_qq", qq)
         self.out.fillBranch("TauTau_Tau0Idx", Tau0Idx)
