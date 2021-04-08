@@ -61,7 +61,7 @@ with open(infile) as json_file:
         #f.write("config.Data.splitting='Automatic'\n")
         f.write("config.Data.splitting = 'FileBased'\n")
         f.write("config.Data.unitsPerJob = 1\n")
-        f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_07042021/'\n")
+        f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_08042021/'\n")
         f.write("config.Data.publication = False\n")
         f.write("\n")
 
