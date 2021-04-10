@@ -8,10 +8,10 @@ year = '2016'
 data['people'].append({
     'name': 'DYJetsToLL_M10to50_2016',
     'inputDataset': '/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
-    'nEvents': '13055644',
-    'nFiles': '9',
+    'nEvents': '24200244',
+    'nFiles': '28',#PRODUCTION
     'isMC': isMC_,
-    'xs': '18610',
+    'xs': '18610.',
     'year': year,
 })
 
@@ -72,7 +72,8 @@ data['people'].append({
     'nFiles': '266',
     'isMC': isMC_,
     'xs': '365.34',
-    'year': year
+    'year': year,
+    'applyFilter': '1',
 })
 
 data['people'].append({
@@ -82,7 +83,8 @@ data['people'].append({
     'nFiles': '202',
     'isMC': isMC_,
     'xs': '88.29',
-    'year': year
+    'year': year,
+    'applyFilter': '1',
 })
 
 data['people'].append({

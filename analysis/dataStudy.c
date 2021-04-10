@@ -12,8 +12,17 @@ TFile * makeHists(const TString datatag, const int year, const TString channel)
 {
    std::cout << "*** makeHists() " << datatag << ", " << year << ", " << channel << std::endl;
    char finname[200];
-   sprintf(finname, "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_22032021/%s.root", datatag.Data());
+   sprintf(finname, "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_08042021/%s.root", datatag.Data());
    TFile * infile = TFile::Open(finname);
+ 
+   char foutname[200];
+   sprintf(foutname, "./dataStudyOutput/%s_%d.root", datatag.Data(), year);
+   TFile * outfile = new TFile(foutname, "RECREATE");  
+   TH2D *h2[4];
+   TH1D *h1_min[4], *h1_max[4];
+  
+   if (infile) {
+   
    TTree * t = (TTree*)infile->Get("Events");
    std::cout << "   entries in tree: " << t->GetEntries() << std::endl;
 
@@ -54,8 +63,8 @@ TFile * makeHists(const TString datatag, const int year, const TString channel)
       baseline = baseline && TCut("Photon_pt[TauTau_PhotonIdx]>=100.");
       baseline = baseline && TCut("TauTau_Mass>=91.1876");
       baseline = baseline && TCut("TauTau_Trigger");
-      baseline = baseline && TCut("Tau_pt[TauTau_Tau0Idx]>=35. && TMath::Abs(Tau_eta[TauTau_Tau0Idx])<2.1");
-      baseline = baseline && TCut("Tau_pt[TauTau_Tau1Idx]>=35. && TMath::Abs(Tau_eta[TauTau_Tau1Idx])<2.1");
+      baseline = baseline && TCut("Tau_pt[TauTau_Tau0Idx]>=40. && TMath::Abs(Tau_eta[TauTau_Tau0Idx])<2.1");
+      baseline = baseline && TCut("Tau_pt[TauTau_Tau1Idx]>=40. && TMath::Abs(Tau_eta[TauTau_Tau1Idx])<2.1");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==0");
       const TCut tau0pass = "(32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx])";
@@ -102,13 +111,6 @@ TFile * makeHists(const TString datatag, const int year, const TString channel)
    h1_temp.SetLineWidth(2);
    h1_temp.SetStats(0);
 
-   char foutname[200];
-   sprintf(foutname, "./dataStudyOutput/%s_%d.root", datatag.Data(), year);
-   TFile * outfile = new TFile(foutname, "RECREATE");
-   
-   TH2D *h2[4];
-   TH1D *h1_min[4], *h1_max[4];
-
    for (int i = 0; i < 4; ++i) {
       if (i==0) continue;
       std::cout << "   filling region " << titles[i] << std::endl;
@@ -136,7 +138,10 @@ TFile * makeHists(const TString datatag, const int year, const TString channel)
       t->Project(h1_max[i]->GetName(), varmax, cuts[i]);
       addOverflow(h1_max[i]);
    }
-   
+   } else {
+      std::cout << "   file not found!" << std::endl;
+   }
+
    outfile->Write();
    outfile->Close();
    return outfile;

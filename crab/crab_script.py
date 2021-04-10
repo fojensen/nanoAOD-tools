@@ -27,7 +27,7 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import runsAn
 #testfile = [
     #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv7/QCD_HT50to100_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/70000/73AF8628-CE5C-7141-B091-BBBCF3BF4333.root",
     #"root://cmsxrootd.fnal.gov//store/data/Run2018D/SingleMuon/NANOAOD/Nano25Oct2019-v1/100000/76BEBA77-9DDB-8144-A183-5842729F006D.root"
-    #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/C00024AD-3D0D-DE45-949F-E56A81BDDCA7.root" # small DY file
+#    "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv6/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano25Oct2019_102X_upgrade2018_realistic_v20-v1/260000/C00024AD-3D0D-DE45-949F-E56A81BDDCA7.root" # small DY file
     #"C00024AD-3D0D-DE45-949F-E56A81BDDCA7.root"
     #"109AFD23-2019-E447-8070-8FA4B9203018.root"
     #"root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv7/Taustar_TauG_L10000_m500_CP5_13TeV_pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/130000/B97EF17B-4634-EB45-8776-BF8CAE1E634A.root"
@@ -44,17 +44,15 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.crabhelper import runsAn
 cut_TauTau = "Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (8&Tau_idDeepTau2017v2p1VSmu) && (4&Tau_idDeepTau2017v2p1VSe))>=2"
 #cut_Tau    = "Sum$(Tau_pt>=180. && TMath::Abs(Tau_eta)<2.1 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (8&Tau_idDeepTau2017v2p1VSmu) && (4&Tau_idDeepTau2017v2p1VSe))>=1"
 #cut_TauMET = "Sum$(Tau_pt>=50.0 && TMath::Abs(Tau_eta)<2.1 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (8&Tau_idDeepTau2017v2p1VSmu) && (4&Tau_idDeepTau2017v2p1VSe))>=1 && MET_pt>=90."
-cut_EleTau = "Sum$(TMath::Abs(Electron_eta)<2.5 && Electron_pt>=24. && Electron_mvaFall17V2Iso_WP90)>0 && Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (8&Tau_idDeepTau2017v2p1VSmu) && (4&Tau_idDeepTau2017v2p1VSe))>0"
-cut_MuoTau = "Sum$(TMath::Abs(Muon_eta)<2.4 && Muon_pt>=19. && Muon_tightId && Muon_pfIsoId>=2)>0  && Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (8&Tau_idDeepTau2017v2p1VSmu) && (4&Tau_idDeepTau2017v2p1VSe))>0"
+cut_EleTau = "Sum$(TMath::Abs(Electron_eta)<2.5 && Electron_pt>=24. && Electron_mvaFall17V2Iso_WP90)>0 && Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (8&Tau_idDeepTau2017v2p1VSmu) && (32&Tau_idDeepTau2017v2p1VSe))>0"
+cut_MuoTau = "Sum$(TMath::Abs(Muon_eta)<2.4 && Muon_pt>=19. && Muon_tightId && Muon_pfIsoId>=2)>0 && Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (8&Tau_idDeepTau2017v2p1VSmu) && (4&Tau_idDeepTau2017v2p1VSe))>0"
 cut_Photon = "Sum$(TMath::Abs(Photon_eta)<2.5 && (Photon_isScEtaEB||Photon_isScEtaEE) && (Photon_electronVeto||!Photon_pixelSeed) && Photon_mvaID_WP90 && Photon_pt>=175.)>0"
-#cut_EleMuo = "Sum$(TMath::Abs(Electron_eta)<2.5 && Electron_pt>=12. && (Electron_mvaFall17V2Iso_WPL||Electron_mvaFall17V2noIso_WPL))>0 && Sum$(TMath::Abs(Muon_eta)<2.4 && Muon_pt>=8. && Muon_looseId && Muon_pfIsoId>=1)>0"
-#cut_EleEle = "Sum$(TMath::Abs(Electron_eta)<2.5  && Electron_pt>=12. && (Electron_mvaFall17V2Iso_WPL||Electron_mvaFall17V2noIso_WPL))>=2"
-#cut_MuoMuo = "Sum$(TMath::Abs(Muon_eta)<2.4 && Muon_pt>=8. && Muon_mediumId && Muon_pfIsoId>=2)>=2"
+cut_EleMuo = "Sum$(TMath::Abs(Electron_eta)<2.5 && Electron_pt>=12. && (Electron_mvaFall17V2Iso_WP90||Electron_mvaFall17V2noIso_WP90))>0 && Sum$(TMath::Abs(Muon_eta)<2.4 && Muon_pt>=8. && Muon_tightId && Muon_pfIsoId>=2)>0"
 #https://twiki.cern.ch/CMS/MissingETOptionalFiltersRun2
 #cut_Tau = "Sum$(Tau_pt>=20. && TMath::Abs(Tau_eta)<2.3 && Tau_decayMode!=5 && Tau_decayMode!=6 && (1&Tau_idDeepTau2017v2p1VSjet) && (8&Tau_idDeepTau2017v2p1VSmu) && (4&Tau_idDeepTau2017v2p1VSe))>0"
 #cut_Photon = "Sum$(TMath::Abs(Photon_eta)<2.5 && (Photon_isScEtaEB||Photon_isScEtaEE) && (Photon_electronVeto||!Photon_pixelSeed) && Photon_mvaID_WP90)>0"
 cut_Flag = "(Flag_goodVertices && Flag_globalSuperTightHalo2016Filter && Flag_HBHENoiseFilter && Flag_HBHENoiseIsoFilter && Flag_EcalDeadCellTriggerPrimitiveFilter && Flag_BadPFMuonFilter)"
-cut_ = "(" + cut_TauTau + " || " + cut_EleTau + " || " + cut_MuoTau + " || " + cut_Photon + ") && " + cut_Flag
+cut_ = "(" + cut_TauTau + " || " + cut_EleTau + " || " + cut_MuoTau + " || " + cut_Photon + " || " + cut_EleMuo + ") && " + cut_Flag
 #cut_ = "(" + cut_Tau + " && " + cut_Photon + " && " + cut_Flag + ")"
 #cut_ = "(" + cut_Tau + " && " + cut_Photon + " && " + cut_Flag + ")"
 print cut_
@@ -66,9 +64,16 @@ from PhysicsTools.NanoAODTools.postprocessing.examples.ElTauProducer import ElTa
 from PhysicsTools.NanoAODTools.postprocessing.examples.MuTauProducer import MuTauProducerConstr
 from PhysicsTools.NanoAODTools.postprocessing.examples.TauTauProducer import TauTauProducerConstr
 from PhysicsTools.NanoAODTools.postprocessing.examples.JetProducer import JetProducerConstr
-from PhysicsTools.NanoAODTools.postprocessing.examples.ZVeto import ZVetoConstr
 from PhysicsTools.NanoAODTools.postprocessing.examples.ZProducer import ZProducerConstr
-modules_ = [ZVetoConstr(), ZProducerConstr(), MuTauProducerConstr(), ElTauProducerConstr(), TauTauProducerConstr(), JetProducerConstr(year)]
+from PhysicsTools.NanoAODTools.postprocessing.examples.ElMuProducer import ElMuProducerConstr
+
+applyFilter = False
+#crab
+if len(sys.argv)==5:
+    applyFilter = int(sys.argv[4][5:]) 
+    print ("will apply tight b-tag veto")
+
+modules_ = [ZProducerConstr(True), MuTauProducerConstr(), ElTauProducerConstr(), TauTauProducerConstr(), ElMuProducerConstr(), JetProducerConstr(year, applyFilter)]
 
 #interactive
 #if len(sys.argv)==3:

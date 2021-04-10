@@ -273,5 +273,85 @@ data['people'].append({
     'year': year
 })
 
+data['people'].append({
+    'name': 'MuonEG_2016B_ver1_HIPM',
+    'inputDataset': '/MuonEG/Run2016B-ver1_HIPM_UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '3',
+    'lumiMask': lumiMask,
+    'year': year
+})
+
+data['people'].append({
+    'name': 'MuonEG_2016B_ver2_HIPM',
+    'inputDataset': '/MuonEG/Run2016B-ver2_HIPM_UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '27',
+    'lumiMask': lumiMask,
+    'year': year
+})
+
+data['people'].append({
+    'name': 'MuonEG_2016C',
+    'inputDataset': '/MuonEG/Run2016C-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '12',
+    'lumiMask': lumiMask,
+    'year': year
+})
+
+data['people'].append({
+    'name': 'MuonEG_2016D',
+    'inputDataset': '/MuonEG/Run2016D-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '20',
+    'lumiMask': lumiMask,
+    'year': year
+})
+
+data['people'].append({
+    'name': 'MuonEG_2016E',
+    'inputDataset': '/MuonEG/Run2016E-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '20',
+    'lumiMask': lumiMask,
+    'year': year
+})
+
+data['people'].append({
+    'name': 'MuonEG_2016F_HIPM',
+    'inputDataset': '/MuonEG/Run2016F-HIPM_UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '10',
+    'lumiMask': lumiMask,
+    'year': year
+})
+
+#data['people'].append({
+#    'name': 'MuonEG_2016F_v1',
+#    'inputDataset': '/MuonEG/Run2016F-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+#    'nFiles': '', # INVALID
+#    'lumiMask': lumiMask,
+#    'year': year
+#})
+
+data['people'].append({
+    'name': 'MuonEG_2016F_v2',
+    'inputDataset': '/MuonEG/Run2016F-UL2016_MiniAODv1_NanoAODv2-v2/NANOAOD',
+    'nFiles': '2',
+    'lumiMask': lumiMask,
+    'year': year
+})
+
+data['people'].append({
+    'name': 'MuonEG_2016G',
+    'inputDataset': '/MuonEG/Run2016G-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '29',
+    'lumiMask': lumiMask,
+    'year': year
+})
+
+data['people'].append({
+    'name': 'MuonEG_2016H',
+    'inputDataset': '/MuonEG/Run2016H-UL2016_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '24',
+    'lumiMask': lumiMask,
+    'year': year
+})
+
 with open('datasamples_2016.json', 'w') as outfile:
    json.dump(data, outfile)

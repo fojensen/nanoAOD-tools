@@ -4,12 +4,13 @@ ROOT.PyConfig.IgnoreCommandLineOptions = True
 
 from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collection 
 from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
-
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaPhi
 
 class JetProducer(Module):
-    def __init__(self, year_):
+    def __init__(self, year_, applyFilter_):
         self.year__ = year_
+        self.applyFilter__ = applyFilter_
+        if self.applyFilter__: print "b-jet veto applied!"
         self.wp = [0, 0, 0]
         #print "chosen year %d" % self.year__
         #https://twiki.cern.ch/CMS/BtagRecommendation2016Legacy
@@ -99,11 +100,17 @@ class JetProducer(Module):
                         photon = photons[event.TauTau_PhotonIdx]
                         dr_3 = abs(deltaPhi(jet, photon))>=0.28284271 and abs(jet.eta-photon.eta)>=0.28284271
 
-                #if event.MuMu_Mu1Idx>=0 and event.MuMu_Mu2Idx>=0:
-                #    dr_1 = deltaR(jet, muons[event.MuMu_Mu1Idx])
-                #    dr_2 = deltaR(jet, muons[event.MuMu_Mu2Idx])
-                #    if event.MuMu_PhotonIdx>=0:
-                #        dr_3 = deltaR(jet, photons[event.MuMu_PhotonIdx])
+                if event.ElMu_ElIdx>=0 and event.ElMu_MuIdx>=0:
+                    havePair = True
+                    el = electrons[event.ElMu_ElIdx]
+                    mu = muons[event.ElMu_MuIdx]
+                    dr_1 = abs(deltaPhi(jet, el))>=0.28284271 and abs(jet.eta-el.eta)>=0.28284271
+                    dr_2 = abs(deltaPhi(jet, mu))>=0.28284271 and abs(jet.eta-mu.eta)>=0.28284271
+                    if event.ElMu_PhotonIdx>=0:
+                        havePair = False
+                        haveTriplet = True
+                        photon = photons[event.ElMu_PhotonIdx]
+                        dr_3 = abs(deltaPhi(jet, photon))>=0.28284271 and abs(jet.eta-photon.eta)>=0.28284271
 
                 nJetinc = nJetinc + 1
                 HTinc += jet.pt
@@ -116,7 +123,8 @@ class JetProducer(Module):
                             nBJetM = nBJetM + 1
                             if jet.btagDeepB >= self.wp[2]:
                                 nBJetT = nBJetT + 1
-       
+                                if self.applyFilter__ and nBJetT>0: return False
+
         self.out.fillBranch("JetProducer_nBJetL", nBJetL)
         self.out.fillBranch("JetProducer_nBJetM", nBJetM)
         self.out.fillBranch("JetProducer_nBJetT", nBJetT)
@@ -128,7 +136,8 @@ class JetProducer(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-JetProducerConstr = lambda year : JetProducer(
-    year_ = year
+JetProducerConstr = lambda year, applyFilter: JetProducer(
+    year_ = year,
+    applyFilter_ = applyFilter
 )
 

@@ -3,7 +3,7 @@ import json
 data = {}
 data['people'] = []
 isMC_ = True
-year = 2018
+year = '2018'
 
 data['people'].append({
     'name': 'Taustar_m250_2018',

@@ -55,7 +55,7 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    h->Sumw2();
    //h->SetLineWidth(2);
 
-   const TString eostag = "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_22032021/";
+   const TString eostag = "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_08042021/";
    char infile[100];
    sprintf(infile, "%s/%s_%d.root", eostag.Data(), sampletag.Data(), year);
    TFile * f = TFile::Open(infile);
@@ -76,7 +76,7 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    if (f) {
 
    TString var;
-   var = makeString(375., channel);
+   var = makeString(250., channel);
    //if (channel=="Electron") var = "TMath::Min(ElTau_ElCollMass, ElTau_TauCollMass)";
    //if (channel=="Muon") var = "TMath::Min(MuTau_MuCollMass, MuTau_TauCollMass)";
    //if (channel=="Tau") "TMath::Min(TauTau_Tau0CollMass, TauTau_Tau1CollMass)";
@@ -89,6 +89,7 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
 
    if (channel=="Muon") {
       baseline = baseline && TCut("MuTau_HavePair>0 && MuTau_HaveTriplet==0");
+      baseline = baseline && TCut("MuMu_HavePair==0||(MuMu_HavePair>0 && MuMu_Mass<50.)");
       //baseline = baseline && TCut("MuTau_HaveTriplet>0");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       //baseline = baseline && TCut("Photon_pt[MuTau_PhotonIdx]>=100.");
@@ -112,8 +113,8 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
       //baseline = baseline && TCut("Photon_pt[TauTau_PhotonIdx]>=100.");
       //baseline = baseline && TCut("TauTau_Mass>=91.1876");
       baseline = baseline && TCut("TauTau_Trigger");
-      baseline = baseline && TCut("Tau_pt[TauTau_Tau0Idx]>=35. && TMath::Abs(Tau_eta[TauTau_Tau0Idx])<2.1");
-      baseline = baseline && TCut("Tau_pt[TauTau_Tau1Idx]>=35. && TMath::Abs(Tau_eta[TauTau_Tau1Idx])<2.1");
+      baseline = baseline && TCut("Tau_pt[TauTau_Tau0Idx]>=40. && TMath::Abs(Tau_eta[TauTau_Tau0Idx])<2.1");
+      baseline = baseline && TCut("Tau_pt[TauTau_Tau1Idx]>=40. && TMath::Abs(Tau_eta[TauTau_Tau1Idx])<2.1");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==0");
       const TCut tau0pass = "(32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx])";
@@ -127,13 +128,14 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    }
    if (channel=="Electron") {
       baseline = baseline && TCut("ElTau_HavePair>0 && ElTau_HaveTriplet==0");
+      baseline = baseline && TCut("EE_HavePair==0||(EE_HavePair>0 && EE_Mass<50.)");
       //baseline = baseline && TCut("ElTau_HaveTriplet>0");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       //baseline = baseline && TCut("Photon_pt[ElTau_PhotonIdx]>=100.");
       //baseline = baseline && TCut("ElTau_Mass>=91.1876");
       baseline = baseline && TCut("ElTau_Trigger");
       baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElTau_ElIdx]");
-      baseline = baseline && TCut("128&Tau_idDeepTau2017v2p1VSe[ElTau_TauIdx]");
+      baseline = baseline && TCut("64&Tau_idDeepTau2017v2p1VSe[ElTau_TauIdx]");
       if (year==2016) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=29.");
       if (year==2017) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
       if (year==2018) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
@@ -225,29 +227,26 @@ void makeABCDHists(const TString channel)
    std::cout << "makeABCDHists()" << std::endl;
    std::cout << "   channel: " << channel << std::endl;
    char indata[100];
-   sprintf(indata, "./outputHists/%s.root", channel.Data());
-   
+   sprintf(indata, "./outputHists/%s.root", channel.Data()); 
    TFile * f_data = TFile::Open(indata);
    TH1D * h_data_B = (TH1D*)((TH1D*)f_data->Get("h_B"))->Clone("h_data_B");
    TH1D * h_data_C = (TH1D*)((TH1D*)f_data->Get("h_C"))->Clone("h_data_C");
    TH1D * h_data_D = (TH1D*)((TH1D*)f_data->Get("h_D"))->Clone("h_data_D");
 
-   const int nmc = 14;
+   const int nmc = 12;
    TString mctag[nmc];
-   mctag[0] = "VBFHToZG";
-   mctag[1] = "GluGluHToZG";
-   mctag[2] = "WW";
-   mctag[3] = "WZ";
-   mctag[4] = "ZZ";
-   mctag[5] = "TTTo2L2Nu";
-   mctag[6] = "TTToSemiLeptonic";
-   mctag[7] = "ST_tW_top";
-   mctag[8] = "ST_tW_antitop";
-   mctag[9] = "ST_t_channel_antitop";
-   mctag[10] = "ST_t_channel_top";
-   mctag[11] = "DYJetsToLL_M10";
-   mctag[12] = "DYJetsToEEMuMu";
-   mctag[13] = "DYJetsToTauTau";
+   mctag[0] = "WW";
+   mctag[1] = "WZ";
+   mctag[2] = "ZZ";
+   mctag[3] = "TTTo2L2Nu";
+   mctag[4] = "TTToSemiLeptonic";
+   mctag[5] = "ST_tW_top";
+   mctag[6] = "ST_tW_antitop";
+   mctag[7] = "ST_t_channel_antitop";
+   mctag[8] = "ST_t_channel_top";
+   mctag[9] = "DYJetsToLL_M10";
+   mctag[10] = "DYJetsToEEMuMu";
+   mctag[11] = "DYJetsToTauTau";
 
    TH1D *h_A[nmc], *h_B[nmc], *h_C[nmc], *h_D[nmc];
    for (int i = 0; i < nmc; ++i) {
@@ -391,11 +390,11 @@ void plotControlRegions(const TString channel, const bool blindA)
 
    const int nsig = 2;
    TString sigtag[nsig];
-   sigtag[0] = "Taustar_m375";
-   sigtag[1] = "Taustar_m750";
+   sigtag[0] = "Taustar_m250";
+   sigtag[1] = "Taustar_m625";
    TString siglabels[nsig];
-   siglabels[0] = "#tau* 375";
-   siglabels[1] = "#tau* 750";
+   siglabels[0] = "#tau* 250";
+   siglabels[1] = "#tau* 625";
    const int sigcolz[nsig] = {209, 207};
    TH1D *h_sig_A[nsig], *h_sig_B[nsig], *h_sig_C[nsig], *h_sig_D[nsig];
    for (int i = 0; i < nsig; ++i) {
@@ -416,23 +415,21 @@ void plotControlRegions(const TString channel, const bool blindA)
       h_sig_D[i]->SetLineStyle(2);
    }
 
-   const int nmc = 14;
-   int colz[14];
+   const int nmc = 12;
+   int colz[nmc];
    TString mctag[nmc];
-   mctag[0] = "VBFHToZG"; colz[0] = 2;
-   mctag[1] = "GluGluHToZG"; colz[1] = 2;
-   mctag[2] = "WW"; colz[2] = 3;
-   mctag[3] = "WZ"; colz[3] = 3;
-   mctag[4] = "ZZ"; colz[4] = 3;
-   mctag[5] = "TTTo2L2Nu"; colz[5] = 4;
-   mctag[6] = "TTToSemiLeptonic"; colz[6] = 4;
-   mctag[7] = "ST_tW_top"; colz[7] = 6;
-   mctag[8] = "ST_tW_antitop"; colz[8] = 6;
-   mctag[9] = "ST_t_channel_antitop"; colz[9] = 6;
-   mctag[10] = "ST_t_channel_top"; colz[10] = 6;
-   mctag[11] = "DYJetsToLL_M10"; colz[11] = 7;
-   mctag[12] = "DYJetsToEEMuMu"; colz[12] = 8;
-   mctag[13] = "DYJetsToTauTau"; colz[13] = 9;
+   mctag[0] = "WW"; colz[0] = 3;
+   mctag[1] = "WZ"; colz[1] = 3;
+   mctag[2] = "ZZ"; colz[2] = 3;
+   mctag[3] = "TTTo2L2Nu"; colz[3] = 4;
+   mctag[4] = "TTToSemiLeptonic"; colz[4] = 4;
+   mctag[5] = "ST_tW_top"; colz[5] = 6;
+   mctag[6] = "ST_tW_antitop"; colz[6] = 6;
+   mctag[7] = "ST_t_channel_antitop"; colz[7] = 6;
+   mctag[8] = "ST_t_channel_top"; colz[8] = 6;
+   mctag[9] = "DYJetsToLL_M10"; colz[9] = 7;
+   mctag[10] = "DYJetsToEEMuMu"; colz[10] = 8;
+   mctag[11] = "DYJetsToTauTau"; colz[11] = 9;
 
    TString labels[nmc];
    for (int i = 0; i < nmc; ++i) {
@@ -564,10 +561,17 @@ void plotControlRegions(const TString channel, const bool blindA)
 
    c->SaveAs("./plots/cr."+channel+".pdf");
 
+   TH1D *h_bkgsum_A = (TH1D*)h_mc_A[0]->Clone("h_bkgSum_A");
+   for (int i = 1; i < nmc; ++i) h_bkgsum_A->Add(h_mc_A[i]);
+   h_bkgsum_A->Add(h_ABCD_A);
+   std::cout << "   expected bkg composition:" << std::endl;
+   const double fullint = h_bkgsum_A->Integral();
+   for (int i = 0; i < nmc; ++i) {
+      std::cout << "   " << mctag[i] << ": " << h_mc_A[i]->Integral()/fullint << std::endl;
+   }
+   std::cout << "   ABCD: " << h_ABCD_A->Integral()/fullint << std::endl;
+
    if (!blindA) {
-      TH1D *h_bkgsum_A = (TH1D*)h_mc_A[0]->Clone("h_bkgSum_A");
-      for (int i = 1; i < nmc; ++i) h_bkgsum_A->Add(h_mc_A[i]);
-      h_bkgsum_A->Add(h_ABCD_A);
       TH1D * r = (TH1D*)h_data_A->Clone("r");
       r->Divide(h_bkgsum_A);
       r->GetYaxis()->SetTitle("observed / prediction");
@@ -592,25 +596,22 @@ void makeAllHists(const TString channel, const int year, const bool blindA)
    std::cout << "makeAllHists()" << std::endl;
    std::cout << "   channel: " << channel << ", year: " << year << ", blindA: " << blindA << std::endl;
 
-   const int nmc = 17;
+   const int nmc = 14;
    TString mctag[nmc];
-   mctag[0] = "VBFHToZG";
-   mctag[1] = "GluGluHToZG";
-   mctag[2] = "WW";
-   mctag[3] = "WZ";
-   mctag[4] = "ZZ";
-   mctag[5] = "TTTo2L2Nu";
-   mctag[6] = "TTToSemiLeptonic";
-   mctag[7] = "ST_tW_top";
-   mctag[8] = "ST_tW_antitop";
-   mctag[9] = "ST_t_channel_antitop";
-   mctag[10] = "ST_t_channel_top";
-   mctag[11] = "DYJetsToLL_M10";
-   mctag[12] = "DYJetsToEEMuMu";
-   mctag[13] = "DYJetsToTauTau";
-   mctag[14] = "Taustar_m375";
-   mctag[15] = "Taustar_m750";
-   mctag[16] = "WJetsToLNu";
+   mctag[0] = "WW";
+   mctag[1] = "WZ";
+   mctag[2] = "ZZ";
+   mctag[3] = "TTTo2L2Nu";
+   mctag[4] = "TTToSemiLeptonic";
+   mctag[5] = "ST_tW_top";
+   mctag[6] = "ST_tW_antitop";
+   mctag[7] = "ST_t_channel_antitop";
+   mctag[8] = "ST_t_channel_top";
+   mctag[9] = "DYJetsToLL_M10";
+   mctag[10] = "DYJetsToEEMuMu";
+   mctag[11] = "DYJetsToTauTau";
+   mctag[12] = "Taustar_m250";
+   mctag[13] = "Taustar_m625";
    for (int i = 0; i < nmc; ++i) {
       runPoint(mctag[i], channel, year, true, false);
    }
@@ -650,25 +651,22 @@ void combineHistogramsMC(const TString channel)
 {
    std::cout << "combineHistogramsMC()" << std::endl;
    std::cout << "   channel: " << channel << std::endl;
-   const int nmc = 17;
+   const int nmc = 14;
    TString mctag[nmc];
-   mctag[0] = "VBFHToZG";
-   mctag[1] = "GluGluHToZG";
-   mctag[2] = "WW";
-   mctag[3] = "WZ";
-   mctag[4] = "ZZ";
-   mctag[5] = "TTTo2L2Nu";
-   mctag[6] = "TTToSemiLeptonic";
-   mctag[7] = "ST_tW_top";
-   mctag[8] = "ST_tW_antitop";
-   mctag[9] = "ST_t_channel_antitop";
-   mctag[10] = "ST_t_channel_top";
-   mctag[11] = "DYJetsToLL_M10";
-   mctag[12] = "DYJetsToEEMuMu";
-   mctag[13] = "DYJetsToTauTau";
-   mctag[14] = "Taustar_m375";
-   mctag[15] = "Taustar_m750";
-   mctag[16] = "WJetsToLNu";
+   mctag[0] = "WW";
+   mctag[1] = "WZ";
+   mctag[2] = "ZZ";
+   mctag[3] = "TTTo2L2Nu";
+   mctag[4] = "TTToSemiLeptonic";
+   mctag[5] = "ST_tW_top";
+   mctag[6] = "ST_tW_antitop";
+   mctag[7] = "ST_t_channel_antitop";
+   mctag[8] = "ST_t_channel_top";
+   mctag[9] = "DYJetsToLL_M10";
+   mctag[10] = "DYJetsToEEMuMu";
+   mctag[11] = "DYJetsToTauTau";
+   mctag[12] = "Taustar_m250";
+   mctag[13] = "Taustar_m625";
 
    for (int i = 0; i < nmc; ++i) {
       char cmd1[1000];

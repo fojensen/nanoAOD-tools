@@ -7,8 +7,8 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaPhi
 
 class ZProducer(Module):
-    def __init__(self):
-        pass
+    def __init__(self, applyFilter_):
+        self.applyFilter__ = applyFilter_
     def beginJob(self):
         pass
     def endJob(self):
@@ -28,28 +28,28 @@ class ZProducer(Module):
         EE_HavePair = MuMu_HavePair = False
         EE_Mass = MuMu_Mass = 0
 
-        #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html#Electron
         electrons = Collection(event, "Electron")
         for e1 in electrons:
-            if e1.pt>=12. and abs(e1.eta)<2.5 and e1.mvaFall17V2noIso_WP90:
-                for e2 in electrons:
-                    if e2.pt>=12. and abs(e2.eta)<2.5 and e2.mvaFall17V2noIso_WP90:
-                        if e1.charge*e2.charge<0:
+            for e2 in electrons:
+                if e1.charge*e2.charge<0:
+                    if e1.pt>=12. and abs(e1.eta)<2.5 and e1.mvaFall17V2noIso_WP90:
+                        if e2.pt>=12. and abs(e2.eta)<2.5 and e2.mvaFall17V2noIso_WP90:
                             if abs(deltaPhi(e1, e2))>=0.28284271 and abs(e1.eta-e2.eta)>=0.28284271:
-                                EE_HavePair = True
                                 EE_Mass = (e1.p4()+e2.p4()).M()
+                                if self.applyFilter__ and EE_Mass>=50.: return False
+                                EE_HavePair = True
 
-        #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html#Muon
         muons = Collection(event, "Muon")
         for mu1 in muons:
-            if mu1.pt>=8. and abs(mu1.eta)<2.4 and mu1.mediumId:
-                for mu2 in muons:
-                    if mu2.pt>=8. and abs(mu2.eta)<2.4 and mu2.mediumId:
-                        if mu1.charge*mu2.charge<0:
+            for mu2 in muons:
+                if mu1.charge*mu2.charge<0:
+                    if mu1.pt>=8. and abs(mu1.eta)<2.4 and mu1.mediumId:
+                        if mu2.pt>=8. and abs(mu2.eta)<2.4 and mu2.mediumId:
                             if abs(deltaPhi(mu1, mu2))>=0.28284271 and abs(mu1.eta-mu2.eta)>=0.28284271:
-                                MuMu_HavePair = True
                                 MuMu_Mass = (mu1.p4()+mu2.p4()).M()
-        
+                                if self.applyFilter__ and MuMu_Mass>=50.: return False
+                                MuMu_HavePair = True
+
         self.out.fillBranch("EE_HavePair", EE_HavePair)
         self.out.fillBranch("EE_Mass", EE_Mass)
         self.out.fillBranch("MuMu_HavePair", MuMu_HavePair)
@@ -59,5 +59,7 @@ class ZProducer(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-ZProducerConstr = lambda : ZProducer()
+ZProducerConstr = lambda applyFilter : ZProducer(
+    applyFilter_ = applyFilter
+)
 

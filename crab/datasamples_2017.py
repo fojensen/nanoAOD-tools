@@ -166,5 +166,45 @@ data['people'].append({
     'year': year
 })
 
+data['people'].append({
+    'name': 'MuonEG_2017B',
+    'inputDataset': '/MuonEG/Run2017B-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '8',
+    'lumiMask': lumiMask,
+    'year': year,
+})
+
+data['people'].append({
+    'name': 'MuonEG_2017C',
+    'inputDataset': '/MuonEG/Run2017C-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '21',
+    'lumiMask': lumiMask,
+    'year': year,
+})
+
+data['people'].append({
+    'name': 'MuonEG_2017D',
+    'inputDataset': '/MuonEG/Run2017D-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '13',
+    'lumiMask': lumiMask,
+    'year': year,
+})
+
+data['people'].append({
+    'name': 'MuonEG_2017E',
+    'inputDataset': '/MuonEG/Run2017E-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '20',
+    'lumiMask': lumiMask,
+    'year': year,
+})
+
+data['people'].append({
+    'name': 'MuonEG_2017F',
+    'inputDataset': '/MuonEG/Run2017F-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
+    'nFiles': '33',
+    'lumiMask': lumiMask,
+    'year': year,
+})
+
 with open('datasamples_2017.json', 'w') as outfile:
    json.dump(data, outfile)

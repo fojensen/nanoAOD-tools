@@ -1,4 +1,5 @@
 #include <TH1D.h>
+#include <iostream>
 
 double addOverflow(TH1D * h)
 {
@@ -17,10 +18,17 @@ double addOverflow(TH1D * h)
    std::cout << "      GetBinContent(n+1) = " << overflow << " +- " << overflowerror << std::endl;
    std::cout << "      GetBinContent(n) = " << lastbin << " +- " << lastbinerror << std::endl;
 
+   auto weights = h->GetSumw2();
+   const double w2_2 = weights->At(n+1);
+   const double w2_1 = weights->At(n);
+   std::cout << "      sumw2 for overflow: " << w2_2 << std::endl;
+   std::cout << "      sumw2 for last bin: " << w2_1 << std::endl;
+   const double newerr = sqrt(w2_1+w2_2);
+
    h->AddBinContent(n, overflow);
-   //h->Fill(h->GetBinCenter(n), overflow); //wrong, 1 fill can potentially have a huge weight
-   h->SetBinContent(n+1, 0.);
-   h->SetBinError(n+1, 0.);
+   h->SetBinError(n, newerr);
+   h->SetBinContent(n+1., 0.);
+   h->SetBinError(n+1., 0.); 
    h->SetEntries(nEntries);
   
    nEntries = h->GetEntries(); 
@@ -35,5 +43,14 @@ double addOverflow(TH1D * h)
    std::cout << "      GetBinContent(n) = " << lastbin << " +- " << lastbinerror << std::endl;
 
    return overflow;
+}
+
+void testOverflow()
+{
+   TH1D * h = new TH1D("h", ";;", 4, -0.5, 3.5);
+   h->Fill(3., 0.7);
+   h->Fill(3., 0.8);
+   h->Fill(4., 0.9);
+   addOverflow(h);
 }
 

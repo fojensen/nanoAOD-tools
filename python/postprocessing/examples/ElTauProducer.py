@@ -74,7 +74,7 @@ class ElTauProducer(Module):
         #https://twiki.cern.ch/CMS/TauIDRecommendationForRun2
         goodTauIdx = []
         for i, tau in enumerate(taus):
-            tauID = (1&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu) and (4&tau.idDeepTau2017v2p1VSe) and not (tau.decayMode==5 or tau.decayMode==6)
+            tauID = (1&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu) and (32&tau.idDeepTau2017v2p1VSe) and not (tau.decayMode==5 or tau.decayMode==6)
             if tau.pt>=20. and abs(tau.eta)<2.3 and tauID:
                 goodTauIdx.append(i)
 

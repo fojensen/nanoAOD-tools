@@ -72,7 +72,8 @@ data['people'].append({
     'nFiles' : '465',
     'isMC': isMC_,
     'xs': '365.34',
-    'year': year
+    'year': year,
+    'applyFilter': '1'
 })
 
 data['people'].append({
@@ -82,7 +83,8 @@ data['people'].append({
     'nFiles' : '181',
     'isMC': isMC_,
     'xs': '88.29',
-    'year': year
+    'year': year,
+    'applyFilter': '1'
 })
 
 data['people'].append({
