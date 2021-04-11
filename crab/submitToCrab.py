@@ -3,11 +3,11 @@ import os
 
 #infile = 'datasamples_2016.json'
 #infile = 'datasamples_2017.json'
-#infile = 'datasamples_2018.json'
+infile = 'datasamples_2018.json'
 #infile = 'mcsamples_2016.json'
 #infile = 'mcsamples_2017.json'
 #infile = 'mcsamples_2018.json'
-infile = 'sigsamples_2016.json'
+#infile = 'sigsamples_2016.json'
 #infile = 'sigsamples_2017.json'
 #infile = 'sigsamples_2018.json'
 
@@ -38,11 +38,7 @@ with open(infile) as json_file:
         f.write("config.JobType.scriptExe = 'crab_script.sh'\n")
         if ('xs' in p) and ('nEvents' in p):
             w = eval(p['xs'])/eval(p['nEvents'])
-            if 'applyFilter' in p: 
-                argstring = "['arg1=%d', 'arg2=%s', 'arg3=1']" % (int(p['year']), w)
-            else :
-                argstring = "['arg1=%d', 'arg2=%s']" % (int(p['year']), w)
-         
+            argstring = "['arg1=%d', 'arg2=%s']" % (int(p['year']), w)
         else :
              argstring = "['arg1=%d']" % int(p['year'])
         f.write("config.JobType.scriptArgs = " + argstring + "\n")
@@ -76,5 +72,5 @@ with open(infile) as json_file:
         f.close()
 
         #actually submit jobs or not
-        os.system("crab submit -c " + f.name)
+#        os.system("crab submit -c " + f.name)
 

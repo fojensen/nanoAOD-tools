@@ -99,6 +99,28 @@ TFile * makeHists(const TString datatag, const int year, const TString channel)
       regionD = "ElTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
       regionA = regionA && TCut("Photon_pt[ElTau_PhotonIdx]<50.");
    }
+   if (channel=="ElMu") {
+      title = "e + #mu";
+      var = "ElMu_MaxCollMass:ElMu_MinCollMass";
+      varmin = "ElMu_MinCollMass";
+      varmax = "ElMu_MaxCollMass";
+      baseline = baseline && TCut("ElMu_HaveTriplet==0");
+      baseline = baseline && TCut("JetProducer_nBJetT==0");
+      baseline = baseline && TCut("Photon_pt[ElMu_PhotonIdx]>=100.");
+      baseline = baseline && TCut("ElMu_Mass>=91.1876");
+      baseline = baseline && TCut("ElMu_Trigger");
+      baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElMu_ElIdx]");
+      if (year==2016) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
+      if (year==2017) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
+      if (year==2018) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
+      baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==1");
+      baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==1");
+      regionA = "ElMu_qq==-1";
+      regionB = "ElMu_qq==-1";
+      regionC = "ElMu_qq==+1";
+      regionD = "ElMu_qq==+1";
+   }
+
 
    const TCut cuts[4] = {baseline&&regionA, baseline&&regionB, baseline&&regionC, baseline&&regionD};
    const TString titles[4] = {"A", "B", "C", "D"};

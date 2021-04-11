@@ -103,7 +103,7 @@ data['people'].append({
 })
 
 data['people'].append({
-    'name': ' MuonEG_2018A',
+    'name': 'MuonEG_2018A',
     'inputDataset': '/MuonEG/Run2018A-UL2018_MiniAODv1_NanoAODv2-v1/NANOAOD',
     'nFiles': '56',
     'lumiMask': lumiMask,

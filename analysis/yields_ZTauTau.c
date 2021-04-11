@@ -37,6 +37,9 @@ TString makeString(const double mass, const TString channel)
                            lower,                       upper,                       upper,                 lower,                        lower,                 upper,                    lower,                 upper
       );
    }
+   if (channel=="ElMu") {
+      sprintf(outstring, "0");
+   }
 
    std::cout << "end makeString()" << std::endl;
    return TString(outstring);
@@ -55,7 +58,7 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    h->Sumw2();
    //h->SetLineWidth(2);
 
-   const TString eostag = "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_08042021/";
+   const TString eostag = "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_10042021/";
    char infile[100];
    sprintf(infile, "%s/%s_%d.root", eostag.Data(), sampletag.Data(), year);
    TFile * f = TFile::Open(infile);
@@ -64,6 +67,7 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    if (channel=="Electron") title = "e + #tau_{h}";
    if (channel=="Muon") title = "#mu + #tau_{h}";
    if (channel=="Tau") title = "#tau_{h} + #tau_{h}";
+   if (channel=="ElMu") title = "e + #mu";
    TH1D * h_A = (TH1D*)h->Clone(TString(h->GetName())+"_A");
    h_A->SetTitle("A: " + title);
    TH1D * h_B = (TH1D*)h->Clone(TString(h->GetName())+"_B");
@@ -83,13 +87,20 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    if (channel=="Electron") var = "ElTau_Mass";
    if (channel=="Muon") var = "MuTau_Mass";
    if (channel=="Tau") var = "TauTau_Mass";
+   if (channel=="ElMu") var = "ElMu_Mass";
    
    TCut baseline = "1>0";
-   TCut regionA, regionB, regionC, regionD; 
+   TCut regionA, regionB, regionC, regionD;
+   
+   /*const TCut bVeto2016 = "Sum$(Jet_pt>=20. && TMath::Abs(Jet_eta)<2.5 && 4&Jet_JetId && Jet_btagDeepB>=0.8953)==0";
+   const TCut bVeto2017 = "Sum$(Jet_pt>=20. && TMath::Abs(Jet_eta)<2.5 && 4&Jet_JetId && Jet_btagDeepB>=0.7738)==0";
+   const TCut bVeto2018 = "Sum$(Jet_pt>=20. && TMath::Abs(Jet_eta)<2.5 && 4&Jet_JetId && Jet_btagDeepB>=0.7665)==0";
+   if (year==2016) baseline = baseline && bVeto2016;
+   if (year==2017) baseline = baseline && bVeto2017;
+   if (year==2018) baseline = baseline && bVeto2018;*/
 
    if (channel=="Muon") {
       baseline = baseline && TCut("MuTau_HavePair>0 && MuTau_HaveTriplet==0");
-      baseline = baseline && TCut("MuMu_HavePair==0||(MuMu_HavePair>0 && MuMu_Mass<50.)");
       //baseline = baseline && TCut("MuTau_HaveTriplet>0");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       //baseline = baseline && TCut("Photon_pt[MuTau_PhotonIdx]>=100.");
@@ -128,14 +139,12 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    }
    if (channel=="Electron") {
       baseline = baseline && TCut("ElTau_HavePair>0 && ElTau_HaveTriplet==0");
-      baseline = baseline && TCut("EE_HavePair==0||(EE_HavePair>0 && EE_Mass<50.)");
       //baseline = baseline && TCut("ElTau_HaveTriplet>0");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       //baseline = baseline && TCut("Photon_pt[ElTau_PhotonIdx]>=100.");
       //baseline = baseline && TCut("ElTau_Mass>=91.1876");
       baseline = baseline && TCut("ElTau_Trigger");
       baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElTau_ElIdx]");
-      baseline = baseline && TCut("64&Tau_idDeepTau2017v2p1VSe[ElTau_TauIdx]");
       if (year==2016) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=29.");
       if (year==2017) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
       if (year==2018) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
@@ -145,6 +154,24 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
       regionB = "ElTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
       regionC = "ElTau_qq==+1 && (32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
       regionD = "ElTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
+   }
+   if (channel=="ElMu") {
+      baseline = baseline && TCut("ElMu_HavePair>0 && ElMu_HaveTriplet==0");
+      //baseline = baseline && TCut("ElMu_HaveTriplet>0");
+      //baseline = baseline && TCut("JetProducer_nBJetT==0");
+      //baseline = baseline && TCut("Photon_pt[ElMu_PhotonIdx]>=100.");
+      //baseline = baseline && TCut("ElMu_Mass>=91.1876");
+      baseline = baseline && TCut("ElMu_Trigger");
+      baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElMu_ElIdx]");
+      if (year==2016) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
+      if (year==2017) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
+      if (year==2018) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
+      baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==1");
+      baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==1");
+      regionA = "ElMu_qq==-1";
+      regionB = "ElMu_qq==-1";
+      regionC = "ElMu_qq==+1";
+      regionD = "ElMu_qq==+1";
    }
    const TCut cuts[4] = {baseline && regionA, baseline && regionB, baseline && regionC, baseline && regionD};
 

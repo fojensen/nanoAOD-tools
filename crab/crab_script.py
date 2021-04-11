@@ -67,13 +67,10 @@ from PhysicsTools.NanoAODTools.postprocessing.examples.JetProducer import JetPro
 from PhysicsTools.NanoAODTools.postprocessing.examples.ZProducer import ZProducerConstr
 from PhysicsTools.NanoAODTools.postprocessing.examples.ElMuProducer import ElMuProducerConstr
 
-applyFilter = False
-#crab
-if len(sys.argv)==5:
-    applyFilter = int(sys.argv[4][5:]) 
-    print ("will apply tight b-tag veto")
 
-modules_ = [ZProducerConstr(True), MuTauProducerConstr(), ElTauProducerConstr(), TauTauProducerConstr(), ElMuProducerConstr(), JetProducerConstr(year, applyFilter)]
+applyZVeto = True
+applyBVeto = True
+modules_ = [ZProducerConstr(applyZVeto), MuTauProducerConstr(), ElTauProducerConstr(), TauTauProducerConstr(), ElMuProducerConstr(), JetProducerConstr(year, applyBVeto)]
 
 #interactive
 #if len(sys.argv)==3:
@@ -98,8 +95,8 @@ p=PostProcessor(
     #maxEntries = 1000,
     provenance = True,
     fwkJobReport = True,
-    #jsonInput = runsAndLumis(),
-    #jsonInput = "./crab/Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt",
+    jsonInput = runsAndLumis(),
+    #jsonInput = "./crab/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt",
     outputbranchsel = "keep_and_drop.txt"
     #histFileName = "myhists.root",
     #histDirName = "histdir"    

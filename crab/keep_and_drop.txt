@@ -1,9 +1,11 @@
 # this is a comment
 keep *
+drop HTXS*
+drop IsoTrack*
+drop SV*
 drop FatJet*
 drop GenJet*
 drop GenJetAK8*
-drop Jet*
 drop SoftActivityJet*
 drop SubGenJetAK8*
 drop SubJet*

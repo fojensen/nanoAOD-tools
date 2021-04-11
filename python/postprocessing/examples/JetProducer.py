@@ -7,10 +7,9 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaPhi
 
 class JetProducer(Module):
-    def __init__(self, year_, applyFilter_):
+    def __init__(self, year_, applyVeto_):
         self.year__ = year_
-        self.applyFilter__ = applyFilter_
-        if self.applyFilter__: print "b-jet veto applied!"
+        self.applyVeto__ = applyVeto_
         self.wp = [0, 0, 0]
         #print "chosen year %d" % self.year__
         #https://twiki.cern.ch/CMS/BtagRecommendation2016Legacy
@@ -123,7 +122,7 @@ class JetProducer(Module):
                             nBJetM = nBJetM + 1
                             if jet.btagDeepB >= self.wp[2]:
                                 nBJetT = nBJetT + 1
-                                if self.applyFilter__ and nBJetT>0: return False
+                                if self.applyVeto__ and nBJetT>0: return False
 
         self.out.fillBranch("JetProducer_nBJetL", nBJetL)
         self.out.fillBranch("JetProducer_nBJetM", nBJetM)
@@ -136,8 +135,8 @@ class JetProducer(Module):
 
 # define modules using the syntax 'name = lambda : constructor' to avoid having them loaded when not needed
 
-JetProducerConstr = lambda year, applyFilter: JetProducer(
+JetProducerConstr = lambda year, applyVeto: JetProducer(
     year_ = year,
-    applyFilter_ = applyFilter
+    applyVeto_ = applyVeto
 )
 
