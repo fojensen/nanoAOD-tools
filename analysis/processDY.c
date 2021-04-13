@@ -191,7 +191,8 @@ void copyTree(const int year, const bool dotautau)
    for (int i = 0; i < 5; ++i) {
       char infile[200];
       sprintf(infile, "./%s_%d.root", tags[i].Data(), year);
-      c->Add(infile);
+      ifstream f(infile);
+      if (f.good()) c->Add(infile);
    }
 
    const TCut tautau = "Sum$(TMath::Abs(GenPart_pdgId)==15 && GenPart_genPartIdxMother>=0 && GenPart_pdgId[GenPart_genPartIdxMother]==23)>=2";

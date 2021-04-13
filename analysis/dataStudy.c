@@ -12,7 +12,7 @@ TFile * makeHists(const TString datatag, const int year, const TString channel)
 {
    std::cout << "*** makeHists() " << datatag << ", " << year << ", " << channel << std::endl;
    char finname[200];
-   sprintf(finname, "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_08042021/%s.root", datatag.Data());
+   sprintf(finname, "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_11042021/%s.root", datatag.Data());
    TFile * infile = TFile::Open(finname);
  
    char foutname[200];
@@ -104,23 +104,28 @@ TFile * makeHists(const TString datatag, const int year, const TString channel)
       var = "ElMu_MaxCollMass:ElMu_MinCollMass";
       varmin = "ElMu_MinCollMass";
       varmax = "ElMu_MaxCollMass";
-      baseline = baseline && TCut("ElMu_HaveTriplet==0");
+      baseline = baseline && TCut("ElMu_HaveTriplet>0");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("Photon_pt[ElMu_PhotonIdx]>=100.");
-      baseline = baseline && TCut("ElMu_Mass>=91.1876");
+      //baseline = baseline && TCut("ElMu_Mass>=91.1876");
       baseline = baseline && TCut("ElMu_Trigger");
       baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElMu_ElIdx]");
-      if (year==2016) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
-      if (year==2017) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
-      if (year==2018) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
+      //if (year==2016) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
+      //if (year==2017) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
+      //if (year==2018) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
+      //TCut c1 = "Electron_pt[ElMu_ElIdx]>=17. && Muon_pt[ElMu_MuIdx]>=8.";
+      //TCut c2 = "Electron_pt[ElMu_ElIdx]>=23. && Muon_pt[ElMu_MuIdx]>=8.";
+      TCut c3 = "Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=13.";
+      //TCut c3 = "Electron_pt[ElMu_ElIdx]>=8.0 && Muon_pt[ElMu_MuIdx]>=23.";
+      TCut c4 = "Electron_pt[ElMu_ElIdx]>=13. && Muon_pt[ElMu_MuIdx]>=24.";
+      baseline = baseline && (c3||c4);
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==1");
-      baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==1");
-      regionA = "ElMu_qq==-1";
-      regionB = "ElMu_qq==-1";
-      regionC = "ElMu_qq==+1";
-      regionD = "ElMu_qq==+1";
+      baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=2)==1");
+      regionA = "ElMu_qq==-1 && Muon_pfIsoId[ElMu_MuIdx]>=4";
+      regionB = "ElMu_qq==-1 && Muon_pfIsoId[ElMu_MuIdx]>=2 && Muon_pfIsoId[ElMu_MuIdx]<4";
+      regionC = "ElMu_qq==+1 && Muon_pfIsoId[ElMu_MuIdx]>=4";
+      regionD = "ElMu_qq==+1 && Muon_pfIsoId[ElMu_MuIdx]>=2 && Muon_pfIsoId[ElMu_MuIdx]<4";
    }
-
 
    const TCut cuts[4] = {baseline&&regionA, baseline&&regionB, baseline&&regionC, baseline&&regionD};
    const TString titles[4] = {"A", "B", "C", "D"};

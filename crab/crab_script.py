@@ -2,6 +2,9 @@ import datetime
 then = datetime.datetime.now()
 print ("Start date and time: ", then.strftime("%Y-%m-%d %H:%M:%S"))
 
+import os
+print "pwd: %s" % os.system("pwd")
+
 from PhysicsTools.NanoAODTools.postprocessing.framework.postprocessor import * 
 
 import sys
@@ -95,8 +98,8 @@ p=PostProcessor(
     #maxEntries = 1000,
     provenance = True,
     fwkJobReport = True,
-    jsonInput = runsAndLumis(),
-    #jsonInput = "./crab/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt",
+    #jsonInput = runsAndLumis(),
+    jsonInput = "Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON.txt",
     outputbranchsel = "keep_and_drop.txt"
     #histFileName = "myhists.root",
     #histDirName = "histdir"    
