@@ -8,7 +8,7 @@
 #include <TH1D.h>
 #include "addOverflow.h"
 
-TFile * makeHists(const TString datatag, const int year, const TString channel)
+TFile * makeHists(const TString datatag, const int year, const TString channel, const bool blindA=true)
 {
    std::cout << "*** makeHists() " << datatag << ", " << year << ", " << channel << std::endl;
    char finname[200];
@@ -20,7 +20,7 @@ TFile * makeHists(const TString datatag, const int year, const TString channel)
    TFile * outfile = new TFile(foutname, "RECREATE");  
    TH2D *h2[4];
    TH1D *h1_min[4], *h1_max[4];
-  
+
    if (infile) {
    
    TTree * t = (TTree*)infile->Get("Events");
@@ -36,35 +36,35 @@ TFile * makeHists(const TString datatag, const int year, const TString channel)
       var = "MuTau_MaxCollMass:MuTau_MinCollMass";
       varmin = "MuTau_MinCollMass";
       varmax = "MuTau_MaxCollMass";
-      baseline = baseline && TCut("MuTau_HaveTriplet>0");
+      //baseline = baseline && TCut("MuTau_HavePair>0 && (MuTau_HaveTriplet==0||(MuTau_HaveTriplet>0&&Photon_pt[MuTau_PhotonIdx]<25.))");
+      baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=100.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
-      baseline = baseline && TCut("Photon_pt[MuTau_PhotonIdx]>=100.");
-      baseline = baseline && TCut("MuTau_Mass>=91.1876");
       baseline = baseline && TCut("MuTau_Trigger");
       baseline = baseline && TCut("Muon_pfIsoId[MuTau_MuIdx]>=4");
       if (year==2016) baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=26.");
       if (year==2017) baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=29.");
       if (year==2018) baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=29.");
+      baseline = baseline && TCut("MuTau_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==1");
-      regionA = "MuTau_qq==-1 && (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
-      regionB = "MuTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
-      regionC = "MuTau_qq==+1 && (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
-      regionD = "MuTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
-      regionA = regionA && TCut("Photon_pt[MuTau_PhotonIdx]<50.");
+      regionA = "MuTau_qq==-1 && (64&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
+      regionB = "MuTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(64&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
+      regionC = "MuTau_qq==+1 && (64&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
+      regionD = "MuTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(64&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
+      if (blindA) regionA = regionA && TCut("Photon_pt[MuTau_PhotonIdx]<0.");
    }
    if (channel=="Tau") {
       title = "#tau_{h} + #tau_{h}";
       var = "TauTau_MaxCollMass:TauTau_MinCollMass";
       varmin = "TauTau_MinCollMass";
       varmax = "TauTau_MaxCollMass";
-      baseline = baseline && TCut("TauTau_HaveTriplet>0");
+      //baseline = baseline && TCut("TauTau_HavePair>0 && (TauTau_HaveTriplet==0||(TauTau_HaveTriplet>0&&Photon_pt[TauTau_PhotonIdx]<25.))");
+      baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=100.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
-      baseline = baseline && TCut("Photon_pt[TauTau_PhotonIdx]>=100.");
-      baseline = baseline && TCut("TauTau_Mass>=91.1876");
       baseline = baseline && TCut("TauTau_Trigger");
       baseline = baseline && TCut("Tau_pt[TauTau_Tau0Idx]>=40. && TMath::Abs(Tau_eta[TauTau_Tau0Idx])<2.1");
       baseline = baseline && TCut("Tau_pt[TauTau_Tau1Idx]>=40. && TMath::Abs(Tau_eta[TauTau_Tau1Idx])<2.1");
+      baseline = baseline && TCut("TauTau_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==0");
       const TCut tau0pass = "(32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx])";
@@ -75,56 +75,51 @@ TFile * makeHists(const TString datatag, const int year, const TString channel)
       regionB = TCut("TauTau_qq==-1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass));
       regionC = TCut("TauTau_qq==+1") &&  (tau0pass&&tau1pass);
       regionD = TCut("TauTau_qq==+1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass));
-      regionA = regionA && TCut("Photon_pt[TauTau_PhotonIdx]<50.");
+      if (blindA) regionA = regionA && TCut("Photon_pt[TauTau_PhotonIdx]<25.");
    }
    if (channel=="Electron") {
       title = "e + #tau_{h}";
       var = "ElTau_MaxCollMass:ElTau_MinCollMass";
       varmin = "ElTau_MinCollMass";
       varmax = "ElTau_MaxCollMass";
-      baseline = baseline && TCut("ElTau_HaveTriplet>0");
+      //baseline = baseline && TCut("ElTau_HavePair>0 && (ElTau_HaveTriplet==0||(ElTau_HaveTriplet>0&&Photon_pt[ElTau_PhotonIdx]<25.))");
+      baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=100.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
-      baseline = baseline && TCut("Photon_pt[ElTau_PhotonIdx]>=100.");
-      baseline = baseline && TCut("ElTau_Mass>=91.1876");
       baseline = baseline && TCut("ElTau_Trigger");
       baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElTau_ElIdx]");
       if (year==2016) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=29.");
       if (year==2017) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
       if (year==2018) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
+      baseline = baseline && TCut("ElTau_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==1");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==0");
-      regionA = "ElTau_qq==-1 && (32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
-      regionB = "ElTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
-      regionC = "ElTau_qq==+1 && (32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
-      regionD = "ElTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
-      regionA = regionA && TCut("Photon_pt[ElTau_PhotonIdx]<50.");
+      regionA = "ElTau_qq==-1 && (64&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
+      regionB = "ElTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(64&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
+      regionC = "ElTau_qq==+1 && (64&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
+      regionD = "ElTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(64&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
+      if (blindA) regionA = regionA && TCut("Photon_pt[ElTau_PhotonIdx]<25.");
    }
    if (channel=="ElMu") {
       title = "e + #mu";
       var = "ElMu_MaxCollMass:ElMu_MinCollMass";
       varmin = "ElMu_MinCollMass";
       varmax = "ElMu_MaxCollMass";
-      baseline = baseline && TCut("ElMu_HaveTriplet>0");
+      //baseline = baseline && TCut("ElMu_HavePair>0 && (ElMu_HaveTriplet==0||(ElMu_HaveTriplet>0&&Photon_pt[ElMu_PhotonIdx]<25.))");
+      baseline = baseline && TCut("ElMu_HaveTriplet>0 && Photon_pt[ElMu_PhotonIdx]>=100.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
-      baseline = baseline && TCut("Photon_pt[ElMu_PhotonIdx]>=100.");
-      //baseline = baseline && TCut("ElMu_Mass>=91.1876");
       baseline = baseline && TCut("ElMu_Trigger");
       baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElMu_ElIdx]");
-      //if (year==2016) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
-      //if (year==2017) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
-      //if (year==2018) baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.");
-      //TCut c1 = "Electron_pt[ElMu_ElIdx]>=17. && Muon_pt[ElMu_MuIdx]>=8.";
-      //TCut c2 = "Electron_pt[ElMu_ElIdx]>=23. && Muon_pt[ElMu_MuIdx]>=8.";
-      TCut c3 = "Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=13.";
-      //TCut c3 = "Electron_pt[ElMu_ElIdx]>=8.0 && Muon_pt[ElMu_MuIdx]>=23.";
-      TCut c4 = "Electron_pt[ElMu_ElIdx]>=13. && Muon_pt[ElMu_MuIdx]>=24.";
-      baseline = baseline && (c3||c4);
+      const TCut c1 = "Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=13.";
+      const TCut c2 = "Electron_pt[ElMu_ElIdx]>=13. && Muon_pt[ElMu_MuIdx]>=24.";
+      baseline = baseline && (c1||c2);
+      baseline = baseline && TCut("ElMu_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==1");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=2)==1");
       regionA = "ElMu_qq==-1 && Muon_pfIsoId[ElMu_MuIdx]>=4";
       regionB = "ElMu_qq==-1 && Muon_pfIsoId[ElMu_MuIdx]>=2 && Muon_pfIsoId[ElMu_MuIdx]<4";
       regionC = "ElMu_qq==+1 && Muon_pfIsoId[ElMu_MuIdx]>=4";
       regionD = "ElMu_qq==+1 && Muon_pfIsoId[ElMu_MuIdx]>=2 && Muon_pfIsoId[ElMu_MuIdx]<4";
+      if (blindA) regionA = regionA && TCut("Photon_pt[ElMu_PhotonIdx]<25.");
    }
 
    const TCut cuts[4] = {baseline&&regionA, baseline&&regionB, baseline&&regionC, baseline&&regionD};
@@ -139,7 +134,7 @@ TFile * makeHists(const TString datatag, const int year, const TString channel)
    h1_temp.SetStats(0);
 
    for (int i = 0; i < 4; ++i) {
-      if (i==0) continue;
+      if (blindA && i==0) continue;
       std::cout << "   filling region " << titles[i] << std::endl;
       //2d
       char h2name[100];
@@ -174,13 +169,13 @@ TFile * makeHists(const TString datatag, const int year, const TString channel)
    return outfile;
 }
 
-void fillAllHists(const TString channel)
+void fillAllHists(const TString channel, const bool blindA=true)
 {
    const TString letters_2018[4] = {"A", "B", "C", "D"};
    for (int i = 0; i < 4; ++i) {
       char buffer[100];
       sprintf(buffer, "%s%s_2018", channel.Data(), letters_2018[i].Data());
-      makeHists(buffer, 2018, channel);
+      makeHists(buffer, 2018, channel, blindA);
    }
    char cmd2018[1000];
    sprintf(cmd2018, "hadd -f ./dataStudyOutput/%s_2018_full.root ./dataStudyOutput/%s*_2018.root", channel.Data(), channel.Data());
@@ -190,7 +185,7 @@ void fillAllHists(const TString channel)
    for (int i = 0; i < 5; ++i) {
       char buffer[100];
       sprintf(buffer, "%s%s_2017", channel.Data(), letters_2017[i].Data());
-      makeHists(buffer, 2017, channel);
+      makeHists(buffer, 2017, channel, blindA);
    }
    char cmd2017[1000];
    sprintf(cmd2017, "hadd -f ./dataStudyOutput/%s_2017_full.root ./dataStudyOutput/%s*_2017.root", channel.Data(), channel.Data());
@@ -200,23 +195,31 @@ void fillAllHists(const TString channel)
    for (int i = 0; i < 7; ++i) {
       char buffer[100];
       sprintf(buffer, "%s%s_2016", channel.Data(), letters_2016[i].Data());
-      makeHists(buffer, 2016, channel);
+      makeHists(buffer, 2016, channel, blindA);
    }
    char cmd2016[1000];
    sprintf(cmd2016, "hadd -f ./dataStudyOutput/%s_2016_full.root ./dataStudyOutput/%s*_2016.root", channel.Data(), channel.Data());
    system(cmd2016);
 }
 
-void yieldCompare(const TString channel)
+void yieldCompare(const TString channel, const bool blindA=true)
 {
    const int years[3] = {2016, 2017, 2018};
    const double lumi[3] = {19.5+16.5, 41.48, 59.83};
+   const double lumitot = lumi[0]+lumi[1]+lumi[2];
+   int nA[3] = {0, 0, 0};
    int nB[3] = {0, 0, 0};
    int nC[3] = {0, 0, 0};
    int nD[3] = {0, 0, 0};
+   int nAtot = 0;
+   int nBtot = 0;
+   int nCtot = 0;
+   int nDtot = 0;
+   double eA[3] = {0., 0., 0.};
    double eB[3] = {0., 0., 0.};
    double eC[3] = {0., 0., 0.};
    double eD[3] = {0., 0., 0.};
+   double errA[3] = {0., 0., 0.};
    double errB[3] = {0., 0., 0.};
    double errC[3] = {0., 0., 0.};
    double errD[3] = {0., 0., 0.};
@@ -225,6 +228,19 @@ void yieldCompare(const TString channel)
       char infile[100];
       sprintf(infile, "./dataStudyOutput/%s_%d_full.root", channel.Data(), years[i]);
       TFile * f = TFile::Open(infile);
+
+      //A
+      if (!blindA) {
+         TH2D * hA = (TH2D*)f->Get("h2_A");
+         nA[i] = hA->GetEntries();
+         if (nA[i]!=hA->Integral()) {
+            std::cout << "overflow: " << "A, " << years[i] << std::endl;
+            std::cout << nA[i] << " " << hA->Integral() << std::endl;
+         }
+         nAtot += hA->GetEntries();
+         eA[i] = double(nA[i])/lumi[i];
+         errA[i] = sqrt(double(nA[i]))/lumi[i];
+      }
       //B
       TH2D * hB = (TH2D*)f->Get("h2_B");
       nB[i] = hB->GetEntries();
@@ -232,6 +248,7 @@ void yieldCompare(const TString channel)
          std::cout << "overflow: " << "B, " << years[i] << std::endl;
          std::cout << nB[i] << " " << hB->Integral() << std::endl;
       }
+      nBtot += hB->GetEntries();
       eB[i] = double(nB[i])/lumi[i];
       errB[i] = sqrt(double(nB[i]))/lumi[i];
       //C
@@ -241,6 +258,7 @@ void yieldCompare(const TString channel)
          std::cout << "overflow: " << "C, " << years[i] << std::endl;
          std::cout << nC[i] << " " << hC->Integral() << std::endl;
       }
+      nCtot += hC->GetEntries();
       eC[i] = double(nC[i])/lumi[i];
       errC[i] = sqrt(double(nC[i]))/lumi[i];
       //D
@@ -250,21 +268,35 @@ void yieldCompare(const TString channel)
          std::cout << "overflow: " << "D, " << years[i] << std::endl;
          std::cout << nD[i] << " " << hD->Integral() << std::endl;
       }
+      nDtot += hD->GetEntries();
       eD[i] = double(nD[i])/lumi[i];
       errD[i] = sqrt(double(nD[i]))/lumi[i];
    }
 
-   std::cout << "region B" << std::endl;
-   for (int i = 0; i < 3; ++i) {
-      std::cout << "   " << years[i] << ": " << eB[i] << "+-" << errB[i] << std::endl;
+   if (!blindA) {
+      std::cout << "region A" << std::endl;
+      std::cout << "  average: " << nAtot << " events; " << nAtot/lumitot << " +- " << sqrt(nAtot)/lumitot << std::endl;
+      for (int i = 0; i < 3; ++i) {
+         std::cout << "   " << years[i] << ": " << nA[i] << " events; " << eA[i] << "+-" << errA[i] << std::endl;
+      }
    }
+
+   std::cout << "region B" << std::endl;
+   std::cout << "  average: " << nBtot << " events; " << nBtot/lumitot << " +- " << sqrt(nBtot)/lumitot << std::endl;
+   for (int i = 0; i < 3; ++i) {
+      std::cout << "   " << years[i] << ": " << nB[i] << " events; " << eB[i] << "+-" << errB[i] << std::endl;
+   }
+
    std::cout << "region C" << std::endl;
+   std::cout << "  average: " << nCtot << " events; " << nCtot/lumitot << " +- " << sqrt(nCtot)/lumitot << std::endl;
    for (int i = 0; i < 3; ++i) {
-      std::cout << "   " << years[i] << ": " << eC[i] << "+-" << errC[i] << std::endl;
+      std::cout << "   " << years[i] << ": " << nC[i] << " events; " << eC[i] << "+-" << errC[i] << std::endl;
    }  
+
    std::cout << "region D" << std::endl;
+   std::cout << "  average: " << nDtot << " events; " << nDtot/lumitot << " +- " << sqrt(nDtot)/lumitot << std::endl;
    for (int i = 0; i < 3; ++i) {
-      std::cout << "   " << years[i] << ": " << eD[i] << "+-" << errD[i] << std::endl;
+      std::cout << "   " << years[i] << ": " << nD[i] << " events; " << eD[i] << "+-" << errD[i] << std::endl;
    }
 }
 
@@ -273,10 +305,11 @@ void plotStuff(const TString channel)
    char cmd[100];
    sprintf(cmd, "hadd -f ./dataStudyOutput/%s.root ./dataStudyOutput/%s_2018_full.root ./dataStudyOutput/%s_2017_full.root ./dataStudyOutput/%s_2016_full.root", channel.Data(), channel.Data(), channel.Data(), channel.Data());
    system(cmd);
-   
+ 
    char infile[100];
    sprintf(infile, "./dataStudyOutput/%s.root", channel.Data());
    TFile *f = TFile::Open(infile);
+
    TH2D * h2_B = (TH2D*)f->Get("h2_B");
    h2_B->SetMarkerColor(6);
    h2_B->SetMarkerStyle(20);
@@ -341,10 +374,10 @@ void plotStuff(const TString channel)
    c->SaveAs("./plots/dataStudy."+channel+".pdf");
 }
 
-void dataStudy(const TString channel)
+void dataStudy(const TString channel, const bool blindA=true)
 {
-   fillAllHists(channel);
-   yieldCompare(channel);
-   plotStuff(channel); 
+   fillAllHists(channel, blindA);
+   yieldCompare(channel, blindA);
+   plotStuff(channel);
 }
 
