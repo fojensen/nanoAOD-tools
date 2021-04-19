@@ -131,7 +131,7 @@ data['people'].append({
     'nEvents': '15670000',
     'nFiles' : '21',
     'isMC': isMC_,
-    'xs': '51.723', #ra2b:51.723
+    'xs': '51.723',
     'year': year
 })
 
@@ -141,7 +141,7 @@ data['people'].append({
     'nEvents': '7986000',
     'nFiles': '21',
     'isMC': isMC_,
-    'xs': '47.13', #ra2b:47.13
+    'xs': '47.13',
     'year': year
 })
 
@@ -151,7 +151,17 @@ data['people'].append({
     'nEvents': '2000000',
     'nFiles': '4',
     'isMC': isMC_,
-    'xs': '16.523', #ra2b: 16.523
+    'xs': '16.523',
+    'year': year
+})
+
+data['people'].append({
+    'name': 'ZZTo2L2Nu_2018',
+    'inputDataset': '/ZZTo2L2Nu_TuneCP5_13TeV_powheg_pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
+    'nEvents': '56812000',
+    'nFiles': '35',
+    'isMC': isMC_,
+    'xs': '0.6008',
     'year': year
 })
 
@@ -164,7 +174,7 @@ data['people'].append({
     'xs': '239400.0',
     'year': year
 })
-
+"""
 data['people'].append({
    'name' : 'WJetsToLNu_2018',
    'inputDataset': '/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
@@ -214,7 +224,7 @@ data['people'].append({
    'xs': '448.896',
    'year': year
 })
-
+"""
 #data['people'].append({
 #    'name': 'EWKZ2Jets_ZToLL_M50',
 #    'inputDataset': '',

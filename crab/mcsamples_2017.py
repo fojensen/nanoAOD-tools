@@ -156,6 +156,16 @@ data['people'].append({
 })
 
 data['people'].append({
+    'name': 'ZZTo2L2Nu_2017',
+    'inputDataset': '/ZZTo2L2Nu_TuneCP5_13TeV_powheg_pythia8/RunIISummer20UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM',
+    'nEvents': '40511000',
+    'nFiles': '24',
+    'isMC': isMC_,
+    'xs': '0.6008', #ra2b: 16.523
+    'year': year
+})
+"""
+data['people'].append({
    'name' : 'WJetsToLNu_2017',
    'inputDataset': '/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM',
    'nEvents': '81254459',
@@ -204,7 +214,7 @@ data['people'].append({
    'xs': '448.896',
    'year': year
 })
-
+"""
 #data['people'].append({
 #    'name': 'EWKZ2Jets_ZToLL_M50',
 #    'inputDataset': '',
@@ -229,7 +239,7 @@ data['people'].append({
 #    'xs': '0.2',
 #})
 
-data['people'].append({
+"""data['people'].append({
     'name': 'GluGluHToZG_2017',
     'inputDataset': '/GluGluHToZG_M-125_TuneCP5_13TeV-powheg-pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM',
     'nEvents': '400000',
@@ -247,7 +257,7 @@ data['people'].append({
     'isMC': isMC_,
     'xs': '0.0057834',
     'year': year
-})
+})"""
 
 with open('mcsamples_2017.json', 'w') as outfile:
    json.dump(data, outfile)

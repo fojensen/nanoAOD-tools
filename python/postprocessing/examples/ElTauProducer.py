@@ -82,7 +82,6 @@ class ElTauProducer(Module):
         for i, photon in enumerate(photons):
             photonID = photon.mvaID_WP90 and (photon.isScEtaEB or photon.isScEtaEE)
             photonID = photonID and not photon.pixelSeed
-            #photonID = photonID and photon.electronVeto
             if abs(photon.eta)<2.5 and photonID:
                 goodPhotonIdx.append(i)
 

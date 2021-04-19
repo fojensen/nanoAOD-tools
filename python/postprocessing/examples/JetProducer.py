@@ -29,6 +29,10 @@ class JetProducer(Module):
             self.wp[2] = 0.7665
         else :
             print "*** JetProducer: no year given! ***"
+            self.wp[0] = 0.2217
+            self.wp[1] = 0.6321
+            self.wp[2] = 0.8953
+
     def beginJob(self):
         pass
     def endJob(self):

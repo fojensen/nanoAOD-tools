@@ -55,13 +55,13 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
 
    char hname[100];
    sprintf(hname, "h_%s_%s_%d", sampletag.Data(), channel.Data(), year);
-   //TH1D * h = new TH1D(hname, ";min collinear mass;events / 200 GeV", 5, 0., 1000.);
+   //TH1D * h = new TH1D(hname, ";min collinear mass;events / 100 GeV", 10, 0., 1000.);
    //TH1D * h = new TH1D(hname, ";analysis bin;events", 5, -0.5, 4.5);
    TH1D * h = new TH1D(hname, ";visible mass [GeV];events / 10 GeV", 20, 0., 200.);
    h->Sumw2();
    //h->SetLineWidth(2);
 
-   const TString eostag = "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_11042021/";
+   const TString eostag = "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_16042021/";
    char infile[100];
    sprintf(infile, "%s/%s_%d.root", eostag.Data(), sampletag.Data(), year);
    TFile * f = TFile::Open(infile);
@@ -83,7 +83,7 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    if (f) {
 
    TString var;
-   //var = makeString(250., channel);
+   //var = makeString(625., channel);
    
    //if (channel=="Electron") var = "ElTau_MinCollMass";
    //if (channel=="Muon") var = "MuTau_MinCollMass";
@@ -101,6 +101,7 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    if (channel=="Muon") {
       baseline = baseline && TCut("MuTau_HavePair>0 && (MuTau_HaveTriplet==0||(MuTau_HaveTriplet>0&&Photon_pt[MuTau_PhotonIdx]<25.))");
       //baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=100.");
+      //baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]<25.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("MuTau_Trigger");
       baseline = baseline && TCut("Muon_pfIsoId[MuTau_MuIdx]>=4");
@@ -118,6 +119,7 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    if (channel=="Tau") {
       baseline = baseline && TCut("TauTau_HavePair>0 && (TauTau_HaveTriplet==0||(TauTau_HaveTriplet>0&&Photon_pt[TauTau_PhotonIdx]<25.))");
       //baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=100.");
+      //baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]<25.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("TauTau_Trigger");
       baseline = baseline && TCut("Tau_pt[TauTau_Tau0Idx]>=40. && TMath::Abs(Tau_eta[TauTau_Tau0Idx])<2.1");
@@ -130,13 +132,22 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
       const TCut tau1pass = "(32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau1Idx])";
       const TCut tau1fail = "(8&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau1Idx]) && !(32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau1Idx])";
       regionA = TCut("TauTau_qq==-1") &&  (tau0pass&&tau1pass);
-      regionB = TCut("TauTau_qq==-1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass));
       regionC = TCut("TauTau_qq==+1") &&  (tau0pass&&tau1pass);
-      regionD = TCut("TauTau_qq==+1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass));
+
+      //regionB = TCut("TauTau_qq==-1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass));
+      //regionB = TCut("TauTau_qq==-1") && (tau0fail&&tau1fail);
+      //regionB = TCut("TauTau_qq==-1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass)||(tau0fail&&tau1fail));
+      regionB = TCut("TauTau_qq==-1") && (tau0fail||tau1fail);
+      
+      //regionD = TCut("TauTau_qq==+1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass));
+      //regionD = TCut("TauTau_qq==+1") && (tau0fail&&tau1fail);
+      //regionD = TCut("TauTau_qq==+1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass)||(tau0fail&&tau1fail));
+      regionD = TCut("TauTau_qq==+1") && (tau0fail||tau1fail);
    }
    if (channel=="Electron") {
       baseline = baseline && TCut("ElTau_HavePair>0 && (ElTau_HaveTriplet==0||(ElTau_HaveTriplet>0&&Photon_pt[ElTau_PhotonIdx]<25.))");
       //baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=100.");
+      //baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]<25.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("ElTau_Trigger");
       baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElTau_ElIdx]");
@@ -154,6 +165,7 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
    if (channel=="ElMu") {
       baseline = baseline && TCut("ElMu_HavePair>0 && (ElMu_HaveTriplet==0||(ElMu_HaveTriplet>0&&Photon_pt[ElMu_PhotonIdx]<25.))");
       //baseline = baseline && TCut("ElMu_HaveTriplet>0 && Photon_pt[ElMu_PhotonIdx]>=100.");
+      //baseline = baseline && TCut("ElMu_HaveTriplet>0 && Photon_pt[ElMu_PhotonIdx]<25.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("ElMu_Trigger");
       baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElMu_ElIdx]");
@@ -168,20 +180,21 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
       regionC = "ElMu_qq==+1 && Muon_pfIsoId[ElMu_MuIdx]>=4";
       regionD = "ElMu_qq==+1 && Muon_pfIsoId[ElMu_MuIdx]>=2 && Muon_pfIsoId[ElMu_MuIdx]<4";
    }
+   if (blindA) regionA = regionA && TCut("1<0");
    const TCut cuts[4] = {baseline && regionA, baseline && regionB, baseline && regionC, baseline && regionD};
 
    TTree * t = (TTree*)f->Get("Events");
    std::cout << "   # of entries in tree: " << t->GetEntries() << std::endl;
 
-   char bufferA[2000], bufferB[2000], bufferC[2000], bufferD[2000];
+   char bufferA[3000], bufferB[3000], bufferC[3000], bufferD[2000];
    if (isMC) {
       double lumi = 0.;
-      if (year==2016) lumi = 36000.;
+      if (year==2015) lumi = 19500.;
+      if (year==2016) lumi = 16500.;
       if (year==2017) lumi = 41480.;
       if (year==2018) lumi = 59830.;
       TString weighttag = "xsWeight";
-      if (sampletag=="DYJetsToEEMuMu"||sampletag=="DYJetsToTauTau") weighttag = "xsWeight_Njets";
-      //if (sampletag=="WJetsToLNu") weighttag = "xsWeight_Njets";
+      if (year!=2015 && (sampletag=="DYJetsToEEMuMu"||sampletag=="DYJetsToTauTau")) weighttag = "xsWeight_Njets";
       sprintf(bufferA, "%f * %s * (%s)", lumi, weighttag.Data(), TString(cuts[0]).Data());
       sprintf(bufferB, "%f * %s * (%s)", lumi, weighttag.Data(), TString(cuts[1]).Data());
       sprintf(bufferC, "%f * %s * (%s)", lumi, weighttag.Data(), TString(cuts[2]).Data());
@@ -307,6 +320,7 @@ void makeABCDHists(const TString channel)
    TH1D * h_CoD = (TH1D*)h_data_C->Clone("h_CoD");
    h_CoD->Divide(h_data_D);
    h_CoD->GetYaxis()->SetTitle("C / D");
+   if (channel=="ElMu") h_CoD->SetTitle("e + #mu");
    if (channel=="Electron") h_CoD->SetTitle("e + #tau_{h}");
    if (channel=="Muon") h_CoD->SetTitle("#mu + #tau_{h}");
    if (channel=="Tau") h_CoD->SetTitle("#tau_{h} + #tau_{h}");
@@ -396,19 +410,21 @@ void makeABCDHists(const TString channel)
    //return f_qcd;
 }
 
-void plotControlRegions(const TString channel, const bool blindA)
+void plotControlRegions(const TString channel, const bool blindA, const bool mcOnly)
 {
    std::cout << "plotControlRegions()" << std::endl;
    std::cout << "   channel: " << channel << ", blindA: " << blindA << std::endl;
 
-   char infdata[100];
-   sprintf(infdata, "./outputHists/%s.root", channel.Data());
-   TFile *f_data = TFile::Open(infdata);
-   TH1D * h_data_A;
-   if (!blindA) h_data_A = (TH1D*)f_data->Get("h_A");
-   TH1D * h_data_B = (TH1D*)f_data->Get("h_B");
-   TH1D * h_data_C = (TH1D*)f_data->Get("h_C");
-   TH1D * h_data_D = (TH1D*)f_data->Get("h_D");
+   TH1D *h_data_A, *h_data_B, *h_data_C, *h_data_D;
+   if (!mcOnly) {
+      char infdata[100];
+      sprintf(infdata, "./outputHists/%s.root", channel.Data());
+      TFile *f_data = TFile::Open(infdata);
+       if (!blindA) h_data_A = (TH1D*)f_data->Get("h_A");
+       h_data_B = (TH1D*)f_data->Get("h_B");
+       h_data_C = (TH1D*)f_data->Get("h_C");
+       h_data_D = (TH1D*)f_data->Get("h_D");
+   }
 
    const int nsig = 2;
    TString sigtag[nsig];
@@ -482,11 +498,14 @@ void plotControlRegions(const TString channel, const bool blindA)
       }
    }
 
-   char qcdin[100];
-   sprintf(qcdin, "./outputHists/ABCD_%s.root", channel.Data());
-   TFile *f_ABCD = TFile::Open(qcdin);
-   TH1D * h_ABCD_A = (TH1D*)f_ABCD->Get("h_A");
-   h_ABCD_A->SetFillColor(95);
+   TH1D * h_ABCD_A;
+   if (!mcOnly) {
+      char qcdin[100];
+      sprintf(qcdin, "./outputHists/ABCD_%s.root", channel.Data());
+      TFile *f_ABCD = TFile::Open(qcdin);
+      h_ABCD_A = (TH1D*)f_ABCD->Get("h_A");
+      h_ABCD_A->SetFillColor(95);
+   }
 
    char titleA[100];
    sprintf(titleA, "%s;%s;%s", h_mc_A[0]->GetTitle(), h_mc_A[0]->GetXaxis()->GetTitle(), h_mc_A[0]->GetYaxis()->GetTitle());
@@ -526,9 +545,17 @@ void plotControlRegions(const TString channel, const bool blindA)
    l->AddEntry(h_sig_B[0], siglabels[0], "L");
    l->AddEntry(h_sig_B[1], siglabels[1], "L");
 
-   double max = TMath::Max(h_data_B->GetMaximum(), h_data_C->GetMaximum());
-   max = TMath::Max(max, h_data_D->GetMaximum());
-   if (!blindA) max = TMath::Max(max, h_data_A->GetMaximum());
+   double max = 0.;
+   if (!mcOnly) {
+      max = TMath::Max(h_data_B->GetMaximum(), h_data_C->GetMaximum());
+      max = TMath::Max(max, h_data_D->GetMaximum());
+      if (!blindA) max = TMath::Max(max, h_data_A->GetMaximum());
+   } else {
+      max = TMath::Max(s_A->GetMaximum(), s_B->GetMaximum());
+      max = TMath::Max(max, s_C->GetMaximum());
+      max = TMath::Max(max, s_D->GetMaximum());
+   }
+
    const double ymax = pow(10, ceil(log10(max))+1);
    double ymin = 1.;
    if (ymax>=10000.) ymin = 100.;
@@ -539,7 +566,7 @@ void plotControlRegions(const TString channel, const bool blindA)
 
    TPad * p1 = (TPad*)c->cd(1);
    s_A->Draw("HIST");
-   if (!blindA) {
+   if (!blindA && !mcOnly) {
       h_data_A->Draw("PE, SAME");
       h_data_A->SetMarkerStyle(20);
    }
@@ -552,8 +579,10 @@ void plotControlRegions(const TString channel, const bool blindA)
 
    TPad * p2 = (TPad*)c->cd(2);
    s_B->Draw("HIST");
-   h_data_B->Draw("PE, SAME");
-   h_data_B->SetMarkerStyle(20);
+   if (!mcOnly) {
+      h_data_B->Draw("PE, SAME");
+      h_data_B->SetMarkerStyle(20);
+   }
    p2->SetLogy();
    s_B->SetMinimum(ymin);
    s_B->SetMaximum(ymax);
@@ -563,8 +592,10 @@ void plotControlRegions(const TString channel, const bool blindA)
 
    TPad * p3 = (TPad*)c->cd(3);
    s_C->Draw("HIST");
-   h_data_C->Draw("PE, SAME");
-   h_data_C->SetMarkerStyle(20);
+   if (!mcOnly) {
+      h_data_C->Draw("PE, SAME");
+      h_data_C->SetMarkerStyle(20);
+   }
    p3->SetLogy();
    s_C->SetMinimum(ymin);
    s_C->SetMaximum(ymax);
@@ -574,8 +605,10 @@ void plotControlRegions(const TString channel, const bool blindA)
 
    TPad * p4 = (TPad*)c->cd(4);
    s_D->Draw("HIST");
-   h_data_D->Draw("PE, SAME");
-   h_data_D->SetMarkerStyle(20);
+   if (!mcOnly) {
+      h_data_D->Draw("PE, SAME");
+      h_data_D->SetMarkerStyle(20);
+   }
    p4->SetLogy();
    s_D->SetMinimum(ymin);
    s_D->SetMaximum(ymax);
@@ -587,29 +620,30 @@ void plotControlRegions(const TString channel, const bool blindA)
 
    TH1D *h_bkgsum_A = (TH1D*)h_mc_A[0]->Clone("h_bkgSum_A");
    for (int i = 1; i < nmc; ++i) h_bkgsum_A->Add(h_mc_A[i]);
-   h_bkgsum_A->Add(h_ABCD_A);
+   if (!mcOnly) h_bkgsum_A->Add(h_ABCD_A);
    std::cout << "   expected bkg composition:" << std::endl;
    const double fullint = h_bkgsum_A->Integral();
    for (int i = 0; i < nmc; ++i) {
       std::cout << "   " << mctag[i] << ": " << h_mc_A[i]->Integral()/fullint << std::endl;
    }
-   std::cout << "   ABCD: " << h_ABCD_A->Integral()/fullint << std::endl;
+   if (!mcOnly) std::cout << "   ABCD: " << h_ABCD_A->Integral()/fullint << std::endl;
 
-   if (!blindA) {
-      TH1D * r = (TH1D*)h_data_A->Clone("r");
-      r->Divide(h_bkgsum_A);
-      r->GetYaxis()->SetTitle("observed / prediction");
-      r->SetMarkerStyle(20);
-      TCanvas * c2 = new TCanvas("c2", "c2", 400, 400);
-      r->Draw("PE");
-      r->SetStats(0);
-      //if (r->GetMaximum()>=10.) r->SetMaximum(10.);
-      r->SetMinimum(0.);
-      r->SetMaximum(2.);
-      TLine * line = new TLine(r->GetBinLowEdge(1), 1., r->GetBinLowEdge(r->GetNbinsX()+1), 1.);
-      line->SetLineStyle(2);
-      line->Draw();
-      c2->SaveAs("./plots/crr."+channel+".pdf");
+   if (!mcOnly) {
+      if (!blindA) {
+         TH1D * r = (TH1D*)h_data_A->Clone("r");
+         r->Divide(h_bkgsum_A);
+         r->GetYaxis()->SetTitle("observed / prediction");
+         r->SetMarkerStyle(20);
+         TCanvas * c2 = new TCanvas("c2", "c2", 400, 400);
+         r->Draw("PE");
+         r->SetStats(0);
+         r->SetMinimum(0.);
+         r->SetMaximum(2.);
+         TLine * line = new TLine(r->GetBinLowEdge(1), 1., r->GetBinLowEdge(r->GetNbinsX()+1), 1.);
+         line->SetLineStyle(2);
+         line->Draw();
+         c2->SaveAs("./plots/crr."+channel+".pdf");
+      }
    }
 
    std::cout << "end plotControlRegions()" << std::endl;
@@ -639,7 +673,7 @@ void makeAllHists(const TString channel, const int year, const bool blindA)
    for (int i = 0; i < nmc; ++i) {
       runPoint(mctag[i], channel, year, true, false);
    }
-  
+
    std::vector<TString> letters;
    if (year==2018) {
       letters.push_back("A");
@@ -694,8 +728,8 @@ void combineHistogramsMC(const TString channel)
 
    for (int i = 0; i < nmc; ++i) {
       char cmd1[1000];
-      sprintf(cmd1, "hadd -f ./outputHists/%s_%s.root ./outputHists/%s_%s_2016.root ./outputHists/%s_%s_2017.root ./outputHists/%s_%s_2018.root",
-         mctag[i].Data(), channel.Data(), mctag[i].Data(), channel.Data(), mctag[i].Data(), channel.Data(), mctag[i].Data(), channel.Data()
+      sprintf(cmd1, "hadd -f -k ./outputHists/%s_%s.root ./outputHists/%s_%s_2015.root ./outputHists/%s_%s_2016.root ./outputHists/%s_%s_2017.root ./outputHists/%s_%s_2018.root",
+         mctag[i].Data(), channel.Data(), mctag[i].Data(), channel.Data(), mctag[i].Data(), channel.Data(), mctag[i].Data(), channel.Data(), mctag[i].Data(), channel.Data()
       );
       system(cmd1);
    }
@@ -737,10 +771,24 @@ void yields_ZTauTau(const TString channel, const bool blindA)
    makeAllHists(channel, 2018, blindA);
    makeAllHists(channel, 2017, blindA);
    makeAllHists(channel, 2016, blindA);
+   makeAllHists(channel, 2015, blindA);
    combineHistogramsMC(channel);
    combineHistogramsData(channel);
    makeABCDHists(channel);
-   plotControlRegions(channel, blindA);
+   plotControlRegions(channel, blindA, false);
    std::cout << "end yields_ZTauTau()" << std::endl;
+}
+
+void yieldsMC_ZTauTau(const TString channel)
+{
+   std::cout << "yieldsMC_ZTauTau()" << std::endl;
+   std::cout << "   channel: " << channel << std::endl;
+   makeAllHists(channel, 2018, false);
+   makeAllHists(channel, 2017, false);
+   makeAllHists(channel, 2016, false);
+   makeAllHists(channel, 2015, false);
+   combineHistogramsMC(channel);
+   plotControlRegions(channel, false, true);
+   std::cout << "end yieldsMC_ZTauTau()" << std::endl;
 }
 
