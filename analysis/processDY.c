@@ -352,20 +352,26 @@ void validate(const TString process, const int year)
 void processDY(const TString process, const int year)
 {
    if (process=="DYJetsToLL") {
-      copyTree(year, true);
-      char inname1[100];
-      sprintf(inname1, "DYJetsToTauTau_%d.root", year);
-      addBranch(process, year, inname1);
-      copyTree(year, false);
-      char inname2[100];
-      sprintf(inname2, "DYJetsToEEMuMu_%d.root", year);
-      addBranch(process, year, inname2);
+      if (year==2015) {
+         copyTree(year, true);
+         copyTree(year, false);
+      } else {
+         copyTree(year, true);
+         char inname1[100];
+         sprintf(inname1, "DYJetsToTauTau_%d.root", year);
+         addBranch(process, year, inname1);
+         copyTree(year, false);
+         char inname2[100];
+         sprintf(inname2, "DYJetsToEEMuMu_%d.root", year);
+         addBranch(process, year, inname2);
+         validate(process, year);
+      }
    }
    if (process=="WJetsToLNu") {
       char inname[100];
       sprintf(inname, "WJetsToLNu_%d.root", year);
       addBranch("WJetsToLNu", year, inname);
+      validate(process, year);
    }
-   validate(process, year);
 }
 
