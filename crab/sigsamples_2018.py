@@ -6,6 +6,16 @@ isMC_ = True
 year = '2018'
 
 data['people'].append({
+    'name': 'Taustar_m175_2018',
+    'inputDataset': '/Taustar_TauG_L10000_m175_CP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '6',
+    'isMC': isMC_,
+    'xs': '0.02888',
+    'year': year
+})
+
+data['people'].append({
     'name': 'Taustar_m250_2018',
     'inputDataset': '/Taustar_TauG_L10000_m250_CP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
     'nEvents': '50000',

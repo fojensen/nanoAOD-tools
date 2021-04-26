@@ -75,6 +75,56 @@ data['people'].append({
     'year': year
 })
 
+data['people'].append({
+    'name': 'Taustar_m1250_2017',
+    'inputDataset': '/Taustar_TauG_L10000_m1250_CP5_13TeV_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '4',
+    'isMC': isMC_,
+    'xs': '0.002554',
+    'year': year
+})
+
+data['people'].append({
+    'name': 'Taustar_m1500_2017',
+    'inputDataset': '/Taustar_TauG_L10000_m1500_CP5_13TeV_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '4',
+    'isMC': isMC_,
+    'xs': '0.001522',
+    'year': year
+})
+
+data['people'].append({
+    'name': 'Taustar_m1750_2017',
+    'inputDataset': '/Taustar_TauG_L10000_m1750_CP5_13TeV_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '1',
+    'isMC': isMC_,
+    'xs': '0.0009048',
+    'year': year
+})
+
+data['people'].append({
+    'name': 'Taustar_m2000_2017',
+    'inputDataset': '/Taustar_TauG_L10000_m2000_CP5_13TeV_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '10',
+    'isMC': isMC_,
+    'xs': '0.0005328',
+    'year': year
+})
+
+data['people'].append({
+    'name': 'Taustar_m5000_2017',
+    'inputDataset': '/Taustar_TauG_L10000_m5000_CP5_13TeV_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '1',
+    'isMC': isMC_,
+    'xs': '1.178e-06',
+    'year': year
+})
+
 with open('sigsamples_2017.json', 'w') as outfile:
    json.dump(data, outfile)
 

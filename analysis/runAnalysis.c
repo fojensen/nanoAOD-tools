@@ -21,7 +21,6 @@ class runAnalysis {
       void sumMCHists();
       void saveHists();
 
-      TString makeString();
       TString channel;
       TString var;
       int mass;
@@ -34,14 +33,19 @@ class runAnalysis {
       TH1D *h_ST_t_channel_top[4], *h_ST_t_channel_antitop[4];
       TH1D *h_DYJetsToLLM10[4];
       TH1D *h_DYJetsToEEMuMu[4], *h_DYJetsToTauTau[4];
-      TH1D *h_taustar[4];
+      TH1D *h_Taustar_m175[5], *h_Taustar_m250[4], *h_Taustar_m375[4], *h_Taustar_m500[4], *h_Taustar_m625[4], *h_Taustar_m750[4];
+      TH1D *h_Taustar_m1000[4], *h_Taustar_m1250[4], *h_Taustar_m1500[4], *h_Taustar_m1750[4];
+      TH1D *h_Taustar_m2000[4];
+
       TH1D *h_data[4];
       TH1D *h_ABCD[4];
       TH1D *h_mcsum[4];
       TH1D *h_CoD, *h_CoD_inc;
       TH1D *h_BCoD, *h_BCoD_inc;
-      const int nmc = 13;
-      TString mctags[13];
+      const int nmc = 12;
+      TString mctags[12];
+      const int nsig = 11;
+      TString sigtags[11];
 };
 
 void plotControlRegions(const bool blindA, const int mass, const TString fname)
@@ -56,7 +60,7 @@ void plotControlRegions(const bool blindA, const int mass, const TString fname)
    TH1D *h_ST_t_channel_top[4], *h_ST_t_channel_antitop[4];
    TH1D *h_DYJetsToLLM10[4];
    TH1D *h_DYJetsToEEMuMu[4], *h_DYJetsToTauTau[4];
-   TH1D *h_taustar[4];
+   //TH1D *h_taustar[4];
    TH1D *h_data[4];
    THStack *s[4];
 
@@ -113,11 +117,11 @@ void plotControlRegions(const bool blindA, const int mass, const TString fname)
       h_DYJetsToTauTau[i]->SetFillColor(9);
       s[i]->Add(h_DYJetsToTauTau[i]);
 
-      char hname[100];
-      sprintf(hname, "h_Taustar_m%d_%s", mass, labels[i].Data());
-      h_taustar[i] = (TH1D*)f->Get(hname);
-      h_taustar[i]->SetLineColor(94);
-      h_taustar[i]->SetLineWidth(2);
+      //char hname[100];
+      //sprintf(hname, "h_Taustar_m%d_%s", mass, labels[i].Data());
+      //h_taustar[i] = (TH1D*)f->Get(hname);
+      //h_taustar[i]->SetLineColor(94);
+      //h_taustar[i]->SetLineWidth(2);
 
       h_data[i] = (TH1D*)f->Get("h_data_"+labels[i]);
       h_data[i]->SetMarkerStyle(20);
@@ -137,11 +141,11 @@ void plotControlRegions(const bool blindA, const int mass, const TString fname)
    s[0]->Add(h_BCoD_inc);
 
    const double ymax = pow(10, ceil(log10(max))+1);
-   double ymin = 0.1;
-   if (ymax>=100.) ymin = 1.;
-   if (ymax>=1000.) ymin = 10.;
-   if (ymax>=10000.) ymin = 100.;
-   if (ymax>=100000.) ymin = 1000.;
+   double ymin = 0.01;
+   if (max>=10.) ymin = 0.1;
+   if (max>=100.) ymin = 1.;
+   if (max>=1000.) ymin = 10.;
+   if (max>=10000.) ymin = 100.;
 
    TLegend * lA = new TLegend(0.25, 0.7, 0.875, 0.875);
    lA->SetNColumns(2);
@@ -158,7 +162,7 @@ void plotControlRegions(const bool blindA, const int mass, const TString fname)
    lA->AddEntry(h_DYJetsToLLM10[0], "DYJetsToLLM10", "F");
    lA->AddEntry(h_DYJetsToEEMuMu[0], "DYJetsToEEMuMu", "F");
    lA->AddEntry(h_DYJetsToTauTau[0], "DYJetsToTauTau", "F");
-   lA->AddEntry(h_taustar[0], "#tau* "+TString::Itoa(mass, 10), "L");
+   //lA->AddEntry(h_taustar[0], "#tau* "+TString::Itoa(mass, 10), "L");
 
    TLegend *lBCD = (TLegend*)lA->Clone();
    
@@ -171,7 +175,7 @@ void plotControlRegions(const bool blindA, const int mass, const TString fname)
 
    TPad * p1 = (TPad*)c1->cd(1);
    s[0]->Draw("HIST");
-   h_taustar[0]->Draw("HIST, E, SAME");
+   //h_taustar[0]->Draw("HIST, E, SAME");
    if (!blindA) h_data[0]->Draw("P, SAME");
    p1->SetLogy();
    lA->Draw();
@@ -179,7 +183,7 @@ void plotControlRegions(const bool blindA, const int mass, const TString fname)
 
    TPad * p2 = (TPad*)c1->cd(2);
    s[1]->Draw("HIST");
-   h_taustar[1]->Draw("HIST, E, SAME");
+   //h_taustar[1]->Draw("HIST, E, SAME");
    h_data[1]->Draw("P, SAME");
    p2->SetLogy();
    lBCD->Draw();
@@ -187,7 +191,7 @@ void plotControlRegions(const bool blindA, const int mass, const TString fname)
 
    TPad * p3 = (TPad*)c1->cd(3);
    s[2]->Draw("HIST");
-   h_taustar[2]->Draw("HIST, E, SAME");
+   //h_taustar[2]->Draw("HIST, E, SAME");
    h_data[2]->Draw("P, SAME");
    p3->SetLogy();
    lBCD->Draw();
@@ -195,7 +199,7 @@ void plotControlRegions(const bool blindA, const int mass, const TString fname)
 
    TPad * p4 = (TPad*)c1->cd(4);
    s[3]->Draw("HIST");
-   h_taustar[3]->Draw("HIST, E, SAME");
+   //h_taustar[3]->Draw("HIST, E, SAME");
    h_data[3]->Draw("P, SAME");
    p4->SetLogy();
    lBCD->Draw();
@@ -281,12 +285,23 @@ void runAnalysis::runAll()
    mctags[9] = "DYJetsToLLM10";
    mctags[10] = "DYJetsToEEMuMu";
    mctags[11] = "DYJetsToTauTau";
-   mctags[12] = "Taustar_m"+TString::Itoa(mass,10);
+
+   sigtags[0] = "Taustar_m175";
+   sigtags[1] = "Taustar_m250";
+   sigtags[2] = "Taustar_m375";
+   sigtags[3] = "Taustar_m500";
+   sigtags[4] = "Taustar_m625";
+   sigtags[5] = "Taustar_m750";
+   sigtags[6] = "Taustar_m1000";
+   sigtags[7] = "Taustar_m1250";
+   sigtags[8] = "Taustar_m1500";
+   sigtags[9] = "Taustar_m1750";
+   sigtags[10] = "Taustar_m2000";
 
    const TString fname = "tree2018_m"+TString::Itoa(mass, 10)+".root";
    fout = new TFile(fname, "RECREATE"); 
    histInit();
-   fillMCHists(2015);
+   //fillMCHists(2015);
    fillMCHists(2016);
    fillDataHists(2016);
    fillMCHists(2017);
@@ -318,10 +333,20 @@ void runAnalysis::histInit()
       h_DYJetsToLLM10[i] = (TH1D*)h->Clone("h_DYJetsToLLM10_"+labels[i]);
       h_DYJetsToEEMuMu[i] = (TH1D*)h->Clone("h_DYJetsToEEMuMu_"+labels[i]);
       h_DYJetsToTauTau[i] = (TH1D*)h->Clone("h_DYJetsToTauTau_"+labels[i]);
-      char hname[100];
-      sprintf(hname, "h_Taustar_m%d_%s", mass,labels[i].Data());
-      h_taustar[i] = (TH1D*)h->Clone(hname);
-      h_data[i] = (TH1D*)h->Clone("h_data_"+labels[i]);     
+      h_data[i] = (TH1D*)h->Clone("h_data_"+labels[i]);
+   }
+   for (int i = 0; i < 4; ++i) {
+      h_Taustar_m175[i] = (TH1D*)h->Clone("h_Taustar_m175_"+labels[i]);
+      h_Taustar_m250[i] = (TH1D*)h->Clone("h_Taustar_m250_"+labels[i]);
+      h_Taustar_m375[i] = (TH1D*)h->Clone("h_Taustar_m375_"+labels[i]);
+      h_Taustar_m500[i] = (TH1D*)h->Clone("h_Taustar_m500_"+labels[i]);
+      h_Taustar_m625[i] = (TH1D*)h->Clone("h_Taustar_m625_"+labels[i]);
+      h_Taustar_m750[i] = (TH1D*)h->Clone("h_Taustar_m750_"+labels[i]);
+      h_Taustar_m1000[i] = (TH1D*)h->Clone("h_Taustar_m1000_"+labels[i]);
+      h_Taustar_m1250[i] = (TH1D*)h->Clone("h_Taustar_m1250_"+labels[i]);
+      h_Taustar_m1500[i] = (TH1D*)h->Clone("h_Taustar_m1500_"+labels[i]);
+      h_Taustar_m1750[i] = (TH1D*)h->Clone("h_Taustar_m1750_"+labels[i]);
+      h_Taustar_m2000[i] = (TH1D*)h->Clone("h_Taustar_m2000_"+labels[i]);
    }
 }
 
@@ -343,10 +368,10 @@ void runAnalysis::loadCuts(const int year, TCut cuts[4])
       baseline = baseline && TCut("MuTau_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==1");
-      regionA = "MuTau_qq==-1 && (64&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
-      regionB = "MuTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(64&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
-      regionC = "MuTau_qq==+1 && (64&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
-      regionD = "MuTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(64&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
+      regionA = "MuTau_qq==-1 && (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
+      regionB = "MuTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
+      regionC = "MuTau_qq==+1 && (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
+      regionD = "MuTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
    }
    if (channel=="Tau") {
       baseline = baseline && TCut("TauTau_HavePair>0 && (TauTau_HaveTriplet==0||(TauTau_HaveTriplet>0&&Photon_pt[TauTau_PhotonIdx]<25.))");
@@ -419,13 +444,50 @@ void runAnalysis::loadCuts(const int year, TCut cuts[4])
    cuts[3] = baseline && regionD;
 }
 
+TString makeString(const double mass, const TString channel)
+{
+   std::cout << "makeString()" << std::endl;
+   std::cout << "   mass: " << mass << ", channel: " << channel << std::endl;
+   char outstring[1000];
+   const double upper=mass+100.;
+   const double lower=mass-100.;
+   
+   if (channel=="Electron") {
+      sprintf(outstring,
+      "(ElTau_MaxCollMass<%f)?1 : (ElTau_MinCollMass>=%f)?4 : (ElTau_MaxCollMass>=%f&&ElTau_MinCollMass<%f)?3 : ((ElTau_MaxCollMass>=%f&&ElTau_MaxCollMass<%f)||(ElTau_MinCollMass>=%f&&ElTau_MinCollMass<%f))?2 : 0",
+                          lower,                      upper,                      upper,                lower,                       lower,                upper,                   lower,                upper
+      );
+   }
+   if (channel=="Muon") {
+      sprintf(outstring,
+      "(MuTau_MaxCollMass<%f)?1 : (MuTau_MinCollMass>=%f)?4 : (MuTau_MaxCollMass>=%f&&MuTau_MinCollMass<%f)?3 : ((MuTau_MaxCollMass>=%f&&MuTau_MaxCollMass<%f)||(MuTau_MinCollMass>=%f&&MuTau_MinCollMass<%f))?2 : 0",
+                          lower,                      upper,                      upper,                lower,                       lower,                upper,                   lower,                upper
+      );
+   }
+   if (channel=="Tau") {
+      sprintf(outstring,
+      "(TauTau_MaxCollMass<%f)?1 : (TauTau_MinCollMass>=%f)?4 : (TauTau_MaxCollMass>=%f&&TauTau_MinCollMass<%f)?3 : ((TauTau_MaxCollMass>=%f&&TauTau_MaxCollMass<%f)||(TauTau_MinCollMass>=%f&&TauTau_MinCollMass<%f))?2 : 0",
+                           lower,                       upper,                       upper,                 lower,                        lower,                 upper,                    lower,                 upper
+      );
+   }
+   if (channel=="ElMu") {
+      sprintf(outstring,
+      "(ElMu_MaxCollMass<%f)?1 : (ElMu_MinCollMass>=%f)?4 : (ElMu_MaxCollMass>=%f&&ElMu_MinCollMass<%f)?3 : ((ElMu_MaxCollMass>=%f&&ElMu_MaxCollMass<%f)||(ElMu_MinCollMass>=%f&&ElMu_MinCollMass<%f))?2 : 0",
+                           lower,                       upper,                       upper,                 lower,                        lower,                 upper,                    lower,                 upper
+      );
+   }
+
+   std::cout << "end makeString()" << std::endl;
+   return TString(outstring);
+}
+
 void runAnalysis::fillMCHists(const int year)
 {
    std::cout << "fillMCHists(): " << year << std::endl;
    double lumi;
-   if (year==2015) lumi = 19500.;
-   if (year==2016) lumi = 16800.;
-   //if (year==2016) lumi = 19500.+16800.;
+   //if (year==2015) lumi = 19500.;
+   //if (year==2016) lumi = 16800.;
+   if (year==2016) lumi = 19500.+16800.;
    if (year==2017) lumi = 41480.;
    if (year==2018) lumi = 59830.;
    const TString eostag = "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_16042021/";
@@ -448,6 +510,21 @@ void runAnalysis::fillMCHists(const int year)
          fout->cd();
          char hname[100];
          sprintf(hname, "+h_%s_%s", mctags[i].Data(), labels[j].Data());
+         std::cout << " entries in projection: " << t->Project(hname, var, buffer) << std::endl;
+      }
+   }
+   for (int i = 0; i < nsig; ++i) {
+      std::cout << "filling " << sigtags[i] << std::endl;
+      char infile[100];
+      sprintf(infile, "%s/%s_%d.root", eostag.Data(), sigtags[i].Data(), year);
+      TFile * f = TFile::Open(infile);
+      TTree * t = (TTree*)f->Get("Events");
+      for (int j = 0; j < 4; ++j) {
+         char buffer[3000];
+         sprintf(buffer, "%f * xsWeight * (%s)", lumi, TString(cuts[j]).Data());
+         fout->cd();
+         char hname[100];
+         sprintf(hname, "+h_%s_%s", sigtags[i].Data(), labels[j].Data());
          std::cout << " entries in projection: " << t->Project(hname, var, buffer) << std::endl;
       }
    }
@@ -516,7 +593,18 @@ void runAnalysis::addOverflowToHists()
       addOverflow(h_DYJetsToEEMuMu[i]);
       addOverflow(h_DYJetsToTauTau[i]);
       addOverflow(h_data[i]);
-      addOverflow(h_taustar[i]);
+   }
+   for (int i = 0; i < 4; ++i) {
+      addOverflow(h_Taustar_m250[i]);
+      addOverflow(h_Taustar_m375[i]);
+      addOverflow(h_Taustar_m500[i]);
+      addOverflow(h_Taustar_m625[i]);
+      addOverflow(h_Taustar_m750[i]);
+      addOverflow(h_Taustar_m1000[i]);
+      addOverflow(h_Taustar_m1250[i]);
+      addOverflow(h_Taustar_m1500[i]);
+      addOverflow(h_Taustar_m1750[i]);
+      addOverflow(h_Taustar_m2000[i]);
    }
 }
 
@@ -609,7 +697,6 @@ void runAnalysis::saveHists()
       h_DYJetsToEEMuMu[i]->Write();
       h_DYJetsToTauTau[i]->Write();
       h_ABCD[i]->Write();
-      h_taustar[i]->Write();
       h_data[i]->Write();
       h_mcsum[i]->Write();
    }
@@ -617,5 +704,17 @@ void runAnalysis::saveHists()
    h_BCoD->Write();
    h_CoD_inc->Write();
    h_BCoD_inc->Write();
+   for (int i = 0; i < 4; ++i) {
+      h_Taustar_m250[i]->Write();
+      h_Taustar_m375[i]->Write();
+      h_Taustar_m500[i]->Write();
+      h_Taustar_m625[i]->Write();
+      h_Taustar_m750[i]->Write();
+      h_Taustar_m1000[i]->Write();
+      h_Taustar_m1250[i]->Write();
+      h_Taustar_m1500[i]->Write();
+      h_Taustar_m1750[i]->Write();
+      h_Taustar_m2000[i]->Write();
+   }
 }
 
