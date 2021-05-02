@@ -4,16 +4,19 @@ import os
 #infile = 'datasamples_2016.json'
 #infile = 'datasamples_2017.json'
 #infile = 'datasamples_2018.json'
+
 #infile = 'mcsamples_2016.json'
+#infile = 'mcsamples_2016APV.json'
 #infile = 'mcsamples_2017.json'
 #infile = 'mcsamples_2018.json'
+
 #infile = 'sigsamples_2016.json'
 #infile = 'sigsamples_2017.json'
 #infile = 'sigsamples_2018.json'
 
-#files = ['datasamples_2016.json', 'mcsamples_2016.json', 'sigsamples_2016.json']
-#files = ['datasamples_2017.json', 'mcsamples_2017.json', 'sigsamples_2017.json']
-files = ['datasamples_2018.json', 'mcsamples_2018.json', 'sigsamples_2018.json']
+#files = ['mcsamples_2016APV.json', 'mcsamples_2016.json', 'mcsamples_2017.json', 'mcsamples_2018.json']
+files = ['sigsamples_2016.json', 'sigsamples_2017.json', 'sigsamples_2018.json']
+#files = ['datasamples_2018.json', 'datasamples_2017.json', 'datasamples_2016.json']
 
 for infile in files:
  with open(infile) as json_file:
@@ -66,7 +69,7 @@ for infile in files:
         #f.write("config.Data.splitting='Automatic'\n")
         f.write("config.Data.splitting = 'FileBased'\n")
         f.write("config.Data.unitsPerJob = 1\n")
-        f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_11042021/'\n")
+        f.write("config.Data.outLFNDirBase = '/store/user/fjensen/cmsdas_26042021/'\n")
         f.write("config.Data.publication = False\n")
         f.write("\n")
 
