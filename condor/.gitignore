@@ -1,2 +1,7 @@
 *.root
-*.txt
+*.pdf
+*.log
+*.stderr
+*.stdout
+*.jdl
+*.sh
