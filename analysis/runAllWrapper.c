@@ -37,25 +37,26 @@ class runAnalysis {
       TH1D *h_DYJetsToEEMuMu[4], *h_DYJetsToTauTau[4];
       TH1D *h_Taustar_m175[5], *h_Taustar_m250[4], *h_Taustar_m375[4], *h_Taustar_m500[4], *h_Taustar_m625[4], *h_Taustar_m750[4];
       TH1D *h_Taustar_m1000[4], *h_Taustar_m1250[4], *h_Taustar_m1500[4], *h_Taustar_m1750[4];
-      TH1D *h_Taustar_m2000[4];
+      TH1D *h_Taustar_m2000[4], *h_Taustar_m2500[4];
 
       TH1D *h_data[4];
       TH1D *h_ABCD[4];
       TH1D *h_mcsum[4];
       TH1D *h_bkgsum, *h_bkgsum_inc;
+      TH1D *h_bkgpsig, *h_bkgpsig_inc;
       TH1D *h_CoD, *h_CoD_inc;
       TH1D *h_BCoD, *h_BCoD_inc;
       const int nmc = 12;
       TString mctags[12];
-      const int nsig = 11;
-      TString sigtags[11];
+      const int nsig = 12;
+      TString sigtags[12];
 };
 
 void plotControlRegions(const TString channel, const int mass, const bool blindA)
 {std::cout << "plotControlRegions() " << channel << " " << mass << " " << blindA << std::endl;
 
    char fname[100];
-   sprintf(fname, "%s_%d.root", channel.Data(), mass);
+   sprintf(fname, "%s_m%d.root", channel.Data(), mass);
    TFile * f = TFile::Open(fname);
 
    TH1D *h_WW[4], *h_WZ[4], *h_ZZ[4];
@@ -68,10 +69,11 @@ void plotControlRegions(const TString channel, const int mass, const bool blindA
    TH1D *h_data[4];
    THStack *s[4];
 
-   TH1D *h_bkg_A = (TH1D*)f->Get("h_bkgsum_inc");
-   TH1D *h_jet = (TH1D*)f->Get("h_BCoD_inc");
-   //TH1D *h_bkg_A = (TH1D*)f->Get("h_bkgsum");
-   //TH1D *h_jet = (TH1D*)f->Get("h_BCoD");
+   TH1D *h_bkgsum_inc = (TH1D*)f->Get("h_bkgsum_inc");
+   TH1D *h_BCoD_inc = (TH1D*)f->Get("h_BCoD_inc");
+
+   TH1D *h_bkgsum = (TH1D*)f->Get("h_bkgsum");
+   TH1D *h_BCoD_binned = (TH1D*)f->Get("h_BCoD");
 
    TString title;
    if (channel=="Muon") title="#mu + #tau_{h}";
@@ -134,6 +136,7 @@ void plotControlRegions(const TString channel, const int mass, const bool blindA
 
       char hname[100];
       sprintf(hname, "h_Taustar_m%d_%s", mass, labels[i].Data());
+      //sprintf(hname, "h_taustar_%s", labels[i].Data());
       h_taustar[i] = (TH1D*)f->Get(hname);
       h_taustar[i]->SetLineColor(94);
       h_taustar[i]->SetLineWidth(2);
@@ -147,8 +150,8 @@ void plotControlRegions(const TString channel, const int mass, const bool blindA
      s[i]->SetTitle(title); 
    }
 
-   h_jet->SetFillColor(98);
-   s[0]->Add(h_jet);
+   h_BCoD_inc->SetFillColor(98);
+   s[0]->Add(h_BCoD_inc);
 
    const double ymax = pow(10, ceil(log10(max))+1);
    double ymin = 0.01;
@@ -176,7 +179,7 @@ void plotControlRegions(const TString channel, const int mass, const bool blindA
 
    TLegend *lBCD = (TLegend*)lA->Clone();
    
-   lA->AddEntry(h_jet, "jet", "F");
+   lA->AddEntry(h_BCoD_inc, "jet", "F");
    if (!blindA) lA->AddEntry(h_data[0], "data", "P");
    lBCD->AddEntry(h_data[1], "data", "P");
 
@@ -222,7 +225,7 @@ void plotControlRegions(const TString channel, const int mass, const bool blindA
    h_CoD->SetMarkerStyle(20);
    h_CoD->SetStats(0);
    h_CoD->SetMinimum(0.);
-   h_CoD->SetMaximum(2*h_CoD->SetMaximum());
+   h_CoD->SetMaximum(2*h_CoD->GetMaximum());
    //p4->SetLogy();
    //h_CoD->SetMinimum(0.8*(h_CoD_inc->GetBinContent(1)-h_CoD_inc->GetBinError(1)));
    //h_CoD->SetMaximum(1.2*(h_CoD_inc->GetBinContent(1)+h_CoD_inc->GetBinError(1)));
@@ -235,17 +238,36 @@ void plotControlRegions(const TString channel, const int mass, const bool blindA
 
    if (!blindA) {
       canvas->cd(1);
+
       TH1D * r = (TH1D*)h_data[0]->Clone("r");
-      r->Divide(h_bkg_A);
+      r->Divide(h_bkgsum);
       r->GetYaxis()->SetTitle("observed / prediction");
       r->SetMarkerStyle(20);
+      r->SetMarkerColor(8);
+      r->SetLineColor(8);
       r->Draw("PE");
       r->SetStats(0);
       r->SetMinimum(0.);
       r->SetMaximum(2.);
+
+      TH1D * r_inc = (TH1D*)h_data[0]->Clone("r_inc");
+      r_inc->Divide(h_bkgsum_inc);
+      r_inc->SetMarkerStyle(20);
+      r_inc->SetMarkerColor(9);
+      r_inc->SetLineColor(9);
+      r_inc->Draw("PE, SAME");
+
+      TLegend * l2 = new TLegend(0.25, 0.75, 0.875, 0.875);
+      l2->SetBorderSize(0);
+      l2->SetNColumns(2);
+      l2->AddEntry(r, "binned C/D ", "P");
+      l2->AddEntry(r_inc, "inclusive C/D", "P");
+      l2->Draw();
+
       TLine * line = new TLine(r->GetBinLowEdge(1), 1., r->GetBinLowEdge(r->GetNbinsX()+1), 1.);
       line->SetLineStyle(2);
-      line->Draw();
+      line->Draw();      
+
    }
    char outfile[50];
    sprintf(outfile, "%s_%d.pdf", channel.Data(), mass);
@@ -291,17 +313,17 @@ TString makeVar(const double mass, const TString channel)
 void runAnalysis::runAll()
 {std::cout << "runAll()" << std::endl;
 
-   if (channel=="Muon") var = "MuTau_Mass";
-   if (channel=="Electron") var = "ElTau_Mass";
-   if (channel=="Tau") var = "TauTau_Mass";
-   if (channel=="MuonEG") var = "ElMu_Mass";
-   h = new TH1D("h", ";visible mass [GeV];events / 10 GeV", 20, 0., 200.);
+   //if (channel=="Muon") var = "MuTau_Mass";
+   //if (channel=="Electron") var = "ElTau_Mass";
+   //if (channel=="Tau") var = "TauTau_Mass";
+   //if (channel=="MuonEG") var = "ElMu_Mass";
+   //h = new TH1D("h", ";visible mass [GeV];events / 10 GeV", 20, 0., 200.);
 
    //var = "MuTau_MinCollMass";
    //h = new TH1D("h", ";min coll mass [GeV];events / 200 GeV", 15, 0., 3000.);
 
-   //var = makeVar(mass, channel);
-   //h = new TH1D("h", ";analysis bin;events / bin", 5, -0.5, 4.5);
+   var = makeVar(mass, channel);
+   h = new TH1D("h", ";analysis bin;events / bin", 5, -0.5, 4.5);
 
    if (channel=="Muon") h->SetTitle("#mu + #tau_{h}");
    if (channel=="Electron") h->SetTitle("e + #tau_{h}");
@@ -332,16 +354,17 @@ void runAnalysis::runAll()
    sigtags[8] = "Taustar_m1500";
    sigtags[9] = "Taustar_m1750";
    sigtags[10] = "Taustar_m2000";
+   sigtags[11] = "Taustar_m2500";
 
    char fname[100];
-   sprintf(fname, "%s_%d.root", channel.Data(), mass);
+   sprintf(fname, "%s_m%d.root", channel.Data(), mass);
    fout = new TFile(fname, "RECREATE"); 
    histInit();
    //fillMCHists(2015);
-   //fillMCHists(2016);
-   //fillDataHists(2016);
-   //fillMCHists(2017);
-   //fillDataHists(2017);
+   fillMCHists(2016);
+   fillDataHists(2016);
+   fillMCHists(2017);
+   fillDataHists(2017);
    fillMCHists(2018);
    fillDataHists(2018);
    addOverflowToHists();
@@ -401,6 +424,7 @@ void runAnalysis::histInit()
       h_Taustar_m1500[i] = (TH1D*)h->Clone("h_Taustar_m1500_"+labels[i]);
       h_Taustar_m1750[i] = (TH1D*)h->Clone("h_Taustar_m1750_"+labels[i]);
       h_Taustar_m2000[i] = (TH1D*)h->Clone("h_Taustar_m2000_"+labels[i]);
+      h_Taustar_m2500[i] = (TH1D*)h->Clone("h_Taustar_m2500_"+labels[i]);
    }
 }
 
@@ -410,8 +434,8 @@ void runAnalysis::loadCuts(const int year, TCut cuts[4])
    TCut baseline, regionA, regionB, regionC, regionD;
    baseline = regionA = regionB = regionC = regionD = "1>0";
    if (channel=="Muon") {
-      baseline = baseline && TCut("MuTau_HavePair>0 && (MuTau_HaveTriplet==0||(MuTau_HaveTriplet>0&&Photon_pt[MuTau_PhotonIdx]<25.))");
-      //baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=100.");
+      //baseline = baseline && TCut("MuTau_HavePair>0 && (MuTau_HaveTriplet==0||(MuTau_HaveTriplet>0&&Photon_pt[MuTau_PhotonIdx]<25.))");
+      baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=100.");
       //baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]<25.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("MuTau_Trigger");
@@ -419,7 +443,7 @@ void runAnalysis::loadCuts(const int year, TCut cuts[4])
       if (year==2015||year==2016) baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=26.");
       if (year==2017) baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=29.");
       if (year==2018) baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=29.");
-      //baseline = baseline && TCut("MuTau_Mass>=100.");
+      baseline = baseline && TCut("MuTau_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==1");
       regionA = "MuTau_qq==-1 && (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
@@ -428,14 +452,14 @@ void runAnalysis::loadCuts(const int year, TCut cuts[4])
       regionD = "MuTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
    }
    if (channel=="Tau") {
-      baseline = baseline && TCut("TauTau_HavePair>0 && (TauTau_HaveTriplet==0||(TauTau_HaveTriplet>0&&Photon_pt[TauTau_PhotonIdx]<25.))");
-      //baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=100.");
+      //baseline = baseline && TCut("TauTau_HavePair>0 && (TauTau_HaveTriplet==0||(TauTau_HaveTriplet>0&&Photon_pt[TauTau_PhotonIdx]<25.))");
+      baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=100.");
       //baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]<25.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("TauTau_Trigger");
       baseline = baseline && TCut("Tau_pt[TauTau_Tau0Idx]>=40. && TMath::Abs(Tau_eta[TauTau_Tau0Idx])<2.1");
       baseline = baseline && TCut("Tau_pt[TauTau_Tau1Idx]>=40. && TMath::Abs(Tau_eta[TauTau_Tau1Idx])<2.1");
-      //baseline = baseline && TCut("TauTau_Mass>=100.");
+      baseline = baseline && TCut("TauTau_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==0");
       const TCut tau0pass = "(32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx])";
@@ -445,17 +469,17 @@ void runAnalysis::loadCuts(const int year, TCut cuts[4])
       regionA = TCut("TauTau_qq==-1") &&  (tau0pass&&tau1pass);
       regionC = TCut("TauTau_qq==+1") &&  (tau0pass&&tau1pass);
 
-      //regionB = TCut("TauTau_qq==-1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass));
+      regionB = TCut("TauTau_qq==-1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass));
       //regionB = TCut("TauTau_qq==-1") && (tau0fail&&tau1fail);
-      regionB = TCut("TauTau_qq==-1") && (tau0fail||tau1fail);
+      //regionB = TCut("TauTau_qq==-1") && (tau0fail||tau1fail);
       
-      //regionD = TCut("TauTau_qq==+1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass));
+      regionD = TCut("TauTau_qq==+1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass));
       //regionD = TCut("TauTau_qq==+1") && (tau0fail&&tau1fail);
-      regionD = TCut("TauTau_qq==+1") && (tau0fail||tau1fail);
+      //regionD = TCut("TauTau_qq==+1") && (tau0fail||tau1fail);
    }
    if (channel=="Electron") {
-      baseline = baseline && TCut("ElTau_HavePair>0 && (ElTau_HaveTriplet==0||(ElTau_HaveTriplet>0&&Photon_pt[ElTau_PhotonIdx]<25.))");
-      //baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=100.");
+      //baseline = baseline && TCut("ElTau_HavePair>0 && (ElTau_HaveTriplet==0||(ElTau_HaveTriplet>0&&Photon_pt[ElTau_PhotonIdx]<25.))");
+      baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=100.");
       //baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]<25.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("ElTau_Trigger");
@@ -463,7 +487,7 @@ void runAnalysis::loadCuts(const int year, TCut cuts[4])
       if (year==2015||year==2016) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=29.");
       if (year==2017) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
       if (year==2018) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
-      //baseline = baseline && TCut("ElTau_Mass>=100.");
+      baseline = baseline && TCut("ElTau_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==1");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==0");
       regionA = "ElTau_qq==-1 && (32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
@@ -471,9 +495,9 @@ void runAnalysis::loadCuts(const int year, TCut cuts[4])
       regionC = "ElTau_qq==+1 && (32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
       regionD = "ElTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
    }
-   if (channel=="MuonEG") {
-      baseline = baseline && TCut("ElMu_HavePair>0 && (ElMu_HaveTriplet==0||(ElMu_HaveTriplet>0&&Photon_pt[ElMu_PhotonIdx]<25.))");
-      //baseline = baseline && TCut("ElMu_HaveTriplet>0 && Photon_pt[ElMu_PhotonIdx]>=100.");
+   if (channel=="ElMu") {
+      //baseline = baseline && TCut("ElMu_HavePair>0 && (ElMu_HaveTriplet==0||(ElMu_HaveTriplet>0&&Photon_pt[ElMu_PhotonIdx]<25.))");
+      baseline = baseline && TCut("ElMu_HaveTriplet>0 && Photon_pt[ElMu_PhotonIdx]>=100.");
       //baseline = baseline && TCut("ElMu_HaveTriplet>0 && Photon_pt[ElMu_PhotonIdx]<25.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("ElMu_Trigger");
@@ -481,7 +505,7 @@ void runAnalysis::loadCuts(const int year, TCut cuts[4])
       const TCut c1 = "Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=13.";
       const TCut c2 = "Electron_pt[ElMu_ElIdx]>=13. && Muon_pt[ElMu_MuIdx]>=24.";
       baseline = baseline && (c1||c2);
-      //baseline = baseline && TCut("ElMu_Mass>=100.");
+      baseline = baseline && TCut("ElMu_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==1");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=2)==1");
       regionA = "ElMu_qq==-1 && Muon_pfIsoId[ElMu_MuIdx]>=4";
@@ -624,6 +648,7 @@ void runAnalysis::addOverflowToHists()
       addOverflow(h_Taustar_m1500[i]);
       addOverflow(h_Taustar_m1750[i]);
       addOverflow(h_Taustar_m2000[i]);
+      addOverflow(h_Taustar_m2500[i]);
    }
 }
 
@@ -717,6 +742,25 @@ void runAnalysis::sumBkgHists()
 
    h_bkgsum = (TH1D*)h_mcsum[0]->Clone("h_bkgsum");
    h_bkgsum->Add(h_BCoD);
+
+   h_bkgpsig_inc = (TH1D*)h_bkgsum_inc->Clone("h_bkgpsig_inc");  
+   h_bkgpsig = (TH1D*)h_bkgsum->Clone("h_bkgpsig");
+   TH1D * h_temp = (TH1D*)h->Clone("h_temp");;
+   if (mass==175) h_temp = (TH1D*)h_Taustar_m175[0]->Clone("h_temp");
+   if (mass==250) h_temp = (TH1D*)h_Taustar_m250[0]->Clone("h_temp");
+   if (mass==375) h_temp = (TH1D*)h_Taustar_m375[0]->Clone("h_temp");
+   if (mass==500) h_temp = (TH1D*)h_Taustar_m500[0]->Clone("h_temp");
+   if (mass==625) h_temp = (TH1D*)h_Taustar_m625[0]->Clone("h_temp");
+   if (mass==750) h_temp = (TH1D*)h_Taustar_m750[0]->Clone("h_temp");
+   if (mass==1000) h_temp = (TH1D*)h_Taustar_m1000[0]->Clone("h_temp");
+   if (mass==1250) h_temp = (TH1D*)h_Taustar_m1250[0]->Clone("h_temp");
+   if (mass==1500) h_temp = (TH1D*)h_Taustar_m1500[0]->Clone("h_temp");
+   if (mass==1750) h_temp = (TH1D*)h_Taustar_m1750[0]->Clone("h_temp");
+   if (mass==2000) h_temp = (TH1D*)h_Taustar_m2000[0]->Clone("h_temp");
+   if (mass==2500) h_temp = (TH1D*)h_Taustar_m2500[0]->Clone("h_temp");
+   h_temp->Scale(0.5);
+   h_bkgpsig_inc->Add(h_temp);
+   h_bkgpsig->Add(h_temp);
 }
 
 void runAnalysis::bkgFraction()
@@ -727,9 +771,12 @@ void runAnalysis::bkgFraction()
    for (int i = 0; i < 4; ++i) {
       std::cout << " region " << labels[i] << std::endl;
       double sum = 0.;
-      std::cout <<  "ahhh " << h_data[i]->Integral() << std::endl;
       if (i==0) sum = h_bkgsum_inc->Integral();
       if (i==1||i==2||i==3) sum = h_data[i]->Integral();
+      if (sum==0.) {
+         std::cout << "  *** NO EVENTS in Integral() ***" << std::endl;
+         sum=1.;
+      }
       std::cout << "  WW: " << h_WW[i]->Integral()/sum << "; " << h_WW[i]->GetEntries() << std::endl;
       std::cout << "  WZ: " << h_WZ[i]->Integral()/sum << "; " << h_WZ[i]->GetEntries() << std::endl;
       std::cout << "  ZZ: " << h_ZZ[i]->Integral()/sum << "; " << h_ZZ[i]->GetEntries() << std::endl;
@@ -770,6 +817,8 @@ void runAnalysis::saveHists()
    }
    h_bkgsum->Write();
    h_bkgsum_inc->Write();
+   h_bkgpsig->Write();
+   h_bkgpsig_inc->Write();
    h_CoD->Write();
    h_BCoD->Write();
    h_CoD_inc->Write();
@@ -786,6 +835,7 @@ void runAnalysis::saveHists()
       h_Taustar_m1500[i]->Write();
       h_Taustar_m1750[i]->Write();
       h_Taustar_m2000[i]->Write();
+      h_Taustar_m2500[i]->Write();
    }
 }
 

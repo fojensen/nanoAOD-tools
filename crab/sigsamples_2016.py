@@ -116,6 +116,16 @@ data['people'].append({
 })
 
 data['people'].append({
+    'name': 'Taustar_m2500_2016',
+    'inputDataset': '/Taustar_TauG_L10000_m2500_13TeV_pythia8/RunIISummer16NanoAODv7-PUMoriond17_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '6',
+    'isMC': isMC_,
+    'xs': '0.0001862',
+    'year': year
+})
+
+data['people'].append({
     'name': 'Taustar_m5000_2016',
     'inputDataset': '/Taustar_TauG_L10000_m5000_13TeV_pythia8/RunIISummer16NanoAODv7-PUMoriond17_Nano02Apr2020_102X_mcRun2_asymptotic_v8-v1/NANOAODSIM',
     'nEvents': '50000',

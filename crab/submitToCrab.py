@@ -80,5 +80,5 @@ for infile in files:
         f.close()
 
         #actually submit jobs or not
-        os.system("crab submit -c " + f.name)
+#        os.system("crab submit -c " + f.name)
 
