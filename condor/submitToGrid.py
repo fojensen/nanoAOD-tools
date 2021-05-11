@@ -11,10 +11,10 @@ import os
 #    print("directory %s exists" % condordir)
 #    exit()
 
-masses = [175, 250, 375, 500, 625, 750, 1000, 1250, 1500, 1750, 2000, 2500]
+masses = [175, 250, 375, 500, 625, 750, 1000, 1250, 1500, 1750, 2000, 2500, 3000, 3500, 4000, 4500, 5000]
 #masses = [250]
-#channels = ['Electron', 'Muon', 'Tau', 'ElMu']
-channels = ['Tau']
+channels = ['Electron', 'Muon', 'Tau', 'MuonEG']
+#channels = ['Tau']
 
 for mass in masses:
     for channel in channels:
@@ -41,7 +41,7 @@ for mass in masses:
         f_jdl = open(jdlname, "w+")
         f_jdl.write('universe = vanilla\n')
         f_jdl.write('Executable = %s\n' % (shname))
-        f_jdl.write('request_memory = 5000\n')
+        if channel=="Tau": f_jdl.write('request_memory = 5000\n')
         f_jdl.write('Should_Transfer_Files = YES\n')
         f_jdl.write('Transfer_Input_Files = ../analysis/runAllWrapper.c, ../analysis/addOverflow.h\n')
         f_jdl.write('Transfer_Output_Files = %s_m%d.root, %s_m%d.pdf\n' % (channel, mass, channel, mass))

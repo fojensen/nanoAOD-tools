@@ -18,7 +18,7 @@ data['people'].append({
 data['people'].append({
     'name': 'Taustar_m250_2017',
     'inputDataset': '/Taustar_TauG_L10000_m250_CP5_13TeV_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM',
-    'nEvents': '5000',
+    'nEvents': '50000',
     'nFiles': '1',
     'isMC': isMC_,
     'xs': '0.02135',
@@ -48,7 +48,7 @@ data['people'].append({
 data['people'].append({
     'name': 'Taustar_m625_2017',
     'inputDataset': '/Taustar_TauG_L10000_m625_CP5_13TeV_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM',
-    'nEvents': '5000',
+    'nEvents': '50000',
     'nFiles': '1',
     'isMC': isMC_,
     'xs': '0.009072',
@@ -122,6 +122,46 @@ data['people'].append({
     'nFiles': '1',
     'isMC': isMC_,
     'xs': '0.0001862',
+    'year': year
+})
+
+data['people'].append({
+   'name': 'Taustar_m3000_2017',
+   'inputDataset': '/Taustar_TauG_L10000_m3000_CP5_13TeV_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM',
+   'nEvents': '50000',
+   'nFiles': '1',
+   'isMC': isMC_,
+   'xs': '6.429e-05',
+   'year': year
+})
+
+data['people'].append({
+    'name': 'Taustar_m3500_2017',
+    'inputDataset': '/Taustar_TauG_L10000_m3500_CP5_13TeV_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '1',
+    'isMC': isMC_,
+    'xs': '2.23e-05',
+    'year': year
+})
+
+data['people'].append({
+    'name': 'Taustar_m4000_2017',
+    'inputDataset': '/Taustar_TauG_L10000_m4000_CP5_13TeV_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '1',
+    'isMC': isMC_,
+    'xs': '8.056e-06',
+    'year': year
+})
+
+data['people'].append({
+    'name': 'Taustar_m4500_2017',
+    'inputDataset': '/Taustar_TauG_L10000_m4500_CP5_13TeV_pythia8/RunIIFall17NanoAODv7-PU2017_12Apr2018_Nano02Apr2020_102X_mc2017_realistic_v8-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '1',
+    'isMC': isMC_,
+    'xs': '3.009e-06',
     'year': year
 })
 

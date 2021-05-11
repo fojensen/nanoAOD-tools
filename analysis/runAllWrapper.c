@@ -38,18 +38,24 @@ class runAnalysis {
       TH1D *h_Taustar_m175[5], *h_Taustar_m250[4], *h_Taustar_m375[4], *h_Taustar_m500[4], *h_Taustar_m625[4], *h_Taustar_m750[4];
       TH1D *h_Taustar_m1000[4], *h_Taustar_m1250[4], *h_Taustar_m1500[4], *h_Taustar_m1750[4];
       TH1D *h_Taustar_m2000[4], *h_Taustar_m2500[4];
+      TH1D *h_Taustar_m3000[4], *h_Taustar_m3500[4];
+      TH1D *h_Taustar_m4000[4], *h_Taustar_m4500[4];
+      TH1D *h_Taustar_m5000[4];
 
       TH1D *h_data[4];
       TH1D *h_ABCD[4];
       TH1D *h_mcsum[4];
       TH1D *h_bkgsum, *h_bkgsum_inc;
-      TH1D *h_bkgpsig, *h_bkgpsig_inc;
+      TH1D *h_bps_0p01, *h_bps_0p01_inc;
+      TH1D *h_bps_0p1, *h_bps_0p1_inc;
+      TH1D *h_bps_0p5, *h_bps_0p5_inc;
+      TH1D *h_bps_1, *h_bps_1_inc;
       TH1D *h_CoD, *h_CoD_inc;
       TH1D *h_BCoD, *h_BCoD_inc;
       const int nmc = 12;
       TString mctags[12];
-      const int nsig = 12;
-      TString sigtags[12];
+      const int nsig = 17;
+      TString sigtags[17];
 };
 
 void plotControlRegions(const TString channel, const int mass, const bool blindA)
@@ -270,17 +276,17 @@ void plotControlRegions(const TString channel, const int mass, const bool blindA
 
    }
    char outfile[50];
-   sprintf(outfile, "%s_%d.pdf", channel.Data(), mass);
+   sprintf(outfile, "%s_m%d.pdf", channel.Data(), mass);
    canvas->SaveAs(outfile);
 }
 
 TString makeVar(const double mass, const TString channel)
 {std::cout << "makeString() " <<  mass << " " << channel << std::endl;
-   
+
    char outstring[1000];
-   const double upper=mass+100.;
-   const double lower=mass-100.;
-   
+   const double upper=mass+0.5*mass;
+   const double lower=mass-0.5*mass;
+
    if (channel=="Electron") {
       sprintf(outstring,
       "(ElTau_MaxCollMass<%f)?1 : (ElTau_MinCollMass>=%f)?4 : (ElTau_MaxCollMass>=%f&&ElTau_MinCollMass<%f)?3 : ((ElTau_MaxCollMass>=%f&&ElTau_MaxCollMass<%f)||(ElTau_MinCollMass>=%f&&ElTau_MinCollMass<%f))?2 : 0",
@@ -325,6 +331,9 @@ void runAnalysis::runAll()
    var = makeVar(mass, channel);
    h = new TH1D("h", ";analysis bin;events / bin", 5, -0.5, 4.5);
 
+   //var = "1.";
+   //h = new TH1D("h", ";the unit bin;events", 1, 0.5, 1.5);
+
    if (channel=="Muon") h->SetTitle("#mu + #tau_{h}");
    if (channel=="Electron") h->SetTitle("e + #tau_{h}");
    if (channel=="Tau") h->SetTitle("#tau_{h} + #tau_{h}");
@@ -355,6 +364,11 @@ void runAnalysis::runAll()
    sigtags[9] = "Taustar_m1750";
    sigtags[10] = "Taustar_m2000";
    sigtags[11] = "Taustar_m2500";
+   sigtags[12] = "Taustar_m3000";
+   sigtags[13] = "Taustar_m3500";
+   sigtags[14] = "Taustar_m4000";
+   sigtags[15] = "Taustar_m4500";
+   sigtags[16] = "Taustar_m5000";
 
    char fname[100];
    sprintf(fname, "%s_m%d.root", channel.Data(), mass);
@@ -425,6 +439,11 @@ void runAnalysis::histInit()
       h_Taustar_m1750[i] = (TH1D*)h->Clone("h_Taustar_m1750_"+labels[i]);
       h_Taustar_m2000[i] = (TH1D*)h->Clone("h_Taustar_m2000_"+labels[i]);
       h_Taustar_m2500[i] = (TH1D*)h->Clone("h_Taustar_m2500_"+labels[i]);
+      h_Taustar_m3000[i] = (TH1D*)h->Clone("h_Taustar_m3000_"+labels[i]);
+      h_Taustar_m3500[i] = (TH1D*)h->Clone("h_Taustar_m3500_"+labels[i]);
+      h_Taustar_m4000[i] = (TH1D*)h->Clone("h_Taustar_m4000_"+labels[i]);
+      h_Taustar_m4500[i] = (TH1D*)h->Clone("h_Taustar_m4500_"+labels[i]);
+      h_Taustar_m5000[i] = (TH1D*)h->Clone("h_Taustar_m5000_"+labels[i]);
    }
 }
 
@@ -453,7 +472,7 @@ void runAnalysis::loadCuts(const int year, TCut cuts[4])
    }
    if (channel=="Tau") {
       //baseline = baseline && TCut("TauTau_HavePair>0 && (TauTau_HaveTriplet==0||(TauTau_HaveTriplet>0&&Photon_pt[TauTau_PhotonIdx]<25.))");
-      baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=100.");
+      baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=75.");
       //baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]<25.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("TauTau_Trigger");
@@ -495,7 +514,7 @@ void runAnalysis::loadCuts(const int year, TCut cuts[4])
       regionC = "ElTau_qq==+1 && (32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
       regionD = "ElTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
    }
-   if (channel=="ElMu") {
+   if (channel=="MuonEG") {
       //baseline = baseline && TCut("ElMu_HavePair>0 && (ElMu_HaveTriplet==0||(ElMu_HaveTriplet>0&&Photon_pt[ElMu_PhotonIdx]<25.))");
       baseline = baseline && TCut("ElMu_HaveTriplet>0 && Photon_pt[ElMu_PhotonIdx]>=100.");
       //baseline = baseline && TCut("ElMu_HaveTriplet>0 && Photon_pt[ElMu_PhotonIdx]<25.");
@@ -604,7 +623,11 @@ void runAnalysis::fillDataHists(const int year)
    const TString eostag = "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_16042021/";
    for (auto i = letters.begin(); i != letters.end(); ++i) {
       char infile[100];
-      sprintf(infile, "%s/%s%s_%d.root", eostag.Data(), channel.Data(), i->Data(), year);
+      if (channel=="MuonEG") {
+         sprintf(infile, "%s/%s%s_%d.root", eostag.Data(), "ElMu", i->Data(), year);
+      } else {
+         sprintf(infile, "%s/%s%s_%d.root", eostag.Data(), channel.Data(), i->Data(), year);
+      }
       //std::cout << infile << std::endl;
       TFile * f = TFile::Open(infile);
       TTree * t = (TTree*)f->Get("Events");
@@ -649,6 +672,11 @@ void runAnalysis::addOverflowToHists()
       addOverflow(h_Taustar_m1750[i]);
       addOverflow(h_Taustar_m2000[i]);
       addOverflow(h_Taustar_m2500[i]);
+      addOverflow(h_Taustar_m3000[i]);
+      addOverflow(h_Taustar_m3500[i]);
+      addOverflow(h_Taustar_m4000[i]);
+      addOverflow(h_Taustar_m4500[i]);
+      addOverflow(h_Taustar_m5000[i]);
    }
 }
 
@@ -743,8 +771,15 @@ void runAnalysis::sumBkgHists()
    h_bkgsum = (TH1D*)h_mcsum[0]->Clone("h_bkgsum");
    h_bkgsum->Add(h_BCoD);
 
-   h_bkgpsig_inc = (TH1D*)h_bkgsum_inc->Clone("h_bkgpsig_inc");  
-   h_bkgpsig = (TH1D*)h_bkgsum->Clone("h_bkgpsig");
+   h_bps_0p1_inc = (TH1D*)h_bkgsum_inc->Clone("h_bps_0p1_inc");
+   h_bps_0p1 = (TH1D*)h_bkgsum->Clone("h_bps_0p1");
+
+   h_bps_0p5_inc = (TH1D*)h_bkgsum_inc->Clone("h_bps_0p5_inc");
+   h_bps_0p5 = (TH1D*)h_bkgsum->Clone("h_bps_0p5");
+
+   h_bps_1_inc = (TH1D*)h_bkgsum_inc->Clone("h_bps_1_inc");
+   h_bps_1 = (TH1D*)h_bkgsum->Clone("h_bps_1");
+
    TH1D * h_temp = (TH1D*)h->Clone("h_temp");;
    if (mass==175) h_temp = (TH1D*)h_Taustar_m175[0]->Clone("h_temp");
    if (mass==250) h_temp = (TH1D*)h_Taustar_m250[0]->Clone("h_temp");
@@ -758,13 +793,30 @@ void runAnalysis::sumBkgHists()
    if (mass==1750) h_temp = (TH1D*)h_Taustar_m1750[0]->Clone("h_temp");
    if (mass==2000) h_temp = (TH1D*)h_Taustar_m2000[0]->Clone("h_temp");
    if (mass==2500) h_temp = (TH1D*)h_Taustar_m2500[0]->Clone("h_temp");
-   h_temp->Scale(0.5);
-   h_bkgpsig_inc->Add(h_temp);
-   h_bkgpsig->Add(h_temp);
+   if (mass==3000) h_temp = (TH1D*)h_Taustar_m3000[0]->Clone("h_temp");
+   if (mass==3500) h_temp = (TH1D*)h_Taustar_m3500[0]->Clone("h_temp");
+   if (mass==4000) h_temp = (TH1D*)h_Taustar_m4000[0]->Clone("h_temp");
+   if (mass==4500) h_temp = (TH1D*)h_Taustar_m4500[0]->Clone("h_temp");
+   if (mass==5000) h_temp = (TH1D*)h_Taustar_m5000[0]->Clone("h_temp");
+
+   h_bps_1_inc->Add(h_temp);
+   h_bps_1->Add(h_temp);
+
+   h_temp->Scale(0.01);
+   h_bps_0p01_inc->Add(h_temp);
+   h_bps_0p01->Add(h_temp);
+
+   h_temp->Scale(100 * 0.1);
+   h_bps_0p1_inc->Add(h_temp);
+   h_bps_0p1->Add(h_temp);
+
+   h_temp->Scale(5.);
+   h_bps_0p5_inc->Add(h_temp);
+   h_bps_0p5->Add(h_temp);
 }
 
 void runAnalysis::bkgFraction()
-{std::cout << "bkgFraction()" << std::endl;  
+{std::cout << "bkgFraction()" << std::endl;
    
    const TString labels[4] = {"A", "B", "C", "D"};
    std::cout << "expected background fractions: ; # of entries" << std::endl;
@@ -817,8 +869,10 @@ void runAnalysis::saveHists()
    }
    h_bkgsum->Write();
    h_bkgsum_inc->Write();
-   h_bkgpsig->Write();
-   h_bkgpsig_inc->Write();
+   h_bps_0p01->Write(); h_bps_0p01_inc->Write();
+   h_bps_0p1->Write(); h_bps_0p1_inc->Write();
+   h_bps_0p5->Write(); h_bps_0p5_inc->Write();
+   h_bps_1->Write(); h_bps_1_inc->Write();
    h_CoD->Write();
    h_BCoD->Write();
    h_CoD_inc->Write();
@@ -836,6 +890,11 @@ void runAnalysis::saveHists()
       h_Taustar_m1750[i]->Write();
       h_Taustar_m2000[i]->Write();
       h_Taustar_m2500[i]->Write();
+      h_Taustar_m3000[i]->Write();
+      h_Taustar_m3500[i]->Write();
+      h_Taustar_m4000[i]->Write();
+      h_Taustar_m4500[i]->Write();
+      h_Taustar_m5000[i]->Write();
    }
 }
 

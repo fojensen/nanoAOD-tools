@@ -12,7 +12,7 @@ TFile * makeHists(const TString datatag, const int year, const TString channel, 
 {
    std::cout << "*** makeHists() " << datatag << ", " << year << ", " << channel << std::endl;
    char finname[200];
-   sprintf(finname, "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_11042021/%s.root", datatag.Data());
+   sprintf(finname, "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_16042021/%s.root", datatag.Data());
    TFile * infile = TFile::Open(finname);
  
    char foutname[200];
@@ -44,13 +44,13 @@ TFile * makeHists(const TString datatag, const int year, const TString channel, 
       if (year==2016) baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=26.");
       if (year==2017) baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=29.");
       if (year==2018) baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=29.");
-      baseline = baseline && TCut("MuTau_Mass>=91.1876");
+      baseline = baseline && TCut("MuTau_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==1");
-      regionA = "MuTau_qq==-1 && (64&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
-      regionB = "MuTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(64&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
-      regionC = "MuTau_qq==+1 && (64&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
-      regionD = "MuTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(64&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
+      regionA = "MuTau_qq==-1 && (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
+      regionB = "MuTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
+      regionC = "MuTau_qq==+1 && (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
+      regionD = "MuTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
       if (blindA) regionA = regionA && TCut("Photon_pt[MuTau_PhotonIdx]<0.");
    }
    if (channel=="Tau") {
@@ -59,12 +59,12 @@ TFile * makeHists(const TString datatag, const int year, const TString channel, 
       varmin = "TauTau_MinCollMass";
       varmax = "TauTau_MaxCollMass";
       //baseline = baseline && TCut("TauTau_HavePair>0 && (TauTau_HaveTriplet==0||(TauTau_HaveTriplet>0&&Photon_pt[TauTau_PhotonIdx]<25.))");
-      baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=100.");
+      baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=75.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("TauTau_Trigger");
       baseline = baseline && TCut("Tau_pt[TauTau_Tau0Idx]>=40. && TMath::Abs(Tau_eta[TauTau_Tau0Idx])<2.1");
       baseline = baseline && TCut("Tau_pt[TauTau_Tau1Idx]>=40. && TMath::Abs(Tau_eta[TauTau_Tau1Idx])<2.1");
-      baseline = baseline && TCut("TauTau_Mass>=91.1876");
+      baseline = baseline && TCut("TauTau_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==0");
       const TCut tau0pass = "(32&Tau_idDeepTau2017v2p1VSjet[TauTau_Tau0Idx])";
@@ -90,16 +90,16 @@ TFile * makeHists(const TString datatag, const int year, const TString channel, 
       if (year==2016) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=29.");
       if (year==2017) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
       if (year==2018) baseline = baseline && TCut("Electron_pt[ElTau_ElIdx]>=34.");
-      baseline = baseline && TCut("ElTau_Mass>=91.1876");
+      baseline = baseline && TCut("ElTau_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==1");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==0");
-      regionA = "ElTau_qq==-1 && (64&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
-      regionB = "ElTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(64&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
-      regionC = "ElTau_qq==+1 && (64&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
-      regionD = "ElTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(64&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
+      regionA = "ElTau_qq==-1 && (32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
+      regionB = "ElTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
+      regionC = "ElTau_qq==+1 && (32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
+      regionD = "ElTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
       if (blindA) regionA = regionA && TCut("Photon_pt[ElTau_PhotonIdx]<25.");
    }
-   if (channel=="ElMu") {
+   if (channel=="MuonEG") {
       title = "e + #mu";
       var = "ElMu_MaxCollMass:ElMu_MinCollMass";
       varmin = "ElMu_MinCollMass";
@@ -112,7 +112,7 @@ TFile * makeHists(const TString datatag, const int year, const TString channel, 
       const TCut c1 = "Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=13.";
       const TCut c2 = "Electron_pt[ElMu_ElIdx]>=13. && Muon_pt[ElMu_MuIdx]>=24.";
       baseline = baseline && (c1||c2);
-      baseline = baseline && TCut("ElMu_Mass>=91.1876");
+      baseline = baseline && TCut("ElMu_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==1");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=2)==1");
       regionA = "ElMu_qq==-1 && Muon_pfIsoId[ElMu_MuIdx]>=4";

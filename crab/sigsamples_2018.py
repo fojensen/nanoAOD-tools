@@ -126,6 +126,46 @@ data['people'].append({
 })
 
 data['people'].append({
+   'name': 'Taustar_m3000_2018',
+   'inputDataset': '/Taustar_TauG_L10000_m3000_CP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+   'nEvents': '50000',
+   'nFiles': '6',
+   'isMC': isMC_,
+   'xs': '6.429e-05',
+   'year': year
+})
+
+data['people'].append({
+    'name': 'Taustar_m3500_2018',
+    'inputDataset': '/Taustar_TauG_L10000_m3500_CP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '3',
+    'isMC': isMC_,
+    'xs': '2.23e-05',
+    'year': year
+})
+
+data['people'].append({
+    'name': 'Taustar_m4000_2018',
+    'inputDataset': '/Taustar_TauG_L10000_m4000_CP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '6',
+    'isMC': isMC_,
+    'xs': '8.056e-06',
+    'year': year
+})
+
+data['people'].append({
+    'name': 'Taustar_m4500_2018',
+    'inputDataset': '/Taustar_TauG_L10000_m4500_CP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '50000',
+    'nFiles': '14',
+    'isMC': isMC_,
+    'xs': '3.009e-06',
+    'year': year
+})
+
+data['people'].append({
     'name': 'Taustar_m5000_2018',
     'inputDataset': '/Taustar_TauG_L10000_m5000_CP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
     'nEvents': '50000',
