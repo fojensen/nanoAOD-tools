@@ -239,5 +239,65 @@ data['people'].append({
 #    'xs': '0.2',
 #})
 
+data['people'].append({
+    'name' : 'GJets_HT40To100_2016',
+    'inputDataset': '/GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
+    'nEvents': '9082742',
+    'nFiles': '44',
+    'isMC': isMC_,
+    'xs': '9249.0',
+    'year': year
+})
+
+data['people'].append({
+    'name' : 'GJets_HT100To200_2016',
+    'inputDataset': '/GJets_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-4cores5k_106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
+    'nEvents': '9882256',
+    'nFiles': '11',
+    'isMC': isMC_,
+    'xs': '9249.0',
+    'year': year  
+})
+
+data['people'].append({
+   'name': 'GJets_HT200To400_2016',
+   'inputDataset': '/GJets_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
+   'nEvents': '19874909',
+   'nFiles': '43',
+   'isMC': isMC_,
+   'xs': '2321.0',
+   'year': year
+})
+
+data['people'].append({
+    'name' : 'GJets_HT400To600_2016',
+    'inputDataset': '/GJets_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
+    'nEvents': '4629781',
+    'nFiles': '7',
+    'isMC': isMC_,
+    'xs': '275.2',
+    'year': year
+})
+
+data['people'].append({
+    'name' : 'GJets_HT600ToInf_2016',
+    'inputDataset': '/GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
+    'nEvents': '4366096',
+    'nFiles': '6',
+    'isMC': isMC_,
+    'xs': '93.19',
+    'year': year
+})
+
+data['people'].append({
+    'name' : 'WGToLNuG_2016',
+    'inputDataset': '/WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
+    'nEvents': '8394172',
+    'nFiles': '5',
+    'isMC': isMC_,
+    'xs': '489.0',
+    'year': year
+})
+
 with open('mcsamples_2016.json', 'w') as outfile:
    json.dump(data, outfile)

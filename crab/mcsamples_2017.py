@@ -164,6 +164,17 @@ data['people'].append({
     'xs': '0.6008', #ra2b: 16.523
     'year': year
 })
+
+data['people'].append({
+    'name' : 'WGToLNuG_2017',
+    'inputDataset': '/WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM',
+    'nEvents': '10266079',
+    'nFiles': '9',
+    'isMC': isMC_,
+    'xs': '489.0',
+    'year': year
+})
+
 """
 data['people'].append({
    'name' : 'WJetsToLNu_2017',
