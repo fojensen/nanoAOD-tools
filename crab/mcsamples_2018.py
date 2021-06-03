@@ -4,7 +4,7 @@ data = {}
 data['people'] = []
 isMC_ = True
 year = "2018"
-
+"""
 data['people'].append({
     'name': 'DYJetsToLL_M10to50_2018',
     'inputDataset': '/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
@@ -164,16 +164,7 @@ data['people'].append({
     'xs': '0.6008',
     'year': year
 })
-
-data['people'].append({
-    'name': 'QCD_Mu15_2018',
-    'inputDataset': '/QCD_Pt-20toInf_MuEnrichedPt15_TuneCP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
-    'nEvents': '22165320',
-    'nFiles': '38',
-    'isMC': isMC_,
-    'xs': '239400.0',
-    'year': year
-})
+"""
 
 data['people'].append({
     'name' : 'WGToLNuG_2018',
@@ -185,7 +176,6 @@ data['people'].append({
     'year': year
 })
 
-"""
 data['people'].append({
    'name' : 'WJetsToLNu_2018',
    'inputDataset': '/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
@@ -260,5 +250,15 @@ data['people'].append({
 #    'xs': '0.2',
 #})
 
+data['people'].append({
+    'name': 'QCD_Mu15_2018',
+    'inputDataset': '/QCD_Pt-20toInf_MuEnrichedPt15_TuneCP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+    'nEvents': '22165320',
+    'nFiles': '38',
+    'isMC': isMC_,
+    'xs': '239400.0',
+    'year': year
+})
+"""
 with open('mcsamples_2018.json', 'w') as outfile:
    json.dump(data, outfile)

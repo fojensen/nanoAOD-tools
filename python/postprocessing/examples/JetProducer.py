@@ -79,16 +79,16 @@ class JetProducer(Module):
                         photon = photons[event.MuTau_PhotonIdx]
                         dr_3 = abs(deltaPhi(jet, photon))>=0.28284271 and abs(jet.eta-photon.eta)>=0.28284271
 
-                if event.ElTau_ElIdx>=0 and event.ElTau_TauIdx>=0:
+                if event.ETau_EIdx>=0 and event.ETau_TauIdx>=0:
                     havePair = True
-                    el = electrons[event.ElTau_ElIdx]
-                    tau = taus[event.ElTau_TauIdx]
+                    el = electrons[event.ETau_EIdx]
+                    tau = taus[event.ETau_TauIdx]
                     dr_1 = abs(deltaPhi(jet, el))>=0.28284271 and abs(jet.eta-el.eta)>=0.28284271
                     dr_2 = abs(deltaPhi(jet, tau))>=0.28284271 and abs(jet.eta-tau.eta)>=0.28284271
-                    if event.ElTau_PhotonIdx>=0:
+                    if event.ETau_PhotonIdx>=0:
                         havePair = False
                         haveTriplet = True
-                        photon = photons[event.ElTau_PhotonIdx]
+                        photon = photons[event.ETau_PhotonIdx]
                         dr_3 = abs(deltaPhi(jet, photon))>=0.28284271 and abs(jet.eta-photon.eta)>=0.28284271
 
                 if event.TauTau_Tau0Idx>=0 and event.TauTau_Tau1Idx>=0:
@@ -103,16 +103,16 @@ class JetProducer(Module):
                         photon = photons[event.TauTau_PhotonIdx]
                         dr_3 = abs(deltaPhi(jet, photon))>=0.28284271 and abs(jet.eta-photon.eta)>=0.28284271
 
-                if event.ElMu_ElIdx>=0 and event.ElMu_MuIdx>=0:
+                if event.EMu_EIdx>=0 and event.EMu_MuIdx>=0:
                     havePair = True
-                    el = electrons[event.ElMu_ElIdx]
-                    mu = muons[event.ElMu_MuIdx]
+                    el = electrons[event.EMu_EIdx]
+                    mu = muons[event.EMu_MuIdx]
                     dr_1 = abs(deltaPhi(jet, el))>=0.28284271 and abs(jet.eta-el.eta)>=0.28284271
                     dr_2 = abs(deltaPhi(jet, mu))>=0.28284271 and abs(jet.eta-mu.eta)>=0.28284271
-                    if event.ElMu_PhotonIdx>=0:
+                    if event.EMu_PhotonIdx>=0:
                         havePair = False
                         haveTriplet = True
-                        photon = photons[event.ElMu_PhotonIdx]
+                        photon = photons[event.EMu_PhotonIdx]
                         dr_3 = abs(deltaPhi(jet, photon))>=0.28284271 and abs(jet.eta-photon.eta)>=0.28284271
 
                 nJetinc = nJetinc + 1

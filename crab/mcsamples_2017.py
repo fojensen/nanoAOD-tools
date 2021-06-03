@@ -4,7 +4,7 @@ data = {}
 data['people'] = []
 isMC_ = True
 year = '2017'
-
+"""
 data['people'].append({
     'name': 'DYJetsToLL_M10to50_2017',
     'inputDataset': '/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM',
@@ -164,7 +164,7 @@ data['people'].append({
     'xs': '0.6008', #ra2b: 16.523
     'year': year
 })
-
+"""
 data['people'].append({
     'name' : 'WGToLNuG_2017',
     'inputDataset': '/WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM',
@@ -175,7 +175,6 @@ data['people'].append({
     'year': year
 })
 
-"""
 data['people'].append({
    'name' : 'WJetsToLNu_2017',
    'inputDataset': '/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM',
@@ -225,6 +224,7 @@ data['people'].append({
    'xs': '448.896',
    'year': year
 })
+
 """
 #data['people'].append({
 #    'name': 'EWKZ2Jets_ZToLL_M50',
@@ -250,7 +250,7 @@ data['people'].append({
 #    'xs': '0.2',
 #})
 
-"""data['people'].append({
+data['people'].append({
     'name': 'GluGluHToZG_2017',
     'inputDataset': '/GluGluHToZG_M-125_TuneCP5_13TeV-powheg-pythia8/RunIISummer19UL17NanoAODv2-106X_mc2017_realistic_v8-v1/NANOAODSIM',
     'nEvents': '400000',

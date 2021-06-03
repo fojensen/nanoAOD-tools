@@ -27,6 +27,7 @@ class runAnalysis {
       void sumMCHists();
       void sumBkgHists();
       void bkgFraction();
+      void fillKappa();
       void saveHists();
 
       TString channel;
@@ -38,6 +39,7 @@ class runAnalysis {
       
       TH1D *h_truetautau[4], *h_realtau[4], *h_lfaketau[4];
       TH1D *h_jetfaketau[4];
+      TH1D *h_kappa, *h_kappa_inc;
 
       /*TH1D *h_WW[4], *h_WZ[4], *h_ZZ[4];
       TH1D *h_TTTo2L2Nu[4], *h_TTToSemiLeptonic[4];
@@ -84,9 +86,8 @@ void plotControlRegions(const TString channel, const int mass, const bool blindA
 
    TH1D *h_bkgsum_inc = (TH1D*)f->Get("h_bkgsum_inc");
    TH1D *h_BCoD_inc = (TH1D*)f->Get("h_BCoD_inc");
-
    TH1D *h_bkgsum = (TH1D*)f->Get("h_bkgsum");
-   TH1D *h_BCoD_binned = (TH1D*)f->Get("h_BCoD");
+   TH1D *h_BCoD = (TH1D*)f->Get("h_BCoD");
 
    TString title;
    if (channel=="Muon") title="#mu + #tau_{h}";
@@ -132,6 +133,8 @@ void plotControlRegions(const TString channel, const int mass, const bool blindA
 
    h_BCoD_inc->SetFillColor(207);
    s[0]->Add(h_BCoD_inc);
+   //h_BCoD->SetFillColor(207);
+   //s[0]->Add(h_BCoD);
 
    const double ymax = pow(10, ceil(log10(max))+1);
    double ymin = 0.01;
@@ -152,7 +155,8 @@ void plotControlRegions(const TString channel, const int mass, const bool blindA
 
    TLegend *lBCD = (TLegend*)lA->Clone();
    
-   lA->AddEntry(h_BCoD_inc, "jet", "F");
+   lA->AddEntry(h_BCoD_inc, "BC/D (inc)", "F");
+   //lA->AddEntry(h_BCoD, "BC/D", "F");
    if (!blindA) lA->AddEntry(h_data[0], "data", "P");
    lBCD->AddEntry(h_data[1], "data", "P");
 
@@ -210,14 +214,49 @@ void plotControlRegions(const TString channel, const int mass, const bool blindA
    ldown->Draw();
 
    if (!blindA) {
+
+      TCanvas * c2 = new TCanvas("c2", "", 400, 400);
+
+      TH1D * h_kappa = (TH1D*)f->Get("h_kappa");
+      h_kappa->SetMarkerStyle(20);
+      h_kappa->SetMarkerColor(8);
+      h_kappa->SetLineColor(8);
+      h_kappa->Draw("PE");
+      //h_kappa->SetMinimum(0.);
+      //h_kappa->SetMaximum(2.);
+      h_kappa->SetStats(0);
+
+      TH1D * h_kappa_inc = (TH1D*)f->Get("h_kappa_inc");
+      h_kappa_inc->SetMarkerStyle(20);
+      h_kappa_inc->SetMarkerColor(9);
+      h_kappa_inc->SetLineColor(9);
+      h_kappa_inc->Draw("PE, SAME");
+
+      TLegend * l3 = new TLegend(0.25, 0.75, 0.875, 0.875);
+      l3->SetBorderSize(0);
+      l3->SetNColumns(2);
+      l3->AddEntry(h_kappa, "binned #kappa", "P");
+      l3->AddEntry(h_kappa_inc, "inclusive #kappa", "P");
+      l3->Draw();
+
+      TLine * line2 = new TLine(h_kappa->GetBinLowEdge(1), 1., h_kappa->GetBinLowEdge(h_kappa->GetNbinsX()+1), 1.);
+      line2->SetLineStyle(2);
+      line2->Draw();
+
+      char outfile2[50];
+      sprintf(outfile2, "%s_m%d_kappa.pdf", channel.Data(), mass);
+      c2->SaveAs(outfile2);
+   }
+
+   if (!blindA) {
       canvas->cd(1);
 
       TH1D * r = (TH1D*)h_data[0]->Clone("r");
       r->Divide(h_bkgsum);
-      r->GetYaxis()->SetTitle("observed / prediction");
+      r->GetYaxis()->SetTitle("observed / predicted");
       r->SetMarkerStyle(20);
-      r->SetMarkerColor(8);
-      r->SetLineColor(8);
+      r->SetMarkerColor(6);
+      r->SetLineColor(6);
       r->Draw("PE");
       r->SetStats(0);
       r->SetMinimum(0.);
@@ -226,15 +265,29 @@ void plotControlRegions(const TString channel, const int mass, const bool blindA
       TH1D * r_inc = (TH1D*)h_data[0]->Clone("r_inc");
       r_inc->Divide(h_bkgsum_inc);
       r_inc->SetMarkerStyle(20);
-      r_inc->SetMarkerColor(9);
-      r_inc->SetLineColor(9);
+      r_inc->SetMarkerColor(7);
+      r_inc->SetLineColor(7);
       r_inc->Draw("PE, SAME");
+
+      /*TH1D * h_kappa_inc = (TH1D*)f->Get("h_kappa_inc");
+      h_kappa_inc->SetMarkerStyle(94);
+      h_kappa_inc->SetMarkerColor(8);
+      h_kappa_inc->SetLineColor(8);
+      h_kappa_inc->Draw("PE, SAME");
+
+      TH1D * h_kappa = (TH1D*)f->Get("h_kappa");
+      h_kappa->SetMarkerStyle(94);
+      h_kappa->SetMarkerColor(9);
+      h_kappa->SetLineColor(9);
+      h_kappa->Draw("PE, SAME");*/
 
       TLegend * l2 = new TLegend(0.25, 0.75, 0.875, 0.875);
       l2->SetBorderSize(0);
       l2->SetNColumns(2);
-      l2->AddEntry(r, "binned C/D ", "P");
       l2->AddEntry(r_inc, "inclusive C/D", "P");
+      l2->AddEntry(r, "binned C/D ", "P");
+      //l2->AddEntry(h_kappa_inc, "inclusive #kappa", "P");
+      //l2->AddEntry(h_kappa, "binned #kappa", "P");
       l2->Draw();
 
       TLine * line = new TLine(r->GetBinLowEdge(1), 1., r->GetBinLowEdge(r->GetNbinsX()+1), 1.);
@@ -508,16 +561,22 @@ void runAnalysis::runAll()
 {std::cout << "runAll()" << std::endl;
 
    //if (channel=="Electron") var = "ElTau_Mass";
-   //if (channel=="Muon") var = "MuTau_Mass";
-   //if (channel=="Tau") var = "TauTau_Mass";
-   //if (channel=="MuonEG") var = "ElMu_Mass";
+   //if (channel=="Muon")     var = "MuTau_Mass";
+   //if (channel=="Tau")      var = "TauTau_Mass";
+   //if (channel=="MuonEG")   var = "ElMu_Mass";
    //h = new TH1D("h", ";visible mass [GeV];events / 10 GeV", 20, 0., 200.);
 
    //var = "MuTau_MinCollMass";
    //h = new TH1D("h", ";min coll mass [GeV];events / 200 GeV", 15, 0., 3000.);
 
-   var = makeVar(mass, channel);
-   h = new TH1D("h", ";analysis bin;events / bin", 5, -0.5, 4.5);
+   //var = makeVar(mass, channel);
+   //h = new TH1D("h", ";analysis bin;events / bin", 5, -0.5, 4.5);
+
+   if (channel=="Electron") var = "Tau_decayMode[ElTau_TauIdx]";
+   if (channel=="Muon")     var = "Tau_decayMode[MuTau_TauIdx]";
+   if (channel=="Tau")      var = "Tau_decayMode[TauTau_Tau0Idx]";
+   if (channel=="MuonEG")   var = "Tau_decayMode[MuTau_TauIdx]";
+   h =  new TH1D("h", ";decayMode;events / bin", 13, -0.5, 12.5);
 
    //var = "TMath::Abs(Photon_eta[MuTau_PhotonIdx])";
    //h = new TH1D("h", ";photon |#eta|;events / bin", 10, 0., 2.5);
@@ -582,8 +641,8 @@ void runAnalysis::runAll()
    sigHistInit();
 
    //fillMCHists(2015);
-   fillMCHists(2016); fillSigHists(2016); fillDataHists(2016);
-   fillMCHists(2017); fillSigHists(2017); fillDataHists(2017);
+   //fillMCHists(2016); fillSigHists(2016); fillDataHists(2016);
+   //fillMCHists(2017); fillSigHists(2017); fillDataHists(2017);
    fillMCHists(2018); fillSigHists(2018); fillDataHists(2018);
 
    dataHistOverflow();
@@ -594,6 +653,7 @@ void runAnalysis::runAll()
    sumMCHists();
    sumBkgHists();
    bkgFraction();
+   if (!blindA) fillKappa();
    saveHists();
    fout->Close();
    plotControlRegions(channel, mass, blindA);
@@ -691,8 +751,8 @@ void runAnalysis::loadCuts(const int year, TCut cuts[4])
    baseline = regionA = regionB = regionC = regionD = "1>0";
    if (channel=="Electron") {
       //baseline = baseline && TCut("ElTau_HavePair>0 && (ElTau_HaveTriplet==0||(ElTau_HaveTriplet>0&&Photon_pt[ElTau_PhotonIdx]<50.))");
-      baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=100.");
-      //baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]<25.");
+      //baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=100.");
+      baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=25. && Photon_pt[ElTau_PhotonIdx]<100.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("ElTau_Trigger");
       baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElTau_ElIdx]");
@@ -709,8 +769,8 @@ void runAnalysis::loadCuts(const int year, TCut cuts[4])
    }
    if (channel=="Muon") {
       //baseline = baseline && TCut("MuTau_HavePair>0 && (MuTau_HaveTriplet==0||(MuTau_HaveTriplet>0&&Photon_pt[MuTau_PhotonIdx]<50.))");
-      baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=100.");
-      //baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]<25.");
+      //baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=100.");
+      baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=25. && Photon_pt[MuTau_PhotonIdx]<100.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("MuTau_Trigger");
       baseline = baseline && TCut("Muon_pfIsoId[MuTau_MuIdx]>=4");
@@ -727,8 +787,8 @@ void runAnalysis::loadCuts(const int year, TCut cuts[4])
    }
    if (channel=="Tau") {
       //baseline = baseline && TCut("TauTau_HavePair>0 && (TauTau_HaveTriplet==0||(TauTau_HaveTriplet>0&&Photon_pt[TauTau_PhotonIdx]<50.))");
-      baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=75.");
-      //baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]<25.");
+      //baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=75.");
+      baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=25. && Photon_pt[TauTau_PhotonIdx]<75.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("TauTau_Trigger");
       baseline = baseline && TCut("Tau_pt[TauTau_Tau0Idx]>=40. && TMath::Abs(Tau_eta[TauTau_Tau0Idx])<2.1");
@@ -1263,6 +1323,24 @@ void runAnalysis::bkgFraction()
    }
 }
 
+void runAnalysis::fillKappa()
+{std::cout << "fillKappa()" << std::endl;
+   h_kappa = (TH1D*)h_ABCD[0]->Clone("h_kappa");
+   h_kappa->Multiply(h_ABCD[3]);
+   h_kappa->Divide(h_ABCD[1]);
+   h_kappa->Divide(h_ABCD[2]);
+
+   double n[4];
+   for (int i = 0; i < 4; ++i ) n[i] = h_ABCD[i]->Integral();
+   const double kappainc = (n[0]*n[3]) / (n[1]*n[2]);
+   const double kappaincerr = 0.;
+   h_kappa_inc = (TH1D*)h_ABCD[0]->Clone("h_kappa_inc");
+   for (int i = 1; i <= h_kappa_inc->GetNbinsX(); ++i) {
+      h_kappa_inc->SetBinContent(i, kappainc);
+      h_kappa_inc->SetBinError(i, kappaincerr);
+   }
+}
+
 void runAnalysis::saveHists()
 {std::cout << "saveHists()" << std::endl;
 
@@ -1324,6 +1402,10 @@ void runAnalysis::saveHists()
       h_Taustar_m4000[i]->Write();
       h_Taustar_m4500[i]->Write();
       h_Taustar_m5000[i]->Write();
+   }
+   if (!blindA) {
+      h_kappa->Write();
+      h_kappa_inc->Write();
    }
 }
 

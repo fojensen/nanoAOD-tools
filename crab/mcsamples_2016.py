@@ -4,7 +4,7 @@ data = {}
 data['people'] = []
 isMC_ = True
 year = '2016'
-
+"""
 data['people'].append({
     'name': 'DYJetsToLL_M10to50_2016',
     'inputDataset': '/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
@@ -165,11 +165,22 @@ data['people'].append({
     'year': year
 })
 
-"""data['people'].append({
+"""
+data['people'].append({
+    'name' : 'WGToLNuG_2016',
+    'inputDataset': '/WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
+    'nEvents': '8394172',
+    'nFiles': '5',
+    'isMC': isMC_,
+    'xs': '489.0',
+    'year': year
+})
+
+data['people'].append({
    'name' : 'WJetsToLNu_2016',
    'inputDataset': '/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
-   'nEvents': '88463979',
-   'nFiles': '62',
+   'nEvents': '81327193',
+   'nFiles': '70',
    'isMC': isMC_,
    'xs': '61526.7',
    'year': year
@@ -214,7 +225,7 @@ data['people'].append({
    'xs': '448.896',
    'year': year
 })
-"""
+
 #data['people'].append({
 #    'name': 'EWKZ2Jets_ZToLL_M50',
 #    'inputDataset': '',
@@ -239,7 +250,7 @@ data['people'].append({
 #    'xs': '0.2',
 #})
 
-data['people'].append({
+"""data['people'].append({
     'name' : 'GJets_HT40To100_2016',
     'inputDataset': '/GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
     'nEvents': '9082742',
@@ -288,16 +299,6 @@ data['people'].append({
     'xs': '93.19',
     'year': year
 })
-
-data['people'].append({
-    'name' : 'WGToLNuG_2016',
-    'inputDataset': '/WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
-    'nEvents': '8394172',
-    'nFiles': '5',
-    'isMC': isMC_,
-    'xs': '489.0',
-    'year': year
-})
-
+"""
 with open('mcsamples_2016.json', 'w') as outfile:
    json.dump(data, outfile)
