@@ -21,6 +21,7 @@ class ElTauProducer(Module):
         self.out.branch("ElTau_qq", "I")
         self.out.branch("ElTau_ElIdx", "I")
         self.out.branch("ElTau_TauIdx", "I")
+        self.out.branch("ElTau_nProng", "I")
         self.out.branch("ElTau_mT", "F")
         self.out.branch("ElTau_Mass", "F")
         self.out.branch("ElTau_CollMass", "F")
@@ -28,10 +29,10 @@ class ElTauProducer(Module):
         self.out.branch("ElTau_ElTauDR", "F")
         self.out.branch("ElTau_Trigger", "O")
         self.out.branch("ElTau_HaveTriplet", "I")
-        self.out.branch("ElTau_ElGammaDR", "F")
+        self.out.branch("ElTau_EGammaDR", "F")
         self.out.branch("ElTau_TauGammaDR", "F")
         self.out.branch("ElTau_PhotonIdx", "I")
-        self.out.branch("ElTau_ElCollMass", "F")
+        self.out.branch("ElTau_ECollMass", "F")
         self.out.branch("ElTau_TauCollMass", "F")
         self.out.branch("ElTau_MinCollMass", "F")
         self.out.branch("ElTau_MaxCollMass", "F")
@@ -53,11 +54,12 @@ class ElTauProducer(Module):
         Pt = 0
         ElTauDR = 0
         HaveTriplet = 0
-        ElGammaDR = TauGammaDR = 0
+        EGammaDR = TauGammaDR = 0
         PhotonIdx = -1
-        TauCollMass = ElCollMass = CollMass = 0
+        TauCollMass = ECollMass = CollMass = 0
         MinCollMass = MaxCollMass = 0
         ETGCollMass = 0
+        nProng = 0
  
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html
         electrons = Collection(event, "Electron")
@@ -77,6 +79,11 @@ class ElTauProducer(Module):
             tauID = (1&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu) and (32&tau.idDeepTau2017v2p1VSe) and not (tau.decayMode==5 or tau.decayMode==6)
             if tau.pt>=20. and abs(tau.eta)<2.3 and tauID:
                 goodTauIdx.append(i)
+        #if len(goodTauIdx)==0:
+        #    for i, tau in enumerate(taus):
+        #        tauID = (1&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu) and (32&tau.idDeepTau2017v2p1VSe)
+        #        if tau.pt>=20. and abs(tau.eta)<2.3 and tauID:
+        #            goodTauIdx.append(i)
 
         goodPhotonIdx = []
         for i, photon in enumerate(photons):
@@ -98,6 +105,8 @@ class ElTauProducer(Module):
                                  qq = el.charge*tau.charge
                                  ElIdx = i
                                  TauIdx = j
+                                 if tau.decayMode==0 or tau.decayMode==1 or tau.decayMode==2: nProng = 1
+                                 if tau.decayMode==10 or tau.decayMode==11 or tau.decayMode==12: nProng = 3
                                  Mass = (el.p4()+tau.p4()).M()
                                  Pt = (el.p4()+tau.p4()).Pt()
                                  HavePair = HavePair + 1
@@ -127,10 +136,10 @@ class ElTauProducer(Module):
                                                      maxphotonpt = photon.pt
                                                      PhotonIdx = k
                                                      TauCollMass = (tau.p4()+nu0+photon.p4()).M()
-                                                     ElCollMass = (el.p4()+nu1+photon.p4()).M()
-                                                     MinCollMass = min(TauCollMass, ElCollMass)
-                                                     MaxCollMass = max(TauCollMass, ElCollMass)
-                                                     ElGammaDR = deltaR(el, photon)
+                                                     ECollMass = (el.p4()+nu1+photon.p4()).M()
+                                                     MinCollMass = min(TauCollMass, ECollMass)
+                                                     MaxCollMass = max(TauCollMass, CollMass)
+                                                     EGammaDR = deltaR(el, photon)
                                                      TauGammaDR = deltaR(tau, photon)
                                                      ETGCollMass = (tau.p4()+nu0+el.p4()+nu1+photon.p4()).M()
 
@@ -150,6 +159,7 @@ class ElTauProducer(Module):
         self.out.fillBranch("ElTau_qq", qq)
         self.out.fillBranch("ElTau_ElIdx", ElIdx)
         self.out.fillBranch("ElTau_TauIdx", TauIdx)
+        self.out.fillBranch("ElTau_nProng", nProng)
         self.out.fillBranch("ElTau_mT", mT)
         self.out.fillBranch("ElTau_Mass", Mass)
         self.out.fillBranch("ElTau_CollMass", CollMass)
@@ -159,10 +169,10 @@ class ElTauProducer(Module):
         self.out.fillBranch("ElTau_HaveTriplet", HaveTriplet)
         self.out.fillBranch("ElTau_PhotonIdx", PhotonIdx)
         self.out.fillBranch("ElTau_TauCollMass", TauCollMass)
-        self.out.fillBranch("ElTau_ElCollMass", ElCollMass)
+        self.out.fillBranch("ElTau_ECollMass", ECollMass)
         self.out.fillBranch("ElTau_MinCollMass", MinCollMass)
         self.out.fillBranch("ElTau_MaxCollMass", MaxCollMass)
-        self.out.fillBranch("ElTau_ElGammaDR", ElGammaDR)
+        self.out.fillBranch("ElTau_EGammaDR", EGammaDR)
         self.out.fillBranch("ElTau_TauGammaDR", TauGammaDR)
         self.out.fillBranch("ElTau_ETGCollMass", ETGCollMass)
         return True, ElIdx, TauIdx, PhotonIdx

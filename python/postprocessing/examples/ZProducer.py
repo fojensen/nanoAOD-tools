@@ -7,6 +7,8 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.eventloop import Module
 from PhysicsTools.NanoAODTools.postprocessing.tools import deltaPhi
 
 class ZProducer(Module):
+    def __init__(self):
+        pass
     def __init__(self, applyFilter_):
         self.applyFilter__ = applyFilter_
     def beginJob(self):
@@ -15,18 +17,18 @@ class ZProducer(Module):
         pass
     def beginFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         self.out = wrappedOutputTree
-        self.out.branch("EE_HavePair", "O")
-        self.out.branch("EE_Mass", "F")
-        self.out.branch("MuMu_HavePair", "O")
-        self.out.branch("MuMu_Mass", "F")
+        #self.out.branch("EE_HavePair", "O")
+        #self.out.branch("EE_Mass", "F")
+        #self.out.branch("MuMu_HavePair", "O")
+        #self.out.branch("MuMu_Mass", "F")
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
 
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
 
-        EE_HavePair = MuMu_HavePair = False
-        EE_Mass = MuMu_Mass = 0
+        #EE_HavePair = MuMu_HavePair = False
+        #EE_Mass = MuMu_Mass = 0
 
         electrons = Collection(event, "Electron")
         for e1 in electrons:
@@ -37,8 +39,9 @@ class ZProducer(Module):
                             if abs(deltaPhi(e1, e2))>=0.28284271 and abs(e1.eta-e2.eta)>=0.28284271:
                                 EE_Mass = (e1.p4()+e2.p4()).M()
                                 if EE_Mass>=50. and EE_Mass<140.:
-                                    if self.applyFilter__: return False
-                                    EE_HavePair = True
+                                    return False
+                                    #if self.applyFilter__: return False
+                                    #EE_HavePair = True
 
         muons = Collection(event, "Muon")
         for mu1 in muons:
@@ -49,13 +52,14 @@ class ZProducer(Module):
                             if abs(deltaPhi(mu1, mu2))>=0.28284271 and abs(mu1.eta-mu2.eta)>=0.28284271:
                                 MuMu_Mass = (mu1.p4()+mu2.p4()).M()
                                 if MuMu_Mass>=50. and MuMu_Mass<140.:
-                                    if self.applyFilter__: return False
-                                    MuMu_HavePair = True
+                                    return False
+                                    #if self.applyFilter__: return False
+                                    #MuMu_HavePair = True
 
-        self.out.fillBranch("EE_HavePair", EE_HavePair)
-        self.out.fillBranch("EE_Mass", EE_Mass)
-        self.out.fillBranch("MuMu_HavePair", MuMu_HavePair)
-        self.out.fillBranch("MuMu_Mass", MuMu_Mass)
+        #self.out.fillBranch("EE_HavePair", EE_HavePair)
+        #self.out.fillBranch("EE_Mass", EE_Mass)
+        #self.out.fillBranch("MuMu_HavePair", MuMu_HavePair)
+        #self.out.fillBranch("MuMu_Mass", MuMu_Mass)
 
         return True
 

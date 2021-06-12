@@ -21,6 +21,8 @@ class TauTauProducer(Module):
         self.out.branch("TauTau_qq", "I")
         self.out.branch("TauTau_Tau0Idx", "I")
         self.out.branch("TauTau_Tau1Idx", "I")
+        self.out.branch("TauTau_Tau0nProng", "I")
+        self.out.branch("TauTau_Tau1nProng", "I")
         self.out.branch("TauTau_mT", "F")
         self.out.branch("TauTau_Mass", "F")
         self.out.branch("TauTau_CollMass", "F")
@@ -58,6 +60,7 @@ class TauTauProducer(Module):
         Tau0CollMass = Tau1CollMass = CollMass = 0
         MinCollMass = MaxCollMass = 0
         TTGCollMass = 0
+        Tau0nProng = Tau1nProng = 0
  
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html
         taus = Collection(event, "Tau")
@@ -69,6 +72,11 @@ class TauTauProducer(Module):
             tauID = (1&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu) and (4&tau.idDeepTau2017v2p1VSe) and not (tau.decayMode==5 or tau.decayMode==6)
             if tau.pt>=20. and abs(tau.eta)<2.3 and tauID:
                 goodTauIdx.append(i)
+        #if len(goodTauIdx)==0:
+        #    for i, tau in enumerate(taus):
+        #        tauID = (1&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu) and (4&tau.idDeepTau2017v2p1VSe)
+        #        if tau.pt>=20. and abs(tau.eta)<2.3 and tauID:
+        #            goodTauIdx.append(i)
 
         goodPhotonIdx = []
         for i, photon in enumerate(photons):
@@ -83,13 +91,18 @@ class TauTauProducer(Module):
             if i in goodTauIdx:
                 for j, tau1 in enumerate(taus):
                     if j in goodTauIdx:
-                        if i>j:
+                        #if i>j:
+                        if tau0.idDeepTau2017v2p1VSjet >= tau1.idDeepTau2017v2p1VSjet: #is this right?
                             if abs(deltaPhi(tau0, tau1))>=0.28284271 and abs(tau0.eta-tau1.eta)>=0.28284271:
                                  if (tau0.idDeepTau2017v2p1VSjet>=maxtau0iso) and (tau1.idDeepTau2017v2p1VSjet>=maxtau1iso):
                                      TauTauDR = deltaR(tau0, tau1)
                                      qq = tau0.charge*tau1.charge
                                      Tau0Idx = i
                                      Tau1Idx = j
+                                     if tau0.decayMode==0  or tau0.decayMode==1  or tau0.decayMode==2:  Tau0nProng = 1
+                                     if tau0.decayMode==10 or tau0.decayMode==11 or tau0.decayMode==12: Tau0nProng = 3
+                                     if tau1.decayMode==0  or tau1.decayMode==1  or tau1.decayMode==2:  Tau1nProng = 1
+                                     if tau1.decayMode==10 or tau1.decayMode==11 or tau1.decayMode==12: Tau1nProng = 3
                                      Mass = (tau0.p4()+tau1.p4()).M()
                                      Pt =   (tau0.p4()+tau1.p4()).Pt()
                                      HavePair = HavePair + 1
@@ -162,6 +175,8 @@ class TauTauProducer(Module):
         self.out.fillBranch("TauTau_HavePair", HavePair)
         self.out.fillBranch("TauTau_qq", qq)
         self.out.fillBranch("TauTau_Tau0Idx", Tau0Idx)
+        self.out.fillBranch("TauTau_Tau0nProng", Tau0nProng)
+        self.out.fillBranch("TauTau_Tau1nProng", Tau1nProng)
         self.out.fillBranch("TauTau_Tau1Idx", Tau1Idx)
         self.out.fillBranch("TauTau_Mass", Mass)
         self.out.fillBranch("TauTau_CollMass", CollMass)

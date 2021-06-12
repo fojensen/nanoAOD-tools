@@ -21,6 +21,7 @@ class MuTauProducer(Module):
         self.out.branch("MuTau_qq", "I")
         self.out.branch("MuTau_MuIdx", "I")
         self.out.branch("MuTau_TauIdx", "I")
+        self.out.branch("MuTau_nProng", "I")
         self.out.branch("MuTau_mT", "F")
         self.out.branch("MuTau_Mass", "F")
         self.out.branch("MuTau_CollMass", "F")
@@ -36,7 +37,7 @@ class MuTauProducer(Module):
         self.out.branch("MuTau_MinCollMass", "F")
         self.out.branch("MuTau_MaxCollMass", "F")
         self.out.branch("MuTau_MTGCollMass", "F")
-
+ 
     def endFile(self, inputFile, outputFile, inputTree, wrappedOutputTree):
         pass
    
@@ -58,6 +59,7 @@ class MuTauProducer(Module):
         TauCollMass = MuCollMass = CollMass = 0
         MinCollMass = MaxCollMass = 0
         MTGCollMass = 0
+        nProng = 0
 
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html
         muons = Collection(event, "Muon")
@@ -77,6 +79,11 @@ class MuTauProducer(Module):
             tauID = (1&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu) and (4&tau.idDeepTau2017v2p1VSe) and not (tau.decayMode==5 or tau.decayMode==6)
             if tau.pt>=20. and abs(tau.eta)<2.3 and tauID:
                 goodTauIdx.append(i)
+        #if len(goodTauIdx)==0:
+        #    for i, tau in enumerate(taus):
+        #        tauID = (1&tau.idDeepTau2017v2p1VSjet) and (8&tau.idDeepTau2017v2p1VSmu) and (4&tau.idDeepTau2017v2p1VSe)
+        #        if tau.pt>=20. and abs(tau.eta)<2.3 and tauID:
+        #            goodTauIdx.append(i)
 
         goodPhotonIdx = []
         for i, photon in enumerate(photons):
@@ -97,6 +104,8 @@ class MuTauProducer(Module):
                                  qq = mu.charge*tau.charge
                                  MuIdx = i
                                  TauIdx = j
+                                 if tau.decayMode==0 or tau.decayMode==1 or tau.decayMode==2: nProng = 1
+                                 if tau.decayMode==10 or tau.decayMode==11 or tau.decayMode==12: nProng = 3
                                  Mass = (mu.p4()+tau.p4()).M()
                                  Pt =  (mu.p4()+tau.p4()).Pt()
                                  HavePair = HavePair + 1
@@ -104,7 +113,7 @@ class MuTauProducer(Module):
                                  mT = math.sqrt(mT)
                                  maxtauiso = tau.idDeepTau2017v2p1VSjet
                                  maxmuiso = mu.pfIsoId
-
+   
                                  #collinear approximation 
                                  nu0 = TLorentzVector()
                                  nu1 = TLorentzVector()
@@ -148,6 +157,7 @@ class MuTauProducer(Module):
         self.out.fillBranch("MuTau_qq", qq)
         self.out.fillBranch("MuTau_MuIdx", MuIdx)
         self.out.fillBranch("MuTau_TauIdx", TauIdx)
+        self.out.fillBranch("MuTau_nProng", nProng)
         self.out.fillBranch("MuTau_mT", mT)
         self.out.fillBranch("MuTau_CollMass", CollMass)
         self.out.fillBranch("MuTau_Mass", Mass)

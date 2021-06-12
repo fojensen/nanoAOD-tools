@@ -27,10 +27,10 @@ class ElMuProducer(Module):
         self.out.branch("ElMu_ElMuDR", "F")
         self.out.branch("ElMu_Trigger", "O")
         self.out.branch("ElMu_HaveTriplet", "I")
-        self.out.branch("ElMu_ElGammaDR", "F")
+        self.out.branch("ElMu_EGammaDR", "F")
         self.out.branch("ElMu_MuGammaDR", "F")
         self.out.branch("ElMu_PhotonIdx", "I")
-        self.out.branch("ElMu_ElCollMass", "F")
+        self.out.branch("ElMu_ECollMass", "F")
         self.out.branch("ElMu_MuCollMass", "F")
         self.out.branch("ElMu_MinCollMass", "F")
         self.out.branch("ElMu_MaxCollMass", "F")
@@ -51,9 +51,9 @@ class ElMuProducer(Module):
         Pt = 0
         ElMuDR = 0
         HaveTriplet = 0
-        ElGammaDR = MuGammaDR = 0
+        EGammaDR = MuGammaDR = 0
         PhotonIdx = -1
-        ElCollMass = MuCollMass = CollMass = 0
+        ECollMass = MuCollMass = CollMass = 0
         MinCollMass = MaxCollMass = 0
         EMGCollMass = 0
 
@@ -66,13 +66,13 @@ class ElMuProducer(Module):
         goodMuonIdx = []
         for i, mu in enumerate(muons):
             muonID = mu.tightId
-            if mu.pt>=8. and abs(mu.eta)<2.4 and muonID:
+            if mu.pt>=23. and abs(mu.eta)<2.4 and muonID:
                 goodMuonIdx.append(i)
 
         goodElectronIdx = []
         for i, el in enumerate(electrons):
             elID = 1>0
-            if el.pt>=12. and abs(el.eta)<2.5 and elID:
+            if el.pt>=23. and abs(el.eta)<2.5 and elID:
                 goodElectronIdx.append(i)
 
         goodPhotonIdx = []
@@ -120,14 +120,14 @@ class ElMuProducer(Module):
                                              if abs(el.eta-photon.eta)>=0.28284271 and abs(mu.eta-photon.eta)>=0.28284271:
                                                  if photon.pt>=maxphotonpt:
                                                      HaveTriplet = HaveTriplet+1
-                                                     ElGammaDR = deltaR(el, photon)
+                                                     EGammaDR = deltaR(el, photon)
                                                      MuGammaDR = deltaR(mu, photon)
                                                      maxphotonpt = photon.pt
                                                      PhotonIdx = k
-                                                     ElCollMass = (el.p4()+nu0+photon.p4()).M()
+                                                     ECollMass = (el.p4()+nu0+photon.p4()).M()
                                                      MuCollMass = (mu.p4()+nu1+photon.p4()).M()
-                                                     MinCollMass = min(ElCollMass, MuCollMass)
-                                                     MaxCollMass = max(ElCollMass, MuCollMass)
+                                                     MinCollMass = min(ECollMass, MuCollMass)
+                                                     MaxCollMass = max(ECollMass, MuCollMass)
                                                      EMGCollMass = (el.p4()+nu0+mu.p4()+nu1+photon.p4()).M()
 
         Trigger = False
@@ -152,10 +152,10 @@ class ElMuProducer(Module):
         self.out.fillBranch("ElMu_ElMuDR", ElMuDR)
         self.out.fillBranch("ElMu_Trigger", Trigger)
         self.out.fillBranch("ElMu_HaveTriplet", HaveTriplet)
-        self.out.fillBranch("ElMu_ElGammaDR", ElGammaDR)
+        self.out.fillBranch("ElMu_EGammaDR", EGammaDR)
         self.out.fillBranch("ElMu_MuGammaDR", MuGammaDR)
         self.out.fillBranch("ElMu_PhotonIdx", PhotonIdx)
-        self.out.fillBranch("ElMu_ElCollMass", ElCollMass)
+        self.out.fillBranch("ElMu_ECollMass", ECollMass)
         self.out.fillBranch("ElMu_MuCollMass", MuCollMass)
         self.out.fillBranch("ElMu_MinCollMass", MinCollMass)
         self.out.fillBranch("ElMu_MaxCollMass", MaxCollMass)
