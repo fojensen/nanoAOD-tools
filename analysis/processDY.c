@@ -426,7 +426,8 @@ void validate(const int year)
 {std::cout << "validate(): " << year << std::endl;
 
    char inbuffer[100];
-   sprintf(inbuffer, "DYJetsToLL_%d.root", year);
+   //sprintf(inbuffer, "DYJetsToLL_%d.root", year);
+   sprintf(inbuffer, "/eos/uscms/store/user/fojensen/cmsdas_16042021/DYJetsToLL_%d.root", year);
    TFile * f = TFile::Open(inbuffer);
    TTree * c_inc = (TTree*)f->Get("Events");
 
@@ -437,12 +438,12 @@ void validate(const int year)
    std::cout << "   # of entries: " << n_inc << std::endl;
 
    char in1[100];
-   sprintf(in1, "DYJetsToTauTau_%d.root", year);
+   sprintf(in1, "/eos/uscms/store/user/fojensen/cmsdas_16042021/DYJetsToTauTau_%d.root", year);
    TFile * f_tautau = TFile::Open(in1);
    TTree * t_tautau = (TTree*)f_tautau->Get("Events");
  
    char in2[100];
-   sprintf(in2, "DYJetsToEEMuMu_%d.root", year);
+   sprintf(in2, "/eos/uscms/store/user/fojensen/cmsdas_16042021/DYJetsToEEMuMu_%d.root", year);
    TFile * f_eemumu = TFile::Open(in2);
    TTree * t_eemumu = (TTree*)f_eemumu->Get("Events");
 
@@ -504,8 +505,8 @@ void validate(const int year)
 void processDY(const int year)
 {std::cout << "processDY(): " << year << std::endl;
 
-   //splitTree(year, false);
-   //addBranch(year, false);
+   splitTree(year, false);
+   addBranch(year, false);
    splitTree(year, true);
    addBranch(year, true);
    validate(year);

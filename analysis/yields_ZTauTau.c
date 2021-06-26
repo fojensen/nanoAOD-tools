@@ -157,6 +157,7 @@ TFile * runPoint(const TString sampletag, const TString channel, const int year,
       //baseline = baseline && TCut("ElTau_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==1");
       baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==0");
+/*********/baseline = baseline && TCut("32&Tau_idDeepTau2017v2p1VSe[ElTau_TauIdx]");/*********/
       regionA = "ElTau_qq==-1 && (64&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
       regionB = "ElTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(64&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
       regionC = "ElTau_qq==+1 && (64&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";

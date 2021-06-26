@@ -1,41 +1,64 @@
+#include <iomanip>
 #include <iostream>
-#include <TFile.h>
+//#include <TFile.h>
 #include <TChain.h>
 #include <TCut.h>
 #include <TCanvas.h>
 #include <TLegend.h>
 #include <TH2D.h>
-#include <TH1D.h>
-#include "addOverflow.h"
+//#include <TH1D.h>
+//#include "addOverflow.h"
 
-TFile * makeHists(TChain * t, const int year, const TString channel, const bool blindA=true, const bool only2d=true)
+class dataStudy {
+   public:
+      void run();
+ bool blindA;
+
+      TString channel;     
+      TChain * chain[3];
+      void chainInit();
+      
+      TH2D *h2_A[3], *h2_B[3], *h2_C[3], *h2_D[3];
+      TH2D *h2_Asum, *h2_Bsum, *h2_Csum, *h2_Dsum;
+   
+      int n_A[3], n_B[3], n_C[3], n_D[3];
+      int n_Asum, n_Bsum, n_Csum, n_Dsum;
+
+      void histInit();
+      void sumHists();
+      
+      void fillHists(const int year);
+      void yieldCompare();
+      void plotStuff();
+};
+
+void dataStudy::sumHists()
 {
-   std::cout << "makeHists() " << year << " " << channel << " " << blindA << " " << only2d << std::endl;
-   char foutname[200];
-   if (blindA) {
-      sprintf(foutname, "./dataStudyOutput/%s_%d_signal.root", channel.Data(), year);
-   } else {
-      sprintf(foutname, "./dataStudyOutput/%s_%d_sideband.root", channel.Data(), year);
+   h2_Asum = (TH2D*)h2_A[0]->Clone("h2_Asum");
+   h2_Bsum = (TH2D*)h2_B[0]->Clone("h2_Bsum");
+   h2_Csum = (TH2D*)h2_C[0]->Clone("h2_Csum");
+   h2_Dsum = (TH2D*)h2_D[0]->Clone("h2_Dsum");
+   for (int i = 1; i < 3; ++i) {
+      h2_Asum->Add(h2_A[i]);
+      h2_Bsum->Add(h2_B[i]);
+      h2_Csum->Add(h2_C[i]);
+      h2_Dsum->Add(h2_D[i]);  
    }
-   TFile * outfile = new TFile(foutname, "RECREATE");
-   TH2D *h2[4];
-   TH1D *h1_min[4], *h1_max[4];
+}
 
-   std::cout << "   entries in tree: " << t->GetEntries() << std::endl;
-
+void dataStudy::fillHists(const int year)
+{
+   std::cout << "filling histograms for year: " << year << std::endl;
+   
    TCut baseline = "1>0";
    TCut regionA, regionB, regionC, regionD;
-   TString var, varmin, varmax;
-   TString title;
-
+   TString var;
+   
    if (channel=="Electron") {
-      title = "e + #tau_{h}";
       var = "ElTau_MaxCollMass:ElTau_MinCollMass";
-      varmin = "ElTau_MinCollMass";
-      varmax = "ElTau_MaxCollMass";
       //baseline = baseline && TCut("ElTau_HavePair>0 && (ElTau_HaveTriplet==0||(ElTau_HaveTriplet>0&&Photon_pt[ElTau_PhotonIdx]<95.))");
-      baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=50. && Photon_pt[ElTau_PhotonIdx]<95.");
-      //baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=100.");
+      //baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=50. && Photon_pt[ElTau_PhotonIdx]<95.");
+      baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=100.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("ElTau_Trigger");
       baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElTau_ElIdx]");
@@ -50,16 +73,13 @@ TFile * makeHists(TChain * t, const int year, const TString channel, const bool 
       regionB = "ElTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
       regionC = "ElTau_qq==+1 && (32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
       regionD = "ElTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[ElTau_TauIdx])";
-      if (blindA) regionA = regionA && TCut("Photon_pt[ElTau_PhotonIdx]<25.");
+      if (blindA) regionA = regionA && TCut("Photon_pt[ElTau_PhotonIdx]<100.");
    }
    if (channel=="Muon") {
-      title = "#mu + #tau_{h}";
       var = "MuTau_MaxCollMass:MuTau_MinCollMass";
-      varmin = "MuTau_MinCollMass";
-      varmax = "MuTau_MaxCollMass";
       //baseline = baseline && TCut("MuTau_HavePair>0 && (MuTau_HaveTriplet==0||(MuTau_HaveTriplet>0&&Photon_pt[MuTau_PhotonIdx]<95.))");
-      baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=50. && Photon_pt[MuTau_PhotonIdx]<95.");
-      //baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=100.");
+      //baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=50. && Photon_pt[MuTau_PhotonIdx]<95.");
+      baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=100.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("MuTau_Trigger");
       baseline = baseline && TCut("Muon_pfIsoId[MuTau_MuIdx]>=4");
@@ -73,16 +93,13 @@ TFile * makeHists(TChain * t, const int year, const TString channel, const bool 
       regionB = "MuTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
       regionC = "MuTau_qq==+1 && (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
       regionD = "MuTau_qq==+1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
-      if (blindA) regionA = regionA && TCut("Photon_pt[MuTau_PhotonIdx]<0.");
+      if (blindA) regionA = regionA && TCut("Photon_pt[MuTau_PhotonIdx]<100.");
    }
    if (channel=="Tau") {
-      title = "#tau_{h} + #tau_{h}";
       var = "TauTau_MaxCollMass:TauTau_MinCollMass";
-      varmin = "TauTau_MinCollMass";
-      varmax = "TauTau_MaxCollMass";
       //baseline = baseline && TCut("TauTau_HavePair>0 && (TauTau_HaveTriplet==0||(TauTau_HaveTriplet>0&&Photon_pt[TauTau_PhotonIdx]<70.))");
-      baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=25. && Photon_pt[TauTau_PhotonIdx]<70.");
-      //baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=75.");
+      //baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=25. && Photon_pt[TauTau_PhotonIdx]<70.");
+      baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=75.");
       //baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("TauTau_Trigger");
       baseline = baseline && TCut("Tau_pt[TauTau_Tau0Idx]>=40. && TMath::Abs(Tau_eta[TauTau_Tau0Idx])<2.1");
@@ -100,13 +117,10 @@ TFile * makeHists(TChain * t, const int year, const TString channel, const bool 
       regionD = TCut("TauTau_qq==+1") && ((tau0pass&&tau1fail)||(tau0fail&&tau1pass));
       //regionB = TCut("TauTau_qq==-1") && (tau0fail || tau1fail);
       //regionD = TCut("TauTau_qq==+1") && (tau0fail || tau1fail)
-      if (blindA) regionA = regionA && TCut("Photon_pt[TauTau_PhotonIdx]<25.");
+      if (blindA) regionA = regionA && TCut("Photon_pt[TauTau_PhotonIdx]<75.");
    } 
    if (channel=="MuonEG") {
-      title = "e + #mu";
       var = "ElMu_MaxCollMass:ElMu_MinCollMass";
-      varmin = "ElMu_MinCollMass";
-      varmax = "ElMu_MaxCollMass";
       //baseline = baseline && TCut("ElMu_HavePair>0 && (ElMu_HaveTriplet==0||(ElMu_HaveTriplet>0&&Photon_pt[ElMu_PhotonIdx]<25.))");
       baseline = baseline && TCut("ElMu_HaveTriplet>0 && Photon_pt[ElMu_PhotonIdx]>=100.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
@@ -122,86 +136,81 @@ TFile * makeHists(TChain * t, const int year, const TString channel, const bool 
       regionB = "ElMu_qq==-1 && Muon_pfIsoId[ElMu_MuIdx]>=2 && Muon_pfIsoId[ElMu_MuIdx]<4";
       regionC = "ElMu_qq==+1 && Muon_pfIsoId[ElMu_MuIdx]>=4";
       regionD = "ElMu_qq==+1 && Muon_pfIsoId[ElMu_MuIdx]>=2 && Muon_pfIsoId[ElMu_MuIdx]<4";
-      if (blindA) regionA = regionA && TCut("Photon_pt[ElMu_PhotonIdx]<25.");
+      if (blindA) regionA = regionA && TCut("Photon_pt[ElMu_PhotonIdx]<100.");
    }
 
-   const TCut cuts[4] = {baseline&&regionA, baseline&&regionB, baseline&&regionC, baseline&&regionD};
-   const TString titles[4] = {"A", "B", "C", "D"};
+   const TCut cutsA = baseline&&regionA;
+   const TCut cutsB = baseline&&regionB;
+   const TCut cutsC = baseline&&regionC;
+   const TCut cutsD = baseline&&regionD;
 
-   TH2D h2_temp("h2_temp", ";min collinear mass [GeV];max collinear mass [GeV]", 1000, 0., 1000., 1000, 0., 1000.);
-   h2_temp.SetTitle(title);
-   h2_temp.SetStats(0);
-
-   TH1D h1_temp("h1_temp", ";collinear mass [GeV];events / 100 GeV", 10, 0., 1000.);
-   h1_temp.SetLineWidth(2);
-   h1_temp.SetStats(0);
-
-   for (int i = 0; i < 4; ++i) {
-      if (blindA && i==0) continue;
-      std::cout << "   filling region " << titles[i] << std::endl;
-      //2d
-      char h2name[100];
-      sprintf(h2name, "h2_%s", titles[i].Data());
-      h2[i] = (TH2D*)h2_temp.Clone(h2name);
-      //h2[i]->SetTitle(titles[i]);
-      const int n = t->Project(h2[i]->GetName(), var, cuts[i]);
-      std::cout << "      " << n << " entries" << std::endl;
-      if (!only2d) {
-         //1d min
-         char h1minname[100];
-         sprintf(h1minname, "h1min_%s", titles[i].Data());
-         h1_min[i] = (TH1D*)h1_temp.Clone(h1minname);
-         char buffer[100];
-         sprintf(buffer, "%s: %s", titles[i].Data(), title.Data());
-         h1_min[i]->SetTitle(buffer);
-         t->Project(h1_min[i]->GetName(), varmin, cuts[i]);
-         addOverflow(h1_min[i]);
-         //1d max
-         char h1maxname[100];
-         sprintf(h1maxname, "h1max_%s", titles[i].Data());
-         h1_max[i] = (TH1D*)h1_temp.Clone(h1maxname);
-         h1_max[i]->SetTitle(buffer);
-         t->Project(h1_max[i]->GetName(), varmax, cuts[i]);
-         addOverflow(h1_max[i]);
-      }
+   if (year==2016) {
+      if (!blindA) std::cout << chain[0]->Project("h2_A_2016", var, cutsA) << std::endl;
+      std::cout << chain[0]->Project("h2_B_2016", var, cutsB) << std::endl;
+      std::cout << chain[0]->Project("h2_C_2016", var, cutsC) << std::endl;
+      std::cout << chain[0]->Project("h2_D_2016", var, cutsD) << std::endl;
+   }
+   if (year==2017) {
+      if (!blindA) std::cout << chain[1]->Project("h2_A_2017", var, cutsA) << std::endl;
+      std::cout << chain[1]->Project("h2_B_2017", var, cutsB) << std::endl;
+      std::cout << chain[1]->Project("h2_C_2017", var, cutsC) << std::endl;
+      std::cout << chain[1]->Project("h2_D_2017", var, cutsD) << std::endl;
+   }
+   if (year==2018) {
+      if (!blindA) std::cout << chain[2]->Project("h2_A_2018", var, cutsA) << std::endl;
+      std::cout << chain[2]->Project("h2_B_2018", var, cutsB) << std::endl;
+      std::cout << chain[2]->Project("h2_C_2018", var, cutsC) << std::endl;
+      std::cout << chain[2]->Project("h2_D_2018", var, cutsD) << std::endl;
    }
 
-   outfile->Write();
-   outfile->Close();
-   return outfile;
 }
 
-void fillAllHists(const TString channel, const bool blindA=true, const bool only2d=true)
+void dataStudy::chainInit()
 {
    const TString letters_2018[4] = {"A", "B", "C", "D"};
-   TChain * chain_2018 = new TChain("Events");
+   chain[2] = new TChain("Events");
    for (int i = 0; i < 4; ++i) {
       char fname[100];
-      sprintf(fname, "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_16042021/%s%s_2018.root", channel.Data(), letters_2018[i].Data());
-      chain_2018->Add(fname);
+      sprintf(fname, "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_12052021/%s%s_2018.root", channel.Data(), letters_2018[i].Data());
+      chain[2]->Add(fname);
    }
-   makeHists(chain_2018, 2018, channel, blindA);
 
    const TString letters_2017[5] = {"B", "C", "D", "E", "F"};
-   TChain * chain_2017 = new TChain("Events");
+   chain[1] = new TChain("Events");
    for (int i = 0; i < 5; ++i) {
       char fname[100];
-      sprintf(fname, "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_16042021/%s%s_2017.root", channel.Data(), letters_2017[i].Data());
-      chain_2017->Add(fname);
+      sprintf(fname, "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_12052021/%s%s_2017.root", channel.Data(), letters_2017[i].Data());
+      chain[1]->Add(fname);
    }
-   makeHists(chain_2017, 2017, channel, blindA);
  
    const TString letters_2016[7] = {"B", "C", "D", "E", "F", "G", "H"};
-   TChain * chain_2016 = new TChain("Events");
+   chain[0] = new TChain("Events");
    for (int i = 0; i < 7; ++i) {
       char fname[100];
-      sprintf(fname, "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_16042021/%s%s_2016.root", channel.Data(), letters_2016[i].Data());
-      chain_2016->Add(fname);
+      sprintf(fname, "root://cmseos.fnal.gov//store/user/fojensen/cmsdas_12052021/%s%s_2016.root", channel.Data(), letters_2016[i].Data());
+      chain[0]->Add(fname);
    }
-   makeHists(chain_2016, 2016, channel, blindA);
 }
 
-void yieldCompare(const TString channel, const bool blindA=true)
+void dataStudy::histInit()
+{
+   TH2D h2("h2", ";min collinear mass [GeV];max collinear mass [GeV]", 1000, 0., 1000., 1000, 0., 1000.);
+   char title[20];
+   if (channel=="Electron") sprintf(title, "e + #tau_{h}");
+   if (channel=="Muon") sprintf(title, "#mu + #tau_{h}");
+   if (channel=="Tau") sprintf(title, "#tau_{h} + #tau_{h}");
+   h2.SetTitle(title);
+   h2.SetStats(0);
+   const TString years[3] = {"2016", "2017", "2018"}; 
+   for (int i = 0; i < 3; ++i) {
+      h2_A[i] = (TH2D*)h2.Clone("h2_A_"+years[i]);
+      h2_B[i] = (TH2D*)h2.Clone("h2_B_"+years[i]);
+      h2_C[i] = (TH2D*)h2.Clone("h2_C_"+years[i]);
+      h2_D[i] = (TH2D*)h2.Clone("h2_D_"+years[i]);
+   }
+}
+
+void dataStudy::yieldCompare()
 {
    const int years[3] = {2016, 2017, 2018};
    const double lumi[3] = {36.33, 41.48, 59.83};
@@ -224,58 +233,47 @@ void yieldCompare(const TString channel, const bool blindA=true)
    double errD[3] = {0., 0., 0.};
 
    for (int i = 0; i < 3; ++i) {
-      char infile[100];
-      if (blindA) {
-         sprintf(infile, "./dataStudyOutput/%s_%d_signal.root", channel.Data(), years[i]);
-      } else {
-         sprintf(infile, "./dataStudyOutput/%s_%d_sideband.root", channel.Data(), years[i]);
-      }
-      TFile * f = TFile::Open(infile);
-
       //A
       if (!blindA) {
-         TH2D * hA = (TH2D*)f->Get("h2_A");
-         nA[i] = hA->GetEntries();
-         if (nA[i]!=hA->Integral()) {
+         nA[i] = h2_A[i]->GetEntries();
+         if (nA[i]!=h2_A[i]->Integral()) {
             std::cout << "overflow: " << "A, " << years[i] << std::endl;
-            std::cout << nA[i] << " " << hA->Integral() << std::endl;
+            std::cout << nA[i] << " " << h2_A[i]->Integral() << std::endl;
          }
-         nAtot += hA->GetEntries();
+         nAtot += h2_A[i]->GetEntries();
          eA[i] = double(nA[i])/lumi[i];
          errA[i] = sqrt(double(nA[i]))/lumi[i];
       }
       //B
-      TH2D * hB = (TH2D*)f->Get("h2_B");
-      nB[i] = hB->GetEntries();
-      if (nB[i]!=hB->Integral()) {
+      nB[i] = h2_B[i]->GetEntries();
+      if (nB[i]!=h2_B[i]->Integral()) {
          std::cout << "overflow: " << "B, " << years[i] << std::endl;
-         std::cout << nB[i] << " " << hB->Integral() << std::endl;
+         std::cout << nB[i] << " " << h2_B[i]->Integral() << std::endl;
       }
-      nBtot += hB->GetEntries();
+      nBtot += h2_B[i]->GetEntries();
       eB[i] = double(nB[i])/lumi[i];
       errB[i] = sqrt(double(nB[i]))/lumi[i];
       //C
-      TH2D * hC = (TH2D*)f->Get("h2_C");
-      nC[i] = hC->GetEntries();
-      if (nC[i]!=hC->Integral()) {
+      nC[i] = h2_C[i]->GetEntries();
+      if (nC[i]!=h2_C[i]->Integral()) {
          std::cout << "overflow: " << "C, " << years[i] << std::endl;
-         std::cout << nC[i] << " " << hC->Integral() << std::endl;
+         std::cout << nC[i] << " " << h2_C[i]->Integral() << std::endl;
       }
-      nCtot += hC->GetEntries();
+      nCtot += h2_C[i]->GetEntries();
       eC[i] = double(nC[i])/lumi[i];
       errC[i] = sqrt(double(nC[i]))/lumi[i];
       //D
-      TH2D * hD = (TH2D*)f->Get("h2_D");
-      nD[i] = hD->GetEntries();
-      if (nD[i]!=hD->Integral()) {
+      nD[i] = h2_D[i]->GetEntries();
+      if (nD[i]!=h2_D[i]->Integral()) {
          std::cout << "overflow: " << "D, " << years[i] << std::endl;
-         std::cout << nD[i] << " " << hD->Integral() << std::endl;
+         std::cout << nD[i] << " " << h2_D[i]->Integral() << std::endl;
       }
-      nDtot += hD->GetEntries();
+      nDtot += h2_D[i]->GetEntries();
       eD[i] = double(nD[i])/lumi[i];
       errD[i] = sqrt(double(nD[i]))/lumi[i];
    }
 
+   std::cout << std::setprecision(3) << std::endl;
    if (!blindA) {
       std::cout << "region A" << std::endl;
       std::cout << "  average: " << nAtot << " events; " << nAtot/lumitot << " +- " << sqrt(nAtot)/lumitot << std::endl;
@@ -303,129 +301,64 @@ void yieldCompare(const TString channel, const bool blindA=true)
    }
 }
 
-void plotStuff(const TString channel, const bool blindA=true, const bool only2d=false)
+void dataStudy::plotStuff()
 {
-   char cmd[100];
-   if (blindA) {
-      sprintf(cmd, "hadd -f ./dataStudyOutput/%s_signal.root ./dataStudyOutput/%s_2018_signal.root ./dataStudyOutput/%s_2017_signal.root ./dataStudyOutput/%s_2016_signal.root", channel.Data(), channel.Data(), channel.Data(), channel.Data());
-   } else {
-      sprintf(cmd, "hadd -f ./dataStudyOutput/%s_sideband.root ./dataStudyOutput/%s_2018_sideband.root ./dataStudyOutput/%s_2017_sideband.root ./dataStudyOutput/%s_2016_sideband.root", channel.Data(), channel.Data(), channel.Data(), channel.Data());
-   }
-   std::cout << "A" << std::endl; 
-   system(cmd);
-   std::cout << "B" << std::endl;
- 
-   char infile[100];
-   if (blindA) {
-      sprintf(infile, "./dataStudyOutput/%s_signal.root", channel.Data());
-   } else {
-      sprintf(infile, "./dataStudyOutput/%s_sideband.root", channel.Data());
-   }
-   TFile *f = TFile::Open(infile);
-   std::cout << "C" << std::endl;
-
-   TH2D * h2_B = (TH2D*)f->Get("h2_B");
-   h2_B->SetMarkerColor(6);
-   h2_B->SetMarkerStyle(20);
-   TH2D * h2_C = (TH2D*)f->Get("h2_C");
-   h2_C->SetMarkerColor(7);
-   h2_C->SetMarkerStyle(20);
-   TH2D * h2_D = (TH2D*)f->Get("h2_D");
-   h2_D->SetMarkerColor(8);
-   h2_D->SetMarkerStyle(20);
-
-   std::cout << "B" << std::endl;
-
-   TH1D *h1_minB,  *h1_maxB;
-   if (!only2d) {
-      h1_minB = (TH1D*)f->Get("h1min_B");
-      h1_maxB = (TH1D*)f->Get("h1max_B");
-      h1_minB->SetLineColor(6);
-      h1_maxB->SetLineColor(7);
-   }
-
-   TH1D *h1_minC, *h1_maxC;
-   if (!only2d) {
-      h1_minC = (TH1D*)f->Get("h1min_C");
-      h1_maxC = (TH1D*)f->Get("h1max_C");
-      h1_minC->SetLineColor(6);
-      h1_maxC->SetLineColor(7);
-   }
-
-   TH1D *h1_minD, *h1_maxD;
-   if (!only2d) {
-      h1_minD = (TH1D*)f->Get("h1min_D");
-      h1_maxD = (TH1D*)f->Get("h1max_D");
-      h1_minD->SetLineColor(6);
-      h1_maxD->SetLineColor(7);
-   }
-
-   std::cout << "B" << std::endl;
+   h2_Asum->SetMarkerColor(6);
+   h2_Asum->SetMarkerStyle(20);
+   h2_Bsum->SetMarkerColor(7);
+   h2_Bsum->SetMarkerStyle(20);
+   h2_Csum->SetMarkerColor(8);
+   h2_Csum->SetMarkerStyle(20);
+   h2_Dsum->SetMarkerColor(9);
+   h2_Dsum->SetMarkerStyle(20);
 
    TLegend * leg2 = new TLegend(0.6, 0.2, 0.875, 0.4);
    leg2->SetBorderSize(0);
 
-   TH2D * h2_A;
    if (!blindA) { 
-      h2_A = (TH2D*)f->Get("h2_A");
-      h2_A->SetMarkerColor(9);
-      h2_A->SetMarkerStyle(20);
-      h2_A->Draw("SAME");
-      leg2->AddEntry(h2_A, "A: " + TString::Itoa(h2_A->GetEntries(), 10) + " entries", "P");
+      leg2->AddEntry(h2_Asum, "A: " + TString::Itoa(h2_Asum->GetEntries(), 10) + " entries", "P");
    }
+   leg2->AddEntry(h2_Bsum, "B: " + TString::Itoa(h2_Bsum->GetEntries(), 10) + " entries", "P");
+   leg2->AddEntry(h2_Csum, "C: " + TString::Itoa(h2_Csum->GetEntries(), 10) + " entries", "P");
+   leg2->AddEntry(h2_Dsum, "D: " + TString::Itoa(h2_Dsum->GetEntries(), 10) + " entries", "P");
 
-   leg2->AddEntry(h2_B, "B: " + TString::Itoa(h2_B->GetEntries(), 10) + " entries", "P");
-   leg2->AddEntry(h2_C, "C: " + TString::Itoa(h2_C->GetEntries(), 10) + " entries", "P");
-   leg2->AddEntry(h2_D, "D: " + TString::Itoa(h2_D->GetEntries(), 10) + " entries", "P");
-
-   TCanvas * c;
-   if (only2d) {
-      c = new TCanvas("c", channel, 400, 400);
+   TCanvas * c = new TCanvas("c", channel, 400, 400); 
+   if (!blindA) {
+      h2_Asum->Draw("");
+      h2_Bsum->Draw("SAME");
    } else {
-      c = new TCanvas("c", channel, 800, 800);
-      c->Divide(2, 2);
+      h2_Bsum->Draw("");
    }
- 
-   c->cd(1);
-   if (blindA) {
-      h2_B->Draw("");
-   } else {
-      h2_A->Draw("");
-      h2_B->Draw("SAME");
-   }
-   h2_C->Draw("SAME");
-   h2_D->Draw("SAME");
+   h2_Csum->Draw("SAME");
+   h2_Dsum->Draw("SAME");
    leg2->Draw();
 
-   if (!only2d) { 
-      TLegend * leg1 = new TLegend(0.6, 0.7, 0.875, 0.875);
-      leg1->SetBorderSize(0);
-      leg1->AddEntry(h1_minB, "min", "L");
-      leg1->AddEntry(h1_maxB, "max", "L");
- 
-      c->cd(2);
-      h1_minB->Draw("HIST");
-      h1_maxB->Draw("HIST, SAME");
-      leg1->Draw();
-
-      c->cd(3);
-      h1_minC->Draw("HIST");
-      h1_maxC->Draw("HIST, SAME");
-      leg1->Draw();
-
-      c->cd(4);
-      h1_minD->Draw("HIST");
-      h1_maxD->Draw("HIST, SAME");
-      leg1->Draw();
+   char savetag[30];
+   if (blindA) {
+      sprintf(savetag, "./plots/dataStudy.%s.12052021.pdf", channel.Data());
+   } else {
+      sprintf(savetag, "./plots/dataStudy.%s.sidebandregion.pdf", channel.Data());
    }
-
-   c->SaveAs("./plots/dataStudy."+channel+".sidebandregion.pdf");
+   c->SaveAs(savetag);
 }
 
-void dataStudy(const TString channel, const bool blindA=true, const bool only2d=true)
+void dataStudy::run()
 {
-   fillAllHists(channel, blindA, only2d);
-   yieldCompare(channel, blindA);
-   plotStuff(channel, blindA, only2d);
+   chainInit();
+   histInit();
+   fillHists(2016);
+   fillHists(2017);
+   fillHists(2018);
+   sumHists();
+   yieldCompare();
+   plotStuff();
+}
+
+void dataStudyWrapper(const TString channel, const bool blindA=true)
+{
+   dataStudy d;
+   d.channel = channel;
+   d.blindA = blindA;
+   d.run();
 }
 

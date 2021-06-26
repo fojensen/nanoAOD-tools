@@ -30,10 +30,18 @@ data['people'].append({
     'year': year
 })
 
+#data['people'].append({
+#    'name': 'Muon_2017E',
+#    'inputDataset': '/SingleMuon/Run2017E-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD', #invalid
+#    'nFiles': '124',
+#    'lumiMask': lumiMask,
+#    'year': year
+#})
+
 data['people'].append({
     'name': 'Muon_2017E',
-    'inputDataset': '/SingleMuon/Run2017E-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
-    'nFiles': '124',
+    'inputDataset': '/SingleMuon/Run2017E-UL2017_MiniAODv1_NanoAODv2-v2/NANOAOD',
+    'nFiles': '135',
     'lumiMask': lumiMask,
     'year': year
 })
@@ -103,10 +111,18 @@ data['people'].append({
     'year': year
 })
 
+#data['people'].append({
+#    'name': 'Electron_2017E',
+#    'inputDataset': '/SingleElectron/Run2017E-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD', INVALID
+#    'nFiles': '90',
+#    'lumiMask': lumiMask,
+#    'year': year
+#})
+
 data['people'].append({
     'name': 'Electron_2017E',
-    'inputDataset': '/SingleElectron/Run2017E-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
-    'nFiles': '90',
+    'inputDataset': '/SingleElectron/Run2017E-UL2017_MiniAODv1_NanoAODv2-v2/NANOAOD',
+    'nFiles': '85',
     'lumiMask': lumiMask,
     'year': year
 })
@@ -150,10 +166,18 @@ data['people'].append({
     'year': year
 })
 
+#data['people'].append({
+#    'name': 'Tau_2017E',
+#    'inputDataset': '/Tau/Run2017E-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD', INVALID
+#    'nFiles': '38',
+#    'lumiMask': lumiMask,
+#    'year': year
+#})
+
 data['people'].append({
     'name': 'Tau_2017E',
-    'inputDataset': '/Tau/Run2017E-UL2017_MiniAODv1_NanoAODv2-v1/NANOAOD',
-    'nFiles': '38',
+    'inputDataset': '/Tau/Run2017E-UL2017_MiniAODv1_NanoAODv2-v2/NANOAOD',
+    'nFiles': '27',
     'lumiMask': lumiMask,
     'year': year
 })
