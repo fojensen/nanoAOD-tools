@@ -391,7 +391,8 @@ void plotRegions4(/*const TString fname, */const TString channel, const int nPro
    //   return;
    //}
    //sprintf(outfile, "%s_m%d_unblind.pdf", channel.Data(), mass);
-   sprintf(outfile, "%s_m%d_blind.pdf", channel.Data(), mass);
+   //sprintf(outfile, "%s_m%d_blind.pdf", channel.Data(), mass);
+   sprintf(outfile, "%s_decayMode.pdf", channel.Data());
    canvas->SaveAs(outfile);
    std::cout << "end plotRegions4() " << channel << blindA << std::endl;
 }
@@ -565,7 +566,7 @@ void runAnalysis::runAll()
        //if (channel=="Tau")      var = "(Tau_decayMode[TauTau_Tau0Idx]==0||Tau_decayMode[TauTau_Tau0Idx]==1||Tau_decayMode[TauTau_Tau0Idx]==2) ? 1 : (Tau_decayMode[TauTau_Tau0Idx]==10||Tau_decayMode[TauTau_Tau0Idx]==11||Tau_decayMode[TauTau_Tau0Idx]==12) ? 3 : 0";
        if (channel=="Electron") var = "ElTau_nProng";
        if (channel=="Muon")     var = "MuTau_nProng";
-        if (channel=="Tau")      var = "TauTau_Tau1nProng";
+       if (channel=="Tau")      var = "TauTau_Tau1nProng";
        //if (channel=="MuonEG")   var = "1.";
        h =  new TH1D("h", ";# of prongs;events / bin", 4, -0.5, 3.5);
 //   } else {
@@ -629,7 +630,9 @@ void runAnalysis::runAll()
    //} else {
    //sprintf(fname, "%s_m%d_lt100.root", channel.Data(), mass);
    //sprintf(fname, "%s_m%d_unblind.root", channel.Data(), mass);
-   sprintf(fname, "%s_m%d_blind.root", channel.Data(), mass);
+//   sprintf(fname, "%s_m%d_blind.root", channel.Data(), mass);
+//   sprintf(fname, "%s_m%d_blind.root", channel.Data(), mass);
+   sprintf(fname, "%s_decayMode.root", channel.Data());
    //}
    fout = new TFile(fname, "RECREATE"); 
 
@@ -637,8 +640,8 @@ void runAnalysis::runAll()
    mcHistInit();
    sigHistInit();
    fillSigHists(2018); fillMCHists(2018); fillDataHists(2018);
-   fillSigHists(2017); fillMCHists(2017); fillDataHists(2017);
-   fillSigHists(2016); fillMCHists(2016); fillDataHists(2016);
+  // fillSigHists(2017); fillMCHists(2017); fillDataHists(2017);
+//   fillSigHists(2016); fillMCHists(2016); fillDataHists(2016);
    //fillMCHists(2015); fillSigHists(2015);
    dataHistOverflow();
    sigHistOverflow();
@@ -727,13 +730,13 @@ void runAnalysis::loadCuts(const int year, TCut cuts[8])
    baseline = regionA = regionB = regionC = regionD = "1>0";
    if (channel=="Electron") {
       //baseline = baseline && TCut("ElTau_HavePair>0 && (ElTau_HaveTriplet==0||(ElTau_HaveTriplet>0&&Photon_pt[ElTau_PhotonIdx]<95.))");
-      //baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=100.");
+      baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=100.");
       //baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=50. && Photon_pt[ElTau_PhotonIdx]<95.");
-      baseline = baseline && TCut("ElTau_HaveTriplet>0");
-      char ptcut[100];
+      //baseline = baseline && TCut("ElTau_HaveTriplet>0");
+      //char ptcut[100];
       //sprintf(ptcut, "Photon_pt[ElTau_PhotonIdx]>=%f && Photon_pt[ElTau_PhotonIdx]<100.", double(mass));
-      sprintf(ptcut, "Photon_pt[ElTau_PhotonIdx]>=%f", double(mass));
-      baseline = baseline && TCut(ptcut);
+      //sprintf(ptcut, "Photon_pt[ElTau_PhotonIdx]>=%f", double(mass));
+      //baseline = baseline && TCut(ptcut);
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("ElTau_Trigger");
       baseline = baseline && TCut("Electron_mvaFall17V2Iso_WP90[ElTau_ElIdx]");
@@ -754,14 +757,14 @@ void runAnalysis::loadCuts(const int year, TCut cuts[8])
    }
    if (channel=="Muon") {
       //baseline = baseline && TCut("MuTau_HavePair>0 && (MuTau_HaveTriplet==0||(MuTau_HaveTriplet>0&&Photon_pt[MuTau_PhotonIdx]<10.))");
-      //baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=100.");
+      baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=100.");
       //baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=70. && Photon_pt[MuTau_PhotonIdx]<95.");
       //baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=10. && Photon_pt[MuTau_PhotonIdx]<50.");
-      baseline = baseline && TCut("MuTau_HaveTriplet>0");
-      char ptcut[100];
+      //baseline = baseline && TCut("MuTau_HaveTriplet>0");
+      //char ptcut[100];
       //sprintf(ptcut, "Photon_pt[MuTau_PhotonIdx]>=%f && Photon_pt[MuTau_PhotonIdx]<100.", double(mass));
-      sprintf(ptcut, "Photon_pt[MuTau_PhotonIdx]>=%f", double(mass));
-      baseline = baseline && TCut(ptcut);
+      //sprintf(ptcut, "Photon_pt[MuTau_PhotonIdx]>=%f", double(mass));
+      //baseline = baseline && TCut(ptcut);
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("MuTau_Trigger");
       baseline = baseline && TCut("Muon_pfIsoId[MuTau_MuIdx]>=4");
@@ -782,13 +785,13 @@ void runAnalysis::loadCuts(const int year, TCut cuts[8])
    }
    if (channel=="Tau") {
       //baseline = baseline && TCut("TauTau_HavePair>0 && (TauTau_HaveTriplet==0||(TauTau_HaveTriplet>0&&Photon_pt[TauTau_PhotonIdx]<70.))");
-      //baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=75.");
+      baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=75.");
       //baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=25. && Photon_pt[TauTau_PhotonIdx]<70.");
-      baseline = baseline && TCut("TauTau_HaveTriplet>0");
+      //baseline = baseline && TCut("TauTau_HaveTriplet>0");
       char ptcut[100];
       //sprintf(ptcut, "Photon_pt[TauTau_PhotonIdx]>=%f && Photon_pt[TauTau_PhotonIdx]<75.", double(mass));
-      sprintf(ptcut, "Photon_pt[TauTau_PhotonIdx]>=%f", double(mass));
-      baseline = baseline && TCut(ptcut);
+      //sprintf(ptcut, "Photon_pt[TauTau_PhotonIdx]>=%f", double(mass));
+      //baseline = baseline && TCut(ptcut);
       //?baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("TauTau_Trigger");
       baseline = baseline && TCut("Tau_pt[TauTau_Tau0Idx]>=40. && TMath::Abs(Tau_eta[TauTau_Tau0Idx])<2.1");
@@ -900,8 +903,8 @@ void runAnalysis::fillMCHists(const int year)
    //TChain * c = new TChain("Events");
    TChain c("Events");
    for (int i = 0; i < nmc; ++i) {
-      //if (i==3) continue; //skip TTTo2L2Nu
-      //if (i==4) continue; //skip TTToSemileptonic
+      if (i==3) continue; //skip TTTo2L2Nu
+      if (i==4) continue; //skip TTToSemileptonic
       char infile[1000];
       sprintf(infile, "%s/%s_%d.root", eostag.Data(), mctags[i].Data(), year);
       std::cout <<infile << std::endl;
@@ -1639,7 +1642,7 @@ void runAnalysis::fillKappa(const int nProng)
 {std::cout << "fillKappa()" << std::endl;
 
    double n[4], err[4];
-   if (nProng==0) {
+   if (nProng==0) {//0prong?
       h_kappa = (TH1D*)h_ABCD[0]->Clone("h_kappa");
       h_kappa->Multiply(h_ABCD[3]);
       h_kappa->Divide(h_ABCD[1]);

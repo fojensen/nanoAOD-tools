@@ -4,7 +4,7 @@ data = {}
 data['people'] = []
 isMC_ = True
 year = '2016'
-"""
+
 data['people'].append({
     'name': 'DYJetsToLL_M10to50_2016',
     'inputDataset': '/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
@@ -147,9 +147,9 @@ data['people'].append({
 
 data['people'].append({
     'name': 'ZZ_2016',
-    'inputDataset': '/ZZ_TuneCP5_13TeV-pythia8/RunIISummer19UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
-    'nEvents': '1986500',
-    'nFiles': '8',
+    'inputDataset': '/ZZ_TuneCP5_13TeV-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
+    'nEvents': '1114000',
+    'nFiles': '17',
     'isMC': isMC_,
     'xs': '16.523', #ra2b: 16.523
     'year': year
@@ -165,8 +165,7 @@ data['people'].append({
     'year': year
 })
 
-"""
-data['people'].append({
+"""data['people'].append({
     'name' : 'WGToLNuG_2016',
     'inputDataset': '/WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
     'nEvents': '8394172',
@@ -224,30 +223,53 @@ data['people'].append({
    'isMC': isMC_,
    'xs': '448.896',
    'year': year
-})
+})"""
 
 #data['people'].append({
-#    'name': 'EWKZ2Jets_ZToLL_M50',
+#    'name': 'EWKZ2Jets_ZToLL_M50_2016',
 #    'inputDataset': '',
 #    'nEvents': '',
+#    'nFiles': '',
 #    'isMC': isMC_,
 #    'xs': '4.0',
 #})
 
 #data['people'].append({
-#    'name' : 'GluGluHToTauTau',
+#    'name' : 'GluGluHToTauTau_2016',
 #    'inputDataset': '',
 #    'nEvents': '',
+#    'nFiles': '',
 #    'isMC': isMC_,
 #    'xs': '2.8',
 #})
 
 #data['people'].append({
-#    'name' : 'VBFHToTauTau',
+#    'name' : 'VBFHToTauTau_2016',
 #    'inputDataset': '',
 #    'nEvents': '',
+#    'nFiles': '',
 #    'isMC': isMC_,
 #    'xs': '0.2',
+#})
+
+#data['people'].append({
+#    'name': 'GluGluHToZG_2016',
+#    'inputDataset': '',
+#    'nEvents': '',
+#    'nFiles': '',
+#    'isMC': isMC_,
+#    'xs': '0.074358',
+#    'year': year
+#})
+
+#data['people'].append({
+#    'name': 'VBFHToZG_2016',
+#    'inputDataset': '',
+#    'nEvents': '',
+#    'nFiles': '',
+#    'isMC': isMC_,
+#    'xs': '0.0057834',
+#    'year': year
 #})
 
 """data['people'].append({
@@ -298,7 +320,7 @@ data['people'].append({
     'isMC': isMC_,
     'xs': '93.19',
     'year': year
-})
-"""
+})"""
+
 with open('mcsamples_2016.json', 'w') as outfile:
    json.dump(data, outfile)

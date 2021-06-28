@@ -4,7 +4,7 @@ data = {}
 data['people'] = []
 isMC_ = True
 year = "2018"
-"""
+
 data['people'].append({
     'name': 'DYJetsToLL_M10to50_2018',
     'inputDataset': '/DYJetsToLL_M-10to50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
@@ -69,7 +69,7 @@ data['people'].append({
     'name': 'TTToSemiLeptonic_2018',
     'inputDataset': '/TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
     'nEvents': '486770000',
-    'nFiles' : '465',
+    'nFiles': '465',
     'isMC': isMC_,
     'xs': '365.34',
     'year': year,
@@ -87,8 +87,8 @@ data['people'].append({
 
 data['people'].append({
     'name': 'ST_tW_antitop_2018',
-    'inputDataset': '/ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
-    'nEvents': '9125752',
+    'inputDataset': '/ST_tW_antitop_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
+    'nEvents': '11695231',
     'nFiles': '10',
     'isMC': isMC_,
     'xs': '19.02828375', #https://arxiv.org/pdf/1805.07399.pdf
@@ -97,9 +97,9 @@ data['people'].append({
 
 data['people'].append({
     'name': 'ST_tW_top_2018',
-    'inputDataset': '/ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
-    'nEvents': '10064364',
-    'nFiles': '13',
+    'inputDataset': '/ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
+    'nEvents': '11518444',
+    'nFiles': '10',
     'isMC': isMC_,
     'xs': '19.02828375', #https://arxiv.org/pdf/1805.07399.pdf 35.85 * (1-(1-3*0.105)**2)
     'year': year
@@ -131,7 +131,7 @@ data['people'].append({
     'nEvents': '15670000',
     'nFiles' : '21',
     'isMC': isMC_,
-    'xs': '51.723',
+    'xs': '51.723', #ra2b:51.723
     'year': year
 })
 
@@ -141,15 +141,15 @@ data['people'].append({
     'nEvents': '7986000',
     'nFiles': '21',
     'isMC': isMC_,
-    'xs': '47.13',
+    'xs': '47.13', #ra2b:47.13
     'year': year
 })
 
 data['people'].append({
     'name': 'ZZ_2018',
-    'inputDataset': '/ZZ_TuneCP5_13TeV-pythia8/RunIISummer19UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
-    'nEvents': '2000000',
-    'nFiles': '4',
+    'inputDataset': '/ZZ_TuneCP5_13TeV-pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
+    'nEvents': '3907000',
+    'nFiles': '3',
     'isMC': isMC_,
     'xs': '16.523',
     'year': year
@@ -164,9 +164,8 @@ data['people'].append({
     'xs': '0.6008',
     'year': year
 })
-"""
 
-data['people'].append({
+"""data['people'].append({
     'name' : 'WGToLNuG_2018',
     'inputDataset': '/WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v1/NANOAODSIM',
     'nEvents': '9850083',
@@ -224,41 +223,64 @@ data['people'].append({
    'isMC': isMC_,
    'xs': '448.896',
    'year': year
-})
-"""
+})"""
+
 #data['people'].append({
-#    'name': 'EWKZ2Jets_ZToLL_M50',
+#    'name': 'EWKZ2Jets_ZToLL_M50_2018',
 #    'inputDataset': '',
 #    'nEvents': '',
+#    'nFiles': '',
 #    'isMC': isMC_,
 #    'xs': '4.0',
 #})
 
-#data['people'].append({
-#    'name' : 'GluGluHToTauTau',
-#    'inputDataset': '',
-#    'nEvents': '',
-#    'isMC': isMC_,
-#    'xs': '2.8',
-#})
-
-#data['people'].append({
-#    'name' : 'VBFHToTauTau',
-#    'inputDataset': '',
-#    'nEvents': '',
-#    'isMC': isMC_,
-#    'xs': '0.2',
-#})
+data['people'].append({
+    'name' : 'GluGluHToTauTau_2018',
+    'inputDataset': '/GluGluHToTauTau_M125_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v3/NANOAODSIM',
+    'nEvents': '12918000',
+    'nFiles': '86',
+    'isMC': isMC_,
+    'xs': '2.8',
+})
 
 data['people'].append({
-    'name': 'QCD_Mu15_2018',
-    'inputDataset': '/QCD_Pt-20toInf_MuEnrichedPt15_TuneCP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
-    'nEvents': '22165320',
-    'nFiles': '38',
+    'name' : 'VBFHToTauTau_2018',
+    'inputDataset': '/VBFHToTauTau_M125_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL18NanoAODv2-106X_upgrade2018_realistic_v15_L1v1-v2/NANOAODSIM',
+    'nEvents': '2987000',
+    'nFiles': '51',
     'isMC': isMC_,
-    'xs': '239400.0',
-    'year': year
+    'xs': '0.2',
 })
-"""
+
+#data['people'].append({
+#    'name': 'GluGluHToZG_2018',
+#    'inputDataset': '',
+#    'nEvents': '',
+#    'nFiles': '',
+#    'isMC': isMC_,
+#    'xs': '0.074358',
+#    'year': year
+#})
+
+#data['people'].append({
+#    'name': 'VBFHToZG_2018',
+#    'inputDataset': '',
+#    'nEvents': '',
+#    'nFiles': '',
+#    'isMC': isMC_,
+#    'xs': '0.0057834',
+#    'year': year
+#})
+
+#data['people'].append({
+#    'name': 'QCD_Mu15_2018',
+#    'inputDataset': '/QCD_Pt-20toInf_MuEnrichedPt15_TuneCP5_13TeV_pythia8/RunIIAutumn18NanoAODv7-Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/NANOAODSIM',
+#    'nEvents': '22165320',
+#    'nFiles': '38',
+#    'isMC': isMC_,
+#    'xs': '239400.0',
+#    'year': year
+#})
+
 with open('mcsamples_2018.json', 'w') as outfile:
    json.dump(data, outfile)
