@@ -60,7 +60,7 @@ void plotCoDKappa_unblind(const TString channel)
       g_kappa_1p->SetTitle(title2);
    }
 
-   TCanvas * c = new TCanvas("c_"+channel, "unblind", 800, 400);
+   TCanvas * c = new TCanvas("c_"+channel+"_unblind", "unblind", 800, 400);
    c->Divide(2, 1);
   
    c->cd(1);
@@ -144,7 +144,7 @@ void plotCoDKappa_blind(const TString channel)
       g_CoD_3p->SetPointError(i, 0., CoDerr_3p);
    }
 
-   TCanvas * c = new TCanvas("c_"+channel, "blind", 400, 400);
+   TCanvas * c = new TCanvas("c_"+channel+"_blind", "blind", 400, 400);
  
    g_CoD_3p->SetMarkerColor(6);
    g_CoD_3p->SetMarkerStyle(7);

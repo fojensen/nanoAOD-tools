@@ -7,6 +7,7 @@
 #include <TGraphAsymmErrors.h>
 #include <iostream>
 #include <TLegend.h>
+#include <TChain.h>
 
 void eff(const bool isSig=true)
 {
@@ -14,24 +15,38 @@ void eff(const bool isSig=true)
    //const TString infile = "root://cmseos.fnal.gov//store/user/cmsdas/2021/short_exercises/Tau/WJetsToLNu__A0A48A5A-15B8-914B-8DC7-E407797D4539.root";
    //const TString infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv7/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/70000/A0A48A5A-15B8-914B-8DC7-E407797D4539.root";
 
-   const TString tag = "DYJetsToLL";
+//   const TString tag = "WJetsToLNu";
    //const TString infile = "root://cmseos.fnal.gov//store/user/cmsdas/2021/short_exercises/Tau/DYJetsToLL_M-50__51C9FDF1-F122-4943-87BA-6EFE4459F867.root";
    //const TString infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv7/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/100000/51C9FDF1-F122-4943-87BA-6EFE4459F867.root";
-   const TString infile = "0262164B-9CA8-8F44-A9B9-2E0056FD9428.root";
+   //const TString infile = "0262164B-9CA8-8F44-A9B9-2E0056FD9428.root";
 
    //const TString tag = "TTJets";
    //const TString infile = "root://cmseos.fnal.gov//store/user/cmsdas/2021/short_exercises/Tau/TTJets__3B433A98-416E-7242-B1F7-9E1153CBBC64.root";
    //const TString infile = "root://cmsxrootd.fnal.gov//store/mc/RunIIAutumn18NanoAODv7/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/Nano02Apr2020_102X_upgrade2018_realistic_v21-v1/130000/3B433A98-416E-7242-B1F7-9E1153CBBC64.root";
 
-   std::cout << "producing efficiency curves: " << tag << std::endl;
-   if (isSig) {
-      std::cout << "treated as signal" << std::endl;
-   } else {
-      std::cout << "treated as background (i.e. mistag)" << std::endl;
-   }
+   //std::cout << "producing efficiency curves: " << tag << std::endl;
+   //if (isSig) {
+   //   std::cout << "treated as signal" << std::endl;
+   //} else {
+   //   std::cout << "treated as background (i.e. mistag)" << std::endl;
+   //}
 
-   TFile * f = TFile::Open(infile);
-   TTree * t = (TTree*)f->Get("Events");
+   //TFile * f = TFile::Open(infile);
+   //TTree * t = (TTree*)f->Get("Events");
+   TChain * t = new TChain("Events");
+
+   //DYJetsToLL
+   //t->Add("root://cmsxrootd.fnal.gov//store/mc/RunIISummer20UL18NanoAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v15_L1v1-v1/270000/0262164B-9CA8-8F44-A9B9-2E0056FD9428.root");
+   //t->Add("root://cmsxrootd.fnal.gov//store/mc/RunIISummer20UL18NanoAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v15_L1v1-v1/270000/2509BB1E-6527-D948-A527-FCDBEBDD2081.root");
+   //t->Add("root://cmsxrootd.fnal.gov//store/mc/RunIISummer20UL18NanoAODv2/DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v15_L1v1-v1/270000/3BDBFFAE-2B3E-1F42-80E9-9B24CBA9B27E.root");
+
+   //W
+   //t->Add("root://cmsxrootd.fnal.gov//store/mc/RunIISummer20UL18NanoAODv2/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v15_L1v1-v1/00000/07C08149-569D-104A-9310-E277C9CC92D8.root");
+   //t->Add("root://cmsxrootd.fnal.gov//store/mc/RunIISummer20UL18NanoAODv2/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v15_L1v1-v1/00000/8B47D4A5-572B-C24D-848A-A2945D0E794D.root");
+   //t->Add("root://cmsxrootd.fnal.gov//store/mc/RunIISummer20UL18NanoAODv2/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v15_L1v1-v1/00000/AA1638AA-DB8F-0542-BBDB-5F111C2B0C92.root");
+   //t->Add("root://cmsxrootd.fnal.gov//store/mc/RunIISummer20UL18NanoAODv2/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v15_L1v1-v1/00000/B81103CC-8168-3F46-AEC4-6CEF3012FC8A.root");
+   //t->Add("root://cmsxrootd.fnal.gov//store/mc/RunIISummer20UL18NanoAODv2/WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v15_L1v1-v1/230000/02AD944D-6982-B248-B14F-DAF826FA4B03.root");
+   t->Add("WJetsToLNu/*.root");
 
    const double x[7] = {20., 25., 35., 50., 70., 95., 125.};   
    TH1D *h_denom = new TH1D("h_denom", ";#tau_{h} p_{T} [GeV];#tau_{h} / bin", 6, x);
@@ -40,7 +55,7 @@ void eff(const bool isSig=true)
    for (int i = 0; i < 8; ++i) {
       h_num[i] = (TH1D*)h_denom->Clone("h_num_"+TString::Itoa(i, 10));
    }
- 
+
    UInt_t nTau = 0;
    Float_t Tau_pt[20];
    Float_t Tau_eta[20];
@@ -66,14 +81,17 @@ void eff(const bool isSig=true)
    std::cout << "entries in the tree: " << n << std::endl;
    int ndenom = 0;
    for (int i = 0; i < n; ++i) {
-      if (i%100000==0) std::cout << "beginning event: " << i << std::endl;
+      if (i%100000==0) {
+         std::cout << "beginning event: " << i << std::endl;
+         std::cout << "   ndenom: " << ndenom << std::endl;
+      }
       t->GetEntry(i);
       for (unsigned int j = 0; j < nTau; ++j) {
          if (Tau_genPartFlav[j]==tauMatch) {
             const int dm = Tau_decayMode[j];
             if (!(dm==0||dm==1||dm==2)) continue;
             //if (!(dm==10||dm==11||dm==12)) continue;
-            if (dm==5||dm==6) continue;
+            //if (dm==5||dm==6) continue;
             const bool tauID = (4&Tau_idDeepTau2017v2p1VSe[j]) && (8&Tau_idDeepTau2017v2p1VSmu[j]);
             if (Tau_pt[j]>=20. && TMath::Abs(Tau_eta[j])<2.3 && tauID) {
                h_denom->Fill(Tau_pt[j]);
@@ -91,7 +109,7 @@ void eff(const bool isSig=true)
             }
          }
       }
-      //if (ndenom>=1000) break;
+      if (ndenom>=400000) break;
    }
 
    TGraphAsymmErrors *g[8];
@@ -99,8 +117,7 @@ void eff(const bool isSig=true)
    l->SetNColumns(2);
    l->SetBorderSize(0);
    const TString labels[8] = {"VVVLoose", "VVLoose", "VLoose", "Loose", "Medium", "Tight", "VTight", "VVTight"};
- 
-   const bool dopoint[8] = {1, 0, 0, 1, 1, 1, 0, 1};
+   const bool dopoint[8] = {1, 0, 0, 1, 0, 1, 0, 1};
 
    for (int i = 0; i < 8; ++i) {
       if (dopoint[i]) {
@@ -141,11 +158,11 @@ void eff(const bool isSig=true)
    pt->Draw();
 
    if (isSig) {
-      c->SaveAs("./plots/eff."+tag+".sig.1prong.pdf");
-      //c->SaveAs("./plots/eff."+tag+".sig.3prong.pdf");
+      c->SaveAs("./plots/eff.sig.1prong.pdf");
+      //c->SaveAs("./plots/eff.sig.3prong.pdf");
    } else {
-      c->SaveAs("./plots/eff."+tag+".bkg.1prong.pdf");
-      //c->SaveAs("./plots/eff."+tag+".bkg.3prong.pdf");
+      c->SaveAs("./plots/eff.bkg.1prong.pdf");
+      //c->SaveAs("./plots/eff.bkg.3prong.pdf");
    }
 }
 
