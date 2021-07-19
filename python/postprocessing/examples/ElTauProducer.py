@@ -29,6 +29,7 @@ class ElTauProducer(Module):
         self.out.branch("ElTau_ElTauDR", "F")
         self.out.branch("ElTau_Trigger", "O")
         self.out.branch("ElTau_HaveTriplet", "I")
+        self.out.branch("ElTau_tightTau", "O")
         self.out.branch("ElTau_EGammaDR", "F")
         self.out.branch("ElTau_TauGammaDR", "F")
         self.out.branch("ElTau_PhotonIdx", "I")
@@ -60,6 +61,7 @@ class ElTauProducer(Module):
         MinCollMass = MaxCollMass = 0
         ETGCollMass = 0
         nProng = 0
+        tightTau = False
  
         #https://cms-nanoaod-integration.web.cern.ch/integration/master-102X/mc102X_doc.html
         electrons = Collection(event, "Electron")
@@ -133,6 +135,7 @@ class ElTauProducer(Module):
                                              if abs(el.eta-photon.eta)>=0.28284271 and abs(tau.eta-photon.eta)>=0.28284271:
                                                  if photon.pt>=maxphotonpt:
                                                      HaveTriplet = HaveTriplet+1
+                                                     if 32&tau.idDeepTau2017v2p1VSjet: tightTau = True
                                                      maxphotonpt = photon.pt
                                                      PhotonIdx = k
                                                      TauCollMass = (tau.p4()+nu0+photon.p4()).M()
@@ -167,6 +170,7 @@ class ElTauProducer(Module):
         self.out.fillBranch("ElTau_ElTauDR", ElTauDR)
         self.out.fillBranch("ElTau_Trigger", Trigger)
         self.out.fillBranch("ElTau_HaveTriplet", HaveTriplet)
+        self.out.fillBranch("ElTau_tightTau", tightTau)
         self.out.fillBranch("ElTau_PhotonIdx", PhotonIdx)
         self.out.fillBranch("ElTau_TauCollMass", TauCollMass)
         self.out.fillBranch("ElTau_ECollMass", ECollMass)

@@ -14,13 +14,21 @@ void findXS(const int year)
 {std::cout << "findXS(): " << year << std::endl;
    
    TString inlist; 
-   const double xs_inc = 6077.22;
 
+   /*const double xs_inc = 6077.22;
+   if (year==2015) inlist="DYJetsToLL_2015.list";
    if (year==2016) inlist="DYJetsToLL_2016.list";
    if (year==2017) inlist="DYJetsToLL_2017.list";
    if (year==2018) inlist="DYJetsToLL_2018.list";
-   if (year==0) inlist = "DYJetsToLL.list";
-  
+   if (year==0) inlist = "DYJetsToLL.list";*/
+
+   const double xs_inc = 61526.7;  
+   if (year==2015) inlist="WJetsToLNu_2015.list";
+   if (year==2016) inlist="WJetsToLNu_2016.list";
+   if (year==2017) inlist="WJetsToLNu_2017.list";
+   if (year==2018) inlist="WJetsToLNu_2018.list";
+   if (year==0) inlist = "WJetsToLNu.list";
+
    TH1D * h = new TH1D("h", ";LHE_Njets;events / 1", 6, -0.5, 5.5);
    h->SetLineWidth(2);
  
@@ -75,9 +83,11 @@ void findXSAndWeight(const TString process, const int year)
 {std::cout << "findXSAndWeight(): " << process << ", " <<  year << std::endl;
 
    double n_incsum = 0.;
-   const double xs_inc = 6077.22;
    double n_b[5];
+   double xs_inc = 0.;
 
+   if (process=="DYJetsToLL") {
+   xs_inc = 6077.22;
    if (year==2016) {
       n_incsum=104072004.;
       n_b[0]=0.;
@@ -101,6 +111,42 @@ void findXSAndWeight(const TString process, const int year)
       n_b[2]=28280407.;
       n_b[3]=19021176.;
       n_b[4]=7581874.;
+   }
+   }
+   if (process=="WJetsToLNu") {   
+   xs_inc = 61526.7;
+   if (year==2015) {
+      n_incsum=81327193.;
+      n_b[0]=0.;
+      n_b[1]=47788364.;
+      n_b[2]=27635126.;
+      n_b[3]=18460582.;
+      n_b[4]=9385004.;
+   }
+   if (year==2016) {
+      n_incsum=81327193.;
+      n_b[0]=0.;
+      n_b[1]=48443131.;
+      n_b[2]=28745846.;
+      n_b[3]=18859350.;
+      n_b[4]=9216091.;
+   }
+   if (year==2017) {
+      n_incsum=81254459.;
+      n_b[0]=0.;
+      n_b[1]=47954631.;
+      n_b[2]=28616461.;
+      n_b[3]=18903448.;
+      n_b[4]=17418488.;
+   }
+   if (year==2018) {
+      n_incsum=83009353.;
+      n_b[0]=0.;
+      n_b[1]=47698594.;
+      n_b[2]=27570500.;
+      n_b[3]=14932443.;
+      n_b[4]=12416620.;
+   }
    }
 
    TH1D * h = new TH1D("h", ";LHE_Njets;events / 1", 6, -0.5, 5.5);
@@ -512,3 +558,8 @@ void processDY(const int year)
    validate(year);
 }
 
+void processDY2015()
+{
+   splitTree(2015, false);
+   splitTree(2015, true);
+}

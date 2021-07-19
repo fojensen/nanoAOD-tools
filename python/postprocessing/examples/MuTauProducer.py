@@ -29,6 +29,7 @@ class MuTauProducer(Module):
         self.out.branch("MuTau_MuTauDR", "F")
         self.out.branch("MuTau_Trigger", "O")
         self.out.branch("MuTau_HaveTriplet", "I")
+        self.out.branch("MuTau_tightTau", "O")
         self.out.branch("MuTau_MuGammaDR", "F")
         self.out.branch("MuTau_TauGammaDR", "F")
         self.out.branch("MuTau_PhotonIdx", "I")
@@ -54,6 +55,7 @@ class MuTauProducer(Module):
         Pt = 0
         MuTauDR = 0
         HaveTriplet = 0
+        tightTau = False
         MuGammaDR = TauGammaDR = 0
         PhotonIdx = -1
         TauCollMass = MuCollMass = CollMass = 0
@@ -132,6 +134,7 @@ class MuTauProducer(Module):
                                              if abs(mu.eta-photon.eta)>=0.28284271 and abs(tau.eta-photon.eta)>=0.28284271:
                                                  if photon.pt>=maxphotonpt:
                                                      HaveTriplet = HaveTriplet+1
+                                                     if 32&tau.idDeepTau2017v2p1VSjet: tightTau = True
                                                      MuGammaDR = deltaR(mu, photon)
                                                      TauGammaDR = deltaR(tau, photon)
                                                      maxphotonpt = photon.pt
@@ -165,6 +168,7 @@ class MuTauProducer(Module):
         self.out.fillBranch("MuTau_MuTauDR", MuTauDR)
         self.out.fillBranch("MuTau_Trigger", Trigger)
         self.out.fillBranch("MuTau_HaveTriplet", HaveTriplet)
+        self.out.fillBranch("MuTau_tightTau", tightTau)
         self.out.fillBranch("MuTau_MuGammaDR", MuGammaDR)
         self.out.fillBranch("MuTau_TauGammaDR", TauGammaDR)
         self.out.fillBranch("MuTau_PhotonIdx", PhotonIdx)

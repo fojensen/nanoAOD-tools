@@ -165,7 +165,7 @@ data['people'].append({
     'year': year
 })
 
-"""data['people'].append({
+data['people'].append({
     'name' : 'WGToLNuG_2016',
     'inputDataset': '/WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
     'nEvents': '8394172',
@@ -223,7 +223,7 @@ data['people'].append({
    'isMC': isMC_,
    'xs': '448.896',
    'year': year
-})"""
+})
 
 #data['people'].append({
 #    'name': 'EWKZ2Jets_ZToLL_M50_2016',

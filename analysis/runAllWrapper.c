@@ -37,7 +37,7 @@ class runAnalysis {
 
       TH1D *h8_truetautau[8], *h8_realtau[8], *h8_lfaketau[8];
       TH1D *h8_mcsum[8];
-      //TH1D *h8_jetfaketau[8];
+      TH1D *h8_jetfaketau[8];
       TH1D *h8_data[8];
       TH1D *h8_Taustar_m175[8],  *h8_Taustar_m250[8], *h8_Taustar_m375[8], *h8_Taustar_m500[8], *h8_Taustar_m625[8], *h8_Taustar_m750[8];
       TH1D *h8_Taustar_m1000[8], *h8_Taustar_m1250[8], *h8_Taustar_m1500[8], *h8_Taustar_m1750[8];
@@ -50,7 +50,7 @@ class runAnalysis {
       void sum8Hists();
       TH1D *h_truetautau[4], *h_realtau[4], *h_lfaketau[4];
       TH1D *h_mcsum[4];
-      //TH1D *h_jetfaketau[4];
+      TH1D *h_jetfaketau[4];
       TH1D *h_data[4];
       TH1D *h_Taustar_m175[4],  *h_Taustar_m250[4],  *h_Taustar_m375[4],  *h_Taustar_m500[4], *h_Taustar_m625[4], *h_Taustar_m750[4];
       TH1D *h_Taustar_m1000[4], *h_Taustar_m1250[4], *h_Taustar_m1500[4], *h_Taustar_m1750[4];
@@ -61,7 +61,7 @@ class runAnalysis {
       TH1D *h_ABCD[4];
 
       TCut cut_1p, cut_3p;
-/*      TH1D * h_1p, *h_3p;
+      /*TH1D * h_1p, *h_3p;
 
       TH1D *h_kappa, *h_kappa_inc;
       TH1D *h_kappa_1p, *h_kappa_1p_inc;
@@ -83,22 +83,26 @@ class runAnalysis {
       TString sigtags[17];
       const int nmc = 12;
       TString mctags[12];
+  //    const int nmc = 1;
+//      TString mctags[1];
 };
 
 void plotRegions2(const TString channel, const int mass, const bool blindA)
 {std::cout << "plotRegions2()" << std::endl;
 
    char fname[30];
-   sprintf(fname, "%s_m%d_blind.root", channel.Data(), mass);
+   //sprintf(fname, "../condor/%s_m%d_blind.root", channel.Data(), mass);
+   sprintf(fname, "%s_m%d_unblind.root", channel.Data(), mass);
    TFile * f = TFile::Open(fname);
    
    char fpredname[30];
    //sprintf(fpredname, "%s_m%d_blind_ABCD.root", channel.Data(), mass);
-   sprintf(fpredname, "%s_m%d_blind_dm.root", channel.Data(), mass);
+   //sprintf(fpredname, "../condor/%s_m%d_blind_dm.root", channel.Data(), mass);
+   sprintf(fpredname, "%s_m%d_unblind_dm.root", channel.Data(), mass);
    TFile * fpred = TFile::Open(fpredname);
 
    TH1D *h_lfaketau[3], *h_truetautau[3], *h_realtau[3];
-   //TH1D * h_jetfaketau[4];
+   TH1D * h_jetfaketau[4];
    TH1D *h_Taustar1[3];
    TH1D *h_Taustar2[3];
    TH1D *h_data[3];
@@ -116,9 +120,9 @@ void plotRegions2(const TString channel, const int mass, const bool blindA)
    for (int i = 0; i < 3; ++i) {
       s[i] = new THStack("s_"+labels[i], "");
 
-      //h_jetfaketau[i] = (TH1D*)f->Get("h_jetfaketau_"+labels[i]);
-      //h_jetfaketau[i]->SetFillColor(222);
-      //s[i]->Add(h_jetfaketau[i]);
+      h_jetfaketau[i] = (TH1D*)f->Get("h_jetfaketau_"+labels[i]);
+      h_jetfaketau[i]->SetFillColor(222);
+      s[i]->Add(h_jetfaketau[i]);
 
       h_lfaketau[i] = (TH1D*)f->Get("h_lfaketau_"+labels[i]);
       h_lfaketau[i]->SetFillColor(222);
@@ -153,18 +157,24 @@ void plotRegions2(const TString channel, const int mass, const bool blindA)
       s[i]->SetTitle(title);
    }
 
+    TH1D * h_BCoD_1p = (TH1D*)((TH1D*)fpred->Get("h_BCoD_1p")->Clone("h_BCoD_1p"));
+    TH1D * h_BCoD_3p = (TH1D*)((TH1D*)fpred->Get("h_BCoD_3p")->Clone("h_BCoD_3p")); 
+    h_BCoD_1p->SetFillColor(207);
+    s[0]->Add(h_BCoD_1p);
+    h_BCoD_3p->SetFillColor(208);
+    s[0]->Add(h_BCoD_3p);
    //TH1D *h_AoB, *h_AoB_inc;
    //TH1D *h_CoD, *h_CoD_inc;
    //   TH1D *h_BCoD, *h_BCoD_inc;
-  // TH1D *h_bkgsum, *h_bkgsum_inc;
+   //TH1D *h_bkgsum;
    //TH1D *h_kappa, *h_kappa_inc;
    
    //h_CoD = (TH1D*)f->Get("h_CoD");
    //h_CoD_inc = (TH1D*)f->Get("h_CoD_inc");
-   TH1D * h_BCoD_1p = (TH1D*)((TH1D*)fpred->Get("h_BCoD_1p")->Clone("h_BCoD_1p"));
-   TH1D * h_BCoD_3p = (TH1D*)((TH1D*)fpred->Get("h_BCoD_3p")->Clone("h_BCoD_3p"));
+   //TH1D * h_BCoD_1p = (TH1D*)((TH1D*)fpred->Get("h_BCoD_1p")->Clone("h_BCoD_1p"));
+   //TH1D * h_BCoD_3p = (TH1D*)((TH1D*)fpred->Get("h_BCoD_3p")->Clone("h_BCoD_3p"));
    //h_BCoD_inc = (TH1D*)fpred->Get("h_BCoD_inc");
-   //TH1D * h_bkgsum = (TH1D*)((TH1D*)f->Get("h_mcsum_A")->Clone("h_bkgsum"));
+   TH1D * h_bkgsum = (TH1D*)((TH1D*)f->Get("h_mcsum_A")->Clone("h_bkgsum"));
    //if (!blindA) {
    //   h_AoB = (TH1D*)f->Get("h_AoB");
    //   h_AoB_inc = (TH1D*)f->Get("h_AoB_inc");
@@ -172,15 +182,10 @@ void plotRegions2(const TString channel, const int mass, const bool blindA)
    //  h_kappa_inc = (TH1D*)f->Get("h_kappa_inc");
    //}
    //h_bkgsum_inc = (TH1D*)h_bkgsum->Clone("h_bkgsum_inc");
-   //h_bkgsum->Add(h_BCoD);
+   h_bkgsum->Add(h_BCoD_1p);
+   h_bkgsum->Add(h_BCoD_3p);
    //h_bkgsum_inc->Add(h_BCoD_inc);
  
-   h_BCoD_1p->SetFillColor(207);
-   s[0]->Add(h_BCoD_1p);
-
-   h_BCoD_3p->SetFillColor(208);
-   s[0]->Add(h_BCoD_3p);
-
    const double ymax = pow(10, ceil(log10(max))+1);
    double ymin = 0.01;
    if (max>=10.) ymin = 0.1;
@@ -191,25 +196,32 @@ void plotRegions2(const TString channel, const int mass, const bool blindA)
    TLegend * lA = new TLegend(0.25, 0.75, 0.875, 0.875);
    lA->SetNColumns(2);
    lA->SetBorderSize(0);
-   //lA->AddEntry(h_jetfaketau[0], "jet #rightarrow #tau_{h}", "F");
+   lA->AddEntry(h_jetfaketau[0], "jet #rightarrow #tau_{h}", "F");
    lA->AddEntry(h_lfaketau[0], "e,#mu,#tau_{e},#tau_{#mu} #rightarrow #tau_{h}", "F");
    lA->AddEntry(h_realtau[0], "#tau_{h} #rightarrow #tau_{h}; !#tau#tau", "F");
    lA->AddEntry(h_truetautau[0], "true #tau#tau", "F");
    lA->AddEntry(h_Taustar1[0], "#tau* 250", "L");
    lA->AddEntry(h_Taustar2[0], "#tau* 1000", "L");
+   lA->AddEntry(h_BCoD_1p, "1-prong", "F");
+   lA->AddEntry(h_BCoD_3p, "3-prong", "F");
 
    TLegend *lBCD = (TLegend*)lA->Clone();
    lBCD->AddEntry(h_data[1], "data", "P");   
 
-   lA->AddEntry(h_BCoD_1p, "1-prong", "F");
-   lA->AddEntry(h_BCoD_3p, "3-prong", "F");
    //if (!blindA) lA->AddEntry(h_data[0], "data", "P");
 
    char canvasname[50];
    //sprintf(canvasname, "canvas_%s_%d", channel.Data(), nProng);
    sprintf(canvasname, "canvas_%s", channel.Data());
-   TCanvas * canvas = new TCanvas(canvasname, canvasname, 1200, 400);
-   canvas->Divide(3, 1);
+   TCanvas * canvas;
+   if (!blindA) {
+      canvas = new TCanvas(canvasname, canvasname, 1600, 400);
+      canvas->Divide(4, 1);
+   } else {
+      canvas = new TCanvas(canvasname, canvasname, 1200, 400);
+      canvas->Divide(3, 1);
+   }
+//   TCanvas * canvas = new TCanvas(canvasname, canvasname, 400, 400);
 
    TPad * p2 = (TPad*)canvas->cd(1);
    s[0]->Draw("HIST");
@@ -305,10 +317,10 @@ void plotRegions2(const TString channel, const int mass, const bool blindA)
    }
 */
    if (!blindA) {
-      canvas->cd(1);
+      canvas->cd(4);
 
       TH1D * r = (TH1D*)h_data[0]->Clone("r");
-      //r->Divide(h_bkgsum);
+      r->Divide(h_bkgsum);
       r->GetYaxis()->SetTitle("observed / predicted");
       r->SetMarkerStyle(20);
       r->SetMarkerColor(6);
@@ -376,7 +388,7 @@ void plotRegions4(/*const TString fname, */const TString channel, const int nPro
    TFile * fpred = TFile::Open(fpredname);
 
    TH1D *h_lfaketau[4], *h_truetautau[4], *h_realtau[4];
-   //TH1D * h_jetfaketau[4];
+   TH1D * h_jetfaketau[4];
    TH1D *h_Taustar1[4];
    TH1D *h_Taustar2[4];
    TH1D *h_data[4];
@@ -403,9 +415,9 @@ void plotRegions4(/*const TString fname, */const TString channel, const int nPro
    for (int i = 0; i < 4; ++i) {
       s[i] = new THStack("s_"+labels[i], "");
 
-      //h_jetfaketau[i] = (TH1D*)f->Get("h_jetfaketau_"+labels[i]);
-      //h_jetfaketau[i]->SetFillColor(222);
-      //s[i]->Add(h_jetfaketau[i]);
+      h_jetfaketau[i] = (TH1D*)f->Get("h_jetfaketau_"+labels[i]);
+      h_jetfaketau[i]->SetFillColor(222);
+      s[i]->Add(h_jetfaketau[i]);
 
       h_lfaketau[i] = (TH1D*)f->Get("h_lfaketau_"+labels[i]);
       h_lfaketau[i]->SetFillColor(222);
@@ -501,7 +513,7 @@ void plotRegions4(/*const TString fname, */const TString channel, const int nPro
    TLegend * lA = new TLegend(0.25, 0.75, 0.875, 0.875);
    lA->SetNColumns(2);
    lA->SetBorderSize(0);
-   //lA->AddEntry(h_jetfaketau[0], "jet #rightarrow #tau_{h}", "F");
+   lA->AddEntry(h_jetfaketau[0], "jet #rightarrow #tau_{h}", "F");
    lA->AddEntry(h_lfaketau[0], "e,#mu,#tau_{e},#tau_{#mu} #rightarrow #tau_{h}", "F");
    lA->AddEntry(h_realtau[0], "#tau_{h} #rightarrow #tau_{h}; !#tau#tau", "F");
    lA->AddEntry(h_truetautau[0], "true #tau#tau", "F");
@@ -846,13 +858,13 @@ void runAnalysis::runAll()
        if (channel=="MuonEG")   var = "1.";
        h =  new TH1D("h", ";# of prongs;events / bin", 4, -0.5, 3.5);
    } else {
-      var = makeVar(mass, channel);
-      h = new TH1D("h", ";bin;events / bin", 5, -0.5, 4.5);
-      //if (channel=="Electron") var = "ElTau_Mass";
-      //if (channel=="Muon")     var = "MuTau_Mass";
-      //if (channel=="Tau")      var = "TauTau_Mass";
-      //if (channel=="MuonEG")   var = "ElMu_Mass";
-      //h = new TH1D("h", ";visible mass [GeV];events / 10 GeV", 20, 0., 200.);
+      //var = makeVar(mass, channel);
+      //h = new TH1D("h", ";bin;events / bin", 5, -0.5, 4.5);
+      if (channel=="Electron") var = "ElTau_Mass";
+      if (channel=="Muon")     var = "MuTau_Mass";
+      if (channel=="Tau")      var = "TauTau_Mass";
+      if (channel=="MuonEG")   var = "ElMu_Mass";
+      h = new TH1D("h", ";visible mass [GeV];events / 10 GeV", 20, 0., 200.);
       //h = new TH1D("h", ";photon p_{T} [GeV];events / 10 GeV", 10, 0., 100.);
       //var = "Photon_pt[MuTau_PhotonIdx]";
    }
@@ -867,6 +879,8 @@ void runAnalysis::runAll()
    if (channel=="Tau") h->SetTitle("#tau_{h} + #tau_{h}");
    if (channel=="MuonEG") h->SetTitle("e + #mu");
 
+   //mctags[0] = "WJetsToLNu";
+   //mctags[0] = "WGToLNuG";
    mctags[0] = "WW";
    mctags[1] = "WZ";
    mctags[2] = "ZZ";
@@ -906,24 +920,22 @@ void runAnalysis::runAll()
    }
    fout = new TFile(fname, "RECREATE");
 
-   dataHistInit();
+   //dataHistInit();
    mcHistInit();
-   sigHistInit();
+   //sigHistInit();
    fillSigHists(2018); fillMCHists(2018); fillDataHists(2018);
    fillSigHists(2017); fillMCHists(2017); fillDataHists(2017);
    fillSigHists(2016); fillMCHists(2016); fillDataHists(2016);
-   //fillMCHists(2015); fillSigHists(2015);
+   fillSigHists(2015); fillMCHists(2015);
+
    dataHistOverflow();
    sigHistOverflow();
    mcHistOverflow();
+   
+   fillMCHists(2018); fillMCHists(2017); fillMCHists(2016); fillMCHists(2015);
    makeMCSum(); //h8_mcsum
    sum8Hists(); //8->4
-   makeABCDHists();
-//   if (!blindA) {
-  //    fillKappa(0);
-    //  fillKappa(1);
-     // fillKappa(3);
-   //}
+   
    saveHists();
    fout->Close();
    std::cout << "end runAll()" << std::endl;
@@ -946,13 +958,13 @@ void runAnalysis::mcHistInit()
 {std::cout << "mcHistInit()" << std::endl; 
    const TString labels[8] = {"A1", "A3", "B1", "B3", "C1", "C3", "D1", "D3"};
    for (int i = 0; i < 8; ++i) {
-      //h_jetfaketau[i] = (TH1D*)h->Clone("h8_jetfaketau_"+labels[i]);
+      h8_jetfaketau[i] = (TH1D*)h->Clone("h_jetfaketau_"+labels[i]);
       h8_lfaketau[i] = (TH1D*)h->Clone("h_lfaketau_"+labels[i]);
       h8_realtau[i] = (TH1D*)h->Clone("h_realtau_"+labels[i]);
       h8_truetautau[i] = (TH1D*)h->Clone("h_truetautau_"+labels[i]);
       char titles[100];
       sprintf(titles, "%s: %s", h->GetTitle(), labels[i].Data());
-      //h8_jetfaketau[i]->SetTitle(titles);
+      h8_jetfaketau[i]->SetTitle(titles);
       h8_lfaketau[i]->SetTitle(titles);
       h8_realtau[i]->SetTitle(titles);
       h8_truetautau[i]->SetTitle(titles);
@@ -991,7 +1003,7 @@ void runAnalysis::loadCuts(const int year, TCut cuts[8])
    TCut baseline, regionA, regionB, regionC, regionD;
    baseline = regionA = regionB = regionC = regionD = "1>0";
    if (channel=="Electron") {
-      //baseline = baseline && TCut("ElTau_HavePair>0 && (ElTau_HaveTriplet==0||(ElTau_HaveTriplet>0&&Photon_pt[ElTau_PhotonIdx]<95.))");
+      //baseline = baseline && TCut("ElTau_HavePair>0 && (ElTau_HaveTriplet==0||(ElTau_HaveTriplet>0&&Photon_pt[ElTau_PhotonIdx]<100.))");
       baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=100.");
       //baseline = baseline && TCut("ElTau_HaveTriplet>0 && Photon_pt[ElTau_PhotonIdx]>=50. && Photon_pt[ElTau_PhotonIdx]<100.");
       //baseline = baseline && TCut("ElTau_HaveTriplet>0");
@@ -1018,9 +1030,9 @@ void runAnalysis::loadCuts(const int year, TCut cuts[8])
       cut_3p = "ElTau_nProng==3";
    }
    if (channel=="Muon") {
-      //baseline = baseline && TCut("MuTau_HavePair>0 && (MuTau_HaveTriplet==0||(MuTau_HaveTriplet>0&&Photon_pt[MuTau_PhotonIdx]<10.))");
-      //baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=100.");
-      baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=50. && Photon_pt[MuTau_PhotonIdx]<100.");
+      //baseline = baseline && TCut("MuTau_HavePair>0 && (MuTau_HaveTriplet==0||(MuTau_HaveTriplet>0&&Photon_pt[MuTau_PhotonIdx]<100.))");
+      baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=100.");
+      //baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=50. && Photon_pt[MuTau_PhotonIdx]<100.");
       //baseline = baseline && TCut("MuTau_HaveTriplet>0 && Photon_pt[MuTau_PhotonIdx]>=10. && Photon_pt[MuTau_PhotonIdx]<50.");
       //baseline = baseline && TCut("MuTau_HaveTriplet>0");
       //char ptcut[100];
@@ -1035,7 +1047,7 @@ void runAnalysis::loadCuts(const int year, TCut cuts[8])
       if (year==2018) baseline = baseline && TCut("Muon_pt[MuTau_MuIdx]>=29.");
       baseline = baseline && TCut("MuTau_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==0");
-      baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=2)==1");
+      baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==1");
       regionA = "MuTau_qq==-1 && (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
       regionB = "MuTau_qq==-1 && (8&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx]) && !(32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
       regionC = "MuTau_qq==+1 && (32&Tau_idDeepTau2017v2p1VSjet[MuTau_TauIdx])";
@@ -1046,9 +1058,9 @@ void runAnalysis::loadCuts(const int year, TCut cuts[8])
       cut_3p = "MuTau_nProng==3";
    }
    if (channel=="Tau") {
-      //baseline = baseline && TCut("TauTau_HavePair>0 && (TauTau_HaveTriplet==0||(TauTau_HaveTriplet>0&&Photon_pt[TauTau_PhotonIdx]<70.))");
-      //baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=75.");
-      baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=25. && Photon_pt[TauTau_PhotonIdx]<75.");
+      //baseline = baseline && TCut("TauTau_HavePair>0 && (TauTau_HaveTriplet==0||(TauTau_HaveTriplet>0&&Photon_pt[TauTau_PhotonIdx]<75.))");
+      baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=75.");
+      //baseline = baseline && TCut("TauTau_HaveTriplet>0 && Photon_pt[TauTau_PhotonIdx]>=25. && Photon_pt[TauTau_PhotonIdx]<75.");
       //baseline = baseline && TCut("TauTau_HaveTriplet>0");
       //char ptcut[100];
       //sprintf(ptcut, "Photon_pt[TauTau_PhotonIdx]>=%f && Photon_pt[TauTau_PhotonIdx]<75.", double(mass));
@@ -1082,21 +1094,26 @@ void runAnalysis::loadCuts(const int year, TCut cuts[8])
       //baseline = baseline && TCut("ElMu_HaveTriplet>0 && Photon_pt[ElMu_PhotonIdx]>=50. && Photon_pt[ElMu_PhotonIdx]<100.");
       baseline = baseline && TCut("JetProducer_nBJetT==0");
       baseline = baseline && TCut("ElMu_Trigger");
-      const TCut c1 = "Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=13.";
-      const TCut c2 = "Electron_pt[ElMu_ElIdx]>=13. && Muon_pt[ElMu_MuIdx]>=24.";
-      baseline = baseline && (c1||c2);
+      //const TCut c1 = "Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=13.";
+      //const TCut c2 = "Electron_pt[ElMu_ElIdx]>=13. && Muon_pt[ElMu_MuIdx]>=24.";
+      //baseline = baseline && (c1||c2);
+      baseline = baseline && TCut("Electron_pt[ElMu_ElIdx]>=24. && Muon_pt[ElMu_MuIdx]>=24.";
       baseline = baseline && TCut("ElMu_Mass>=100.");
       baseline = baseline && TCut("Sum$(Electron_pt>=12. && TMath::Abs(Electron_eta)<2.5 && Electron_mvaFall17V2Iso_WP90)==1");
-      baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=2)==1");
-      baseline = baseline && TCut("Muon_pfIsoId[ElMu_MuIdx]>=2 && Electron_mvaFall17V2Iso_WP90[ElMu_ElIdx]");
-      const TCut looseMuon = "Muon_pfIsoId[ElMu_MuIdx]>=2 && Muon_pfIsoId[ElMu_MuIdx]<4";
-      const TCut tightMuon = "Muon_pfIsoId[ElMu_MuIdx]>=4";
-      const TCut looseElectron = "Electron_pfRelIso03_all[ElMu_ElIdx]>=0.08";
-      const TCut tightElectron = "Electron_pfRelIso03_all[ElMu_ElIdx]<0.08";
-      regionA = TCut("ElMu_qq==-1") && (tightMuon && tightElectron);
-      regionB = TCut("ElMu_qq==-1") && (looseMuon || looseElectron);
-      regionC = TCut("ElMu_qq==+1") && (tightMuon && tightElectron);
-      regionD = TCut("ElMu_qq==+1") && (looseMuon || looseElectron);
+      baseline = baseline && TCut("Sum$(Muon_pt>=8. && TMath::Abs(Muon_eta)<2.4 && Muon_tightId && Muon_pfIsoId>=4)==1");
+      //baseline = baseline && TCut("Muon_pfIsoId[ElMu_MuIdx]>=2 && Electron_mvaFall17V2Iso_WP90[ElMu_ElIdx]");
+      //const TCut looseMuon = "Muon_pfIsoId[ElMu_MuIdx]>=2 && Muon_pfIsoId[ElMu_MuIdx]<4";
+      //const TCut tightMuon = "Muon_pfIsoId[ElMu_MuIdx]>=4";
+      //const TCut looseElectron = "Electron_pfRelIso03_all[ElMu_ElIdx]>=0.08";
+      //const TCut tightElectron = "Electron_pfRelIso03_all[ElMu_ElIdx]<0.08";
+      //regionA = TCut("ElMu_qq==-1") && (tightMuon && tightElectron);
+      //regionB = TCut("ElMu_qq==-1") && (looseMuon || looseElectron);
+      //regionC = TCut("ElMu_qq==+1") && (tightMuon && tightElectron);
+      //regionD = TCut("ElMu_qq==+1") && (looseMuon || looseElectron);
+      regionA = TCut("ElMu_qq==-1");
+      regionB = TCut("ElMu_qq==-1");
+      regionC = TCut("ElMu_qq==+1");
+      regionD = TCut("ElMu_qq==+1");
    }
    //if (blindA) regionA = regionA && TCut("1<0");
    cuts[0] = baseline && regionA && cut_1p;
@@ -1115,28 +1132,28 @@ void runAnalysis::fillMCHists(const int year)
 {std::cout << "fillMCHists() " << year << std::endl;
    
    double lumi;
-   //if (year==2015) lumi = 19500.;
-   //if (year==2016) lumi = 16800.;
-   if (year==2016) lumi = 36330.;
+   if (year==2015) lumi = 19500.;
+   if (year==2016) lumi = 16800.;
+   //if (year==2016) lumi = 36330.;
    if (year==2017) lumi = 41480.;
    if (year==2018) lumi = 59830.;
 
    TCut cut_lfaketau, cut_realtau, cut_truetautau;
    TCut cut_jetfaketau;
    if (channel=="Electron") {
-      //cut_jetfaketau = "Tau_genPartFlav[ElTau_TauIdx]==0";
+      cut_jetfaketau = "Tau_genPartFlav[ElTau_TauIdx]==0";
       cut_lfaketau = "Tau_genPartFlav[ElTau_TauIdx]==1||Tau_genPartFlav[ElTau_TauIdx]==2||Tau_genPartFlav[ElTau_TauIdx]==3||Tau_genPartFlav[ElTau_TauIdx]==4";
       cut_realtau = "Tau_genPartFlav[ElTau_TauIdx]==5 && Electron_genPartFlav[ElTau_ElIdx]!=15";
       cut_truetautau = "Tau_genPartFlav[ElTau_TauIdx]==5 && Electron_genPartFlav[ElTau_ElIdx]==15";
    }
    if (channel=="Muon") {
-      //cut_jetfaketau = "Tau_genPartFlav[MuTau_TauIdx]==0";
+      cut_jetfaketau = "Tau_genPartFlav[MuTau_TauIdx]==0";
       cut_lfaketau = "Tau_genPartFlav[MuTau_TauIdx]==1||Tau_genPartFlav[MuTau_TauIdx]==2||Tau_genPartFlav[MuTau_TauIdx]==3||Tau_genPartFlav[MuTau_TauIdx]==4";
       cut_realtau = "Tau_genPartFlav[MuTau_TauIdx]==5 && Muon_genPartFlav[MuTau_MuIdx]!=15";
       cut_truetautau = "Tau_genPartFlav[MuTau_TauIdx]==5 && Muon_genPartFlav[MuTau_MuIdx]==15";
    }
    if (channel=="Tau") {
-      //cut_jetfaketau = "Tau_genPartFlav[TauTau_Tau0Idx]==0 || Tau_genPartFlav[TauTau_Tau1Idx]==0";
+      cut_jetfaketau = "Tau_genPartFlav[TauTau_Tau0Idx]==0 || Tau_genPartFlav[TauTau_Tau1Idx]==0";
       const TCut cut_realtau_a = "Tau_genPartFlav[TauTau_Tau0Idx]==5 && (Tau_genPartFlav[TauTau_Tau1Idx]==1||Tau_genPartFlav[TauTau_Tau1Idx]==2||Tau_genPartFlav[TauTau_Tau1Idx]==3||Tau_genPartFlav[TauTau_Tau1Idx]==4)";
       const TCut cut_realtau_b = "Tau_genPartFlav[TauTau_Tau1Idx]==5 && (Tau_genPartFlav[TauTau_Tau0Idx]==1||Tau_genPartFlav[TauTau_Tau0Idx]==2||Tau_genPartFlav[TauTau_Tau0Idx]==3||Tau_genPartFlav[TauTau_Tau0Idx]==4)";
       cut_realtau = cut_realtau_a||cut_realtau_b;
@@ -1170,7 +1187,8 @@ void runAnalysis::fillMCHists(const int year)
       char infile[1000];
       sprintf(infile, "%s/%s_%d.root", eostag.Data(), mctags[i].Data(), year);
       std::cout <<infile << std::endl;
-      c.Add(infile);
+      std::cout << c.Add(infile) << std::endl;
+      std::cout << c.GetEntries() << std::endl;
    }
 
    const TString labels[8] = {"A1", "A3", "B1", "B3", "C1", "C3", "D1", "D3"};
@@ -1180,12 +1198,13 @@ void runAnalysis::fillMCHists(const int year)
       std::cout << "filling region : " << labels[i] << std::endl;
       const int n = c.GetEntries(cuts[i]);
       int ntot = 0;
+      std::cout << n << std::endl;
       // jet fake tau
-      //char buffer1[3000];
-      //sprintf(buffer1, "%f * xsWeight * (%s)", lumi, TString(cuts[i] && cut_jetfaketau).Data());
-      //char hname1[100];
-      //sprintf(hname1, "+h_jetfaketau_%s", labels[i].Data());
-      //ntot += c.Project(hname1, var, buffer1);
+      char buffer1[3000];
+      sprintf(buffer1, "%f * xsWeight * (%s)", lumi, TString(cuts[i] && cut_jetfaketau).Data());
+      char hname1[100];
+      sprintf(hname1, "+h_jetfaketau_%s", labels[i].Data());
+      ntot += c.Project(hname1, var, buffer1);
       // e mu fake tau
       char buffer2[3000];
       sprintf(buffer2, "%f * xsWeight * (%s)", lumi, TString(cuts[i] && cut_lfaketau).Data());
@@ -1215,7 +1234,7 @@ void runAnalysis::fillMCHists(const int year)
 
 /*void runAnalysis::Hists(const int year)
 {std::cout << "fillMCHists() " << year << std::endl;
-   
+ 
    const bool vetoFake = true;
    TCut cut_vetoFake;
    if (vetoFake) {
@@ -1266,9 +1285,9 @@ void runAnalysis::fillSigHists(const int year)
 {std::cout << "fillSigHists(): " << year << std::endl;
 
    double lumi;
-   //if (year==2015) lumi = 19500.;
-   //if (year==2016) lumi = 16800.;
-   if (year==2016) lumi = 36330.;
+   if (year==2015) lumi = 19500.;
+   if (year==2016) lumi = 16800.;
+   //if (year==2016) lumi = 36330.;
    if (year==2017) lumi = 41480.;
    if (year==2018) lumi = 59830.;
 
@@ -1361,7 +1380,7 @@ void runAnalysis::dataHistOverflow()
 void runAnalysis::mcHistOverflow()
 {std::cout << "mcHistOverflow()" << std::endl;
    for (int i = 0; i < 8; ++i) {
-      //addOverflow(h8_jetfaketau[i]);
+      addOverflow(h8_jetfaketau[i]);
       addOverflow(h8_lfaketau[i]);
       addOverflow(h8_realtau[i]);
       addOverflow(h8_truetautau[i]);
@@ -1429,14 +1448,14 @@ void runAnalysis::sum8Hists()
       h_mcsum[i] = (TH1D*)h8_mcsum[2*i]->Clone("h_mcsum_"+labels[i]);
       h_mcsum[i]->Add(h8_mcsum[(2*i)+1]);
       h_mcsum[i]->SetTitle(titles);
-      //h_jetfaketau[i] = (TH1D*)h8_jetfaketau[2*i]->Clone("h_jetfaketau_"+labels[i]);
-      //h_jetfaketau[i]->Add(h8_jetfaketau[(2*i)+1]);
-      //h_jetfaketau[i]->SetTitle(titles);
-      h_data[i] = (TH1D*)h8_data[2*i]->Clone("h_data_"+labels[i]);
-      h_data[i]->Add(h8_data[(2*i)+1]);
-      h_data[i]->SetTitle(titles);
+      h_jetfaketau[i] = (TH1D*)h8_jetfaketau[2*i]->Clone("h_jetfaketau_"+labels[i]);
+      h_jetfaketau[i]->Add(h8_jetfaketau[(2*i)+1]);
+      h_jetfaketau[i]->SetTitle(titles);
+      //h_data[i] = (TH1D*)h8_data[2*i]->Clone("h_data_"+labels[i]);
+      //h_data[i]->Add(h8_data[(2*i)+1]);
+      //h_data[i]->SetTitle(titles);
    }
-   for (int i = 0; i < 4; ++i) {
+/*   for (int i = 0; i < 4; ++i) {
       std::cout << "summing region " << labels[i] << std::endl;
       char titles[100];
       sprintf(titles, "%s: %s", title.Data(), labels[i].Data());
@@ -1491,7 +1510,7 @@ void runAnalysis::sum8Hists()
 
       h_Taustar_m5000[i] = (TH1D*)h8_Taustar_m5000[2*i]->Clone("h_Taustar_m5000_"+labels[i]);
       h_Taustar_m5000[i]->Add(h8_Taustar_m5000[(2*i)+1]);     
-   }
+   }*/
    std::cout << "end sum8Hists()" << std::endl;
 }
 
@@ -1503,25 +1522,28 @@ void makePrediction_dm(const TString channel, const int mass)
    TFile * fin2 = TFile::Open(fin2name, "READ");
 
    TH1D * h_CoD = (TH1D*)((TH1D*)fin2->Get("h_CoD")->Clone("h_CoD"));
-   const double fr_1p = h_CoD->GetBinContent(2);
-   const double frerr_1p = h_CoD->GetBinError(2);
-   const double fr_3p = h_CoD->GetBinContent(4);
-   const double frerr_3p = h_CoD->GetBinError(4);
+   const double fr1p = h_CoD->GetBinContent(2);
+   const double fr1p_err = h_CoD->GetBinError(2);
+   const double fr3p = h_CoD->GetBinContent(4);
+   const double fr3p_err = h_CoD->GetBinError(4);
 
    char fin1name[20];
    sprintf(fin1name, "%s_m0_unblind_ABCD.root", channel.Data());
    TFile * fin1 = TFile::Open(fin1name, "READ");
 
    TH1D * h_kappa = (TH1D*)((TH1D*)fin1->Get("h_kappa")->Clone("h_kappa"));
-   const double kappa_1p = h_kappa->GetBinContent(2);
-   const double kappaerr_1p = h_kappa->GetBinError(2);
-   const double kappa_3p = h_kappa->GetBinContent(4);
-   const double kappaerr_3p = h_kappa->GetBinError(4);
+   const double k1p = h_kappa->GetBinContent(2);
+   const double k1p_err = h_kappa->GetBinError(2);
+   const double k3p = h_kappa->GetBinContent(4);
+   const double k3p_err = h_kappa->GetBinError(4);
+   std::cout << "1-prong fake rate: " << fr1p << " +- " << fr1p_err << std::endl;
+   std::cout << "3-prong fake rate: " << fr3p << " +- " << fr3p_err << std::endl;
 
    //fin->Close();
 
    char fin3name[20];
-   sprintf(fin3name, "%s_m%d_blind.root", channel.Data(), mass);
+   //sprintf(fin3name, "%s_m%d_blind.root", channel.Data(), mass);
+   sprintf(fin3name, "%s_m%d_unblind.root", channel.Data(), mass);
    TFile * fin3 = TFile::Open(fin3name, "READ");
 
    fin2->cd();
@@ -1531,17 +1553,131 @@ void makePrediction_dm(const TString channel, const int mass)
    TFile * fout = new TFile(foutname, "RECREATE");
 
    TH1D * h_BCoD_1p = (TH1D*)((TH1D*)fin3->Get("h_ABCD_B1")->Clone("h_BCoD_1p"));
-   h_BCoD_1p->Scale(kappa_1p * fr_1p);
+   h_BCoD_1p->Scale(k1p * fr1p);
 
+   TH1D * h_BCoD_1p_kd = (TH1D*)((TH1D*)fin3->Get("h_ABCD_B1")->Clone("h_BCoD_1p_kd"));
+   h_BCoD_1p_kd->Scale((k1p-k1p_err) * fr1p);
+
+   TH1D * h_BCoD_1p_ku = (TH1D*)((TH1D*)fin3->Get("h_ABCD_B1")->Clone("h_BCoD_1p_ku"));
+   h_BCoD_1p_ku->Scale((k1p+k1p_err) * fr1p);
+
+   TH1D * h_BCoD_1p_fd = (TH1D*)((TH1D*)fin3->Get("h_ABCD_B1")->Clone("h_BCoD_1p_fd"));
+   h_BCoD_1p_fd->Scale(k1p * (fr1p-fr1p_err));
+
+   TH1D * h_BCoD_1p_fu = (TH1D*)((TH1D*)fin3->Get("h_ABCD_B1")->Clone("h_BCoD_1p_fu"));
+   h_BCoD_1p_fu->Scale(k1p * (fr1p+fr1p_err));
+   
    TH1D * h_BCoD_3p = (TH1D*)((TH1D*)fin3->Get("h_ABCD_B3")->Clone("h_BCoD_3p"));
-   h_BCoD_3p->Scale(kappa_3p * fr_3p);
+   h_BCoD_3p->Scale(k3p * fr3p);
+
+   TH1D * h_BCoD_3p_kd = (TH1D*)((TH1D*)fin3->Get("h_ABCD_B3")->Clone("h_BCoD_3p_kd"));
+   h_BCoD_3p_kd->Scale((k3p-k3p_err) * fr3p);
+
+   TH1D * h_BCoD_3p_ku = (TH1D*)((TH1D*)fin3->Get("h_ABCD_B3")->Clone("h_BCoD_3p_ku"));
+   h_BCoD_3p_ku->Scale((k3p+k3p_err) * fr3p);
+ 
+   TH1D * h_BCoD_3p_fd = (TH1D*)((TH1D*)fin3->Get("h_ABCD_B3")->Clone("h_BCoD_3p_fd"));
+   h_BCoD_3p_fd->Scale(k3p * (fr3p-fr3p_err));
+
+   TH1D * h_BCoD_3p_fu = (TH1D*)((TH1D*)fin3->Get("h_ABCD_B3")->Clone("h_BCoD_3p_fu"));
+   h_BCoD_3p_fu->Scale(k3p * (fr3p+fr3p_err));
+
+   TH1D * h_BCoD = (TH1D*)h_BCoD_1p->Clone("h_BCoD");
+   h_BCoD->Add(h_BCoD_3p);
+
+   TH1D * h_BCoD_k1u = (TH1D*)h_BCoD_1p_ku->Clone("h_BCoD_k1u");
+   h_BCoD_k1u->Add(h_BCoD_3p);
+
+   TH1D * h_BCoD_k1d = (TH1D*)h_BCoD_1p_kd->Clone("h_BCoD_k1d");
+   h_BCoD_k1d->Add(h_BCoD_3p);
+
+   TH1D * h_BCoD_f1u = (TH1D*)h_BCoD_1p_fu->Clone("h_BCoD_f1u");
+   h_BCoD_f1u->Add(h_BCoD_3p);
+
+   TH1D * h_BCoD_f1d = (TH1D*)h_BCoD_1p_fd->Clone("h_BCoD_f1d");
+   h_BCoD_f1d->Add(h_BCoD_3p);
+
+   TH1D * h_BCoD_k3u = (TH1D*)h_BCoD_1p->Clone("h_BCoD_k3u");
+   h_BCoD_k3u->Add(h_BCoD_3p_ku);
+
+   TH1D * h_BCoD_k3d = (TH1D*)h_BCoD_1p->Clone("h_BCoD_k3d");
+   h_BCoD_k3d->Add(h_BCoD_3p_kd);
+
+   TH1D * h_BCoD_f3u = (TH1D*)h_BCoD_1p->Clone("h_BCoD_f3u");
+   h_BCoD_f3u->Add(h_BCoD_3p_fu);
+
+   TH1D * h_BCoD_f3d = (TH1D*)h_BCoD_1p->Clone("h_BCoD_f3d");
+   h_BCoD_f3d->Add(h_BCoD_3p_fd);
+
+   char signame[20];
+   sprintf(signame, "h_Taustar_m%d_A", mass);
+   TH1D * h_sig = (TH1D*)fin3->Get(signame);
+   char signame_1p[20];
+   sprintf(signame_1p, "h_Taustar_m%d_A1", mass);
+   TH1D * h_sig_1p = (TH1D*)fin3->Get(signame_1p);
+   char signame_3p[20];
+   sprintf(signame_3p, "h_Taustar_m%d_A3", mass);
+   TH1D * h_sig_3p = (TH1D*)fin3->Get(signame_3p);
+
+   TH1D * h_bps_0p1 = (TH1D*)((TH1D*)fin3->Get("h_mcsum_A")->Clone("h_bps_0p1"));
+   h_bps_0p1->Add(h_BCoD);
+   h_bps_0p1->Add(h_sig, 0.1);
+
+   TH1D * h_bps_0p1_1p = (TH1D*)((TH1D*)fin3->Get("h_mcsum_A1")->Clone("h_bps_0p1_1p"));
+   h_bps_0p1_1p->Add(h_BCoD_1p);
+   h_bps_0p1_1p->Add(h_sig_1p, 0.1);
+
+   TH1D * h_bps_0p1_3p = (TH1D*)((TH1D*)fin3->Get("h_mcsum_A3")->Clone("h_bps_0p1_3p"));
+   h_bps_0p1_3p->Add(h_BCoD_3p);
+   h_bps_0p1_3p->Add(h_sig_3p, 0.1);
+
+   TH1D * h_bps = (TH1D*)((TH1D*)fin3->Get("h_mcsum_A")->Clone("h_bps"));
+   h_bps->Add(h_BCoD);
+   h_bps->Add(h_sig);
+
+   fout->Write();
+   fout->Close();
+   std::cout << "end makePrediction_dm()" << std::endl;
+}
+
+void makePrediction_dmSimple(const TString channel)
+{std::cout << "makePrediction_dmSimple()" << std::endl;
+
+   char fin2name[20];
+   sprintf(fin2name, "%s_m0_unblind_ABCD.root", channel.Data());
+   TFile * fin2 = TFile::Open(fin2name, "READ");
+
+   TH1D * h_CoD = (TH1D*)((TH1D*)fin2->Get("h_CoD")->Clone("h_CoD"));
+   const double fr1p = h_CoD->GetBinContent(2);
+   const double fr1p_err = h_CoD->GetBinError(2);
+   const double fr3p = h_CoD->GetBinContent(4);
+   const double fr3p_err = h_CoD->GetBinError(4);
+
+   std::cout << "1-prong fake rate: " << fr1p << " +- " << fr1p_err << std::endl;
+   std::cout << "3-prong fake rate: " << fr3p << " +- " << fr3p_err << std::endl;
+
+   char fin1name[20];
+   sprintf(fin1name, "%s_m1_unblind.root", channel.Data());
+   TFile * fin1 = TFile::Open(fin1name, "READ");
+
+   fin2->cd();
+
+   char foutname[20];
+   sprintf(foutname, "%s_m1_unblind_dm.root", channel.Data());
+   TFile * fout = new TFile(foutname, "RECREATE");
+
+   TH1D * h_BCoD_1p = (TH1D*)((TH1D*)fin1->Get("h_ABCD_B1")->Clone("h_BCoD_1p"));
+   h_BCoD_1p->Scale(fr1p);
+
+   TH1D * h_BCoD_3p = (TH1D*)((TH1D*)fin1->Get("h_ABCD_B3")->Clone("h_BCoD_3p"));
+   h_BCoD_3p->Scale(fr3p);
 
    TH1D * h_BCoD = (TH1D*)h_BCoD_1p->Clone("h_BCoD");
    h_BCoD->Add(h_BCoD_3p);
 
    fout->Write();
    fout->Close();
-   std::cout << "end makePrediction_dm()" << std::endl;
+   std::cout << "end makePrediction_dmSimple()" << std::endl;
 }
 
 /*void makePrediction_dm()
@@ -1676,7 +1812,7 @@ void runAnalysis::makeABCDHists()
    const TString labels8[8] = {"A1", "A3", "B1", "B3", "C1", "C3", "D1", "D3"};
    for (int i = 0; i < 8; ++i) {
       h8_ABCD[i] = (TH1D*)h8_data[i]->Clone("h_ABCD_"+labels8[i]);
-      //h8_ABCD[i]->Add(h8_jetfaketau[i], -1.);
+      h8_ABCD[i]->Add(h8_jetfaketau[i], -1.);
       h8_ABCD[i]->Add(h8_lfaketau[i], -1.);
       h8_ABCD[i]->Add(h8_realtau[i], -1.);
       h8_ABCD[i]->Add(h8_truetautau[i], -1.);
@@ -1686,7 +1822,7 @@ void runAnalysis::makeABCDHists()
             std::cout << "negative event yield!" << std::endl;
             std::cout << "   " << labels8[i] << std::endl;
             std::cout << "   " << h8_ABCD[i]->GetBinContent(j) << std::endl;
-            //h8_ABCD[i]->SetBinContent(j, 0);
+            h8_ABCD[i]->SetBinContent(j, 0);
          }
       }
    }
@@ -1703,7 +1839,7 @@ void runAnalysis::makeABCDHists()
             std::cout << "negative event yield!" << std::endl;
             std::cout << "   " << labels[i] << std::endl;
             std::cout << "   " << h_ABCD[i]->GetBinContent(j) << std::endl;
-            //h8_ABCD[i]->SetBinContent(j, 0);
+            h8_ABCD[i]->SetBinContent(j, 0);
          }
       }
    }
@@ -1833,8 +1969,6 @@ void makePrediction_ABCD(const TString channel, const int mass, const bool blind
    //h_BCoD_dm = (TH1D*)h_BCoD_1p->Clone("h_BCoD_dm");
    //h_BCoD_dm->Add(h_BCoD_3p);
 
-   
-
    if (!blindA) {
       TH1D * h_AoB = (TH1D*)hA->Clone("h_AoB");
       h_AoB->Divide(hB);
@@ -1888,7 +2022,7 @@ void runAnalysis::makeMCSum()
       h8_mcsum[i] = (TH1D*)h8_realtau[i]->Clone("h_mcsum_"+labels8[i]);
       h8_mcsum[i]->Add(h8_lfaketau[i]);
       h8_mcsum[i]->Add(h8_truetautau[i]);
-      //h_mcsum[i]->Add(h_jetfaketau[i]);
+      h8_mcsum[i]->Add(h8_jetfaketau[i]);
     }
 /*
    const TString labels[4] = {"A", "B", "C", "D"};
@@ -1959,33 +2093,57 @@ void runAnalysis::makeMCSum()
    std::cout << "end sumBkgHists()" << std::endl;
 }*/
 
-/*void runAnalysis::bkgFraction()
+void bkgFraction(const TString channel, const bool blindA, const int mass)
 {std::cout << "bkgFraction()" << std::endl;
-   
+
+   char fname[20];
+   if (blindA) {
+      sprintf(fname, "%s_m%d_blind.root", channel.Data(), mass);
+   } else {
+      sprintf(fname, "%s_m%d_unblind.root", channel.Data(), mass);
+   }
+   TFile * f = TFile::Open(fname, "READ");
+
+   char fname2[20];
+//   if (blindA) {
+      sprintf(fname2, "%s_m%d_blind_dm.root", channel.Data(), mass);
+  // } else {
+    //  sprintf(fname2, "%s_m%d_unblind_dm.root", channel.Data());
+   //}
+   TFile * f_pred = TFile::Open(fname2, "READ");
+
    const TString labels[4] = {"A", "B", "C", "D"};
    std::cout << "expected background fractions: ; # of entries" << std::endl;
    for (int i = 0; i < 4; ++i) {
+      TH1D * h_data = (TH1D*)f->Get("h_data_"+labels[i]);
+      TH1D * h_jetfaketau = (TH1D*)f->Get("h_jetfaketau_"+labels[i]);
+      TH1D * h_lfaketau = (TH1D*)f->Get("h_lfaketau_"+labels[i]);
+      TH1D * h_realtau = (TH1D*)f->Get("h_realtau_"+labels[i]);
+      TH1D * h_truetautau = (TH1D*)f->Get("h_truetautau_"+labels[i]);
+      TH1D * h_BCoD;
+      if (i==0) h_BCoD = (TH1D*)f_pred->Get("h_BCoD");
+      TH1D * h_ABCD = (TH1D*)f->Get("h_ABCD_"+labels[i]);
       std::cout << " region " << labels[i] << std::endl;
       double sum = 0.;
-      if (i==0 && !blindA) std::cout << "yield in data: " << h_data[i]->GetEntries() << std::endl;
-      //if (i==0) sum = h_bkgsum_inc->Integral(); //mc+prediction
+      if (i==0 && !blindA) std::cout << "yield in data: " << h_data->GetEntries() << std::endl;
+      if (i==0) sum = (h_lfaketau->Integral()+h_realtau->Integral()+h_truetautau->Integral()+h_BCoD->Integral()); //mc+prediction
       if (i==1||i==2||i==3) {
-         sum = h_data[i]->Integral();
-         std::cout << "yield in data: " << h_data[i]->GetEntries() << std::endl;
+         sum = h_data->Integral();
+         std::cout << "yield in data: " << h_data->GetEntries() << std::endl;
       }
       if (sum==0.) {
          std::cout << "  *** NO EVENTS in Integral() ***" << std::endl;
          sum=1.;
       }
-      //std::cout << "  jetfaketau: " << h_jetfaketau[i]->Integral()/sum << "; " << h_jetfaketau[i]->GetEntries() << std::endl;
-      std::cout << "  lfaketau: " << h_lfaketau[i]->Integral()/sum << "; " << h_lfaketau[i]->GetEntries() << std::endl;
-      std::cout << "  realtau: " << h_realtau[i]->Integral()/sum << "; " << h_realtau[i]->GetEntries() << std::endl;
-      std::cout << "  truetautau: " << h_truetautau[i]->Integral()/sum << "; " << h_truetautau[i]->GetEntries() << std::endl;
-      if (i==0) std::cout << "  jet prediction: " << h_BCoD_inc->Integral()/sum << "; " << h_BCoD_inc->GetEntries() << std::endl;
-      if (i==1||i==2||i==3) std::cout << "  jet residual: " << h_ABCD[i]->Integral()/sum << "; " << h_ABCD[i]->GetEntries() << std::endl;
+      std::cout << "  jetfaketau: " << h_jetfaketau->Integral()/sum << "; " << h_jetfaketau->GetEntries() << std::endl;
+      std::cout << "  lfaketau: " << h_lfaketau->Integral()/sum << "; " << h_lfaketau->GetEntries() << std::endl;
+      std::cout << "  realtau: " << h_realtau->Integral()/sum << "; " << h_realtau->GetEntries() << std::endl;
+      std::cout << "  truetautau: " << h_truetautau->Integral()/sum << "; " << h_truetautau->GetEntries() << std::endl;
+      if (i==0) std::cout << "  jet prediction: " << h_BCoD->Integral()/sum << "; " << h_BCoD->GetEntries() << std::endl;
+      if (i==1||i==2||i==3) std::cout << "  jet residual: " << h_ABCD->Integral()/sum << "; " << h_ABCD->GetEntries() << std::endl;
    }
    std::cout << "end bkgFraction()" << std::endl;
-}*/
+}
 
 /*void fillKappa(const int nProng)
 {std::cout << "fillKappa()" << std::endl;
@@ -2057,28 +2215,28 @@ void runAnalysis::saveHists()
    fout->cd();
    
    for (int i = 0; i < 4; ++i) {
-      //h_jetfaketau[i]->Write();
       h_lfaketau[i]->Write();
       h_realtau[i]->Write();
       h_truetautau[i]->Write();
+      h_jetfaketau[i]->Write();
    }
    for (int i = 0; i < 8; ++i) {
-      //h8_jetfaketau[i]->Write();
       h8_lfaketau[i]->Write();
       h8_realtau[i]->Write();
       h8_truetautau[i]->Write();
+      h8_jetfaketau[i]->Write();
    }
    for (int i = 0; i < 4; ++i) {
       h_mcsum[i]->Write();   
-      h_ABCD[i]->Write();
-      h_data[i]->Write();
+      //h_ABCD[i]->Write();
+ //     h_data[i]->Write();
    }
    for (int i = 0; i < 8; ++i) {
       h8_mcsum[i]->Write();
-      h8_ABCD[i]->Write();
-      h8_data[i]->Write();
+      //h8_ABCD[i]->Write();
+      //h8_data[i]->Write();
    }
- 
+
    //h_CoD->Write();
    //h_CoD_inc->Write();
    //h_CoD_1p->Write();
@@ -2086,7 +2244,7 @@ void runAnalysis::saveHists()
    //h_CoD_3p->Write();
    //h_CoD_3p_inc->Write();
 
-   for (int i = 0; i < 4; ++i) {
+  /* for (int i = 0; i < 4; ++i) {
       h_Taustar_m175[i]->Write();
       h_Taustar_m250[i]->Write();
       h_Taustar_m375[i]->Write();
@@ -2124,7 +2282,7 @@ void runAnalysis::saveHists()
       h8_Taustar_m4500[i]->Write();
       h8_Taustar_m5000[i]->Write();
    }
-   
+   */
    /*if (!blindA && mass==0) {
       h_kappa->Write();
       h_kappa_inc->Write();
@@ -2155,6 +2313,8 @@ void runAllWrapper(const TString channel, const int mass, const bool blindA)
    r.mass = mass;
    r.blindA = blindA;
    r.runAll();
+   //makePrediction_dm(channel, mass);
+   //makePrediction_ABCD(channel, mass);
    std::cout << "end runAllWrapper()" << std::endl;
 }
 
