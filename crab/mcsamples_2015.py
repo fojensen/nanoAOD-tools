@@ -27,9 +27,9 @@ data['people'].append({
 
 """data['people'].append({
     'name': 'DY1JetsToLL_M50_2015',
-    'inputDataset': '/DY1JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
-    'nEvents': '65712864',
-    'nFiles': '50',
+    'inputDataset': '',
+    'nEvents': '',
+    'nFiles': 0',
     'isMC': isMC_,
     'xs': '1112.14',
     'year': year
@@ -37,9 +37,9 @@ data['people'].append({
 
 data['people'].append({
     'name': 'DY2JetsToLL_M50_2015',
-    'inputDataset': '/DY2JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
-    'nEvents': '28446811',
-    'nFiles': '30',
+    'inputDataset': '',
+    'nEvents': '',
+    'nFiles': '',
     'isMC': isMC_,
     'xs': '344.987',
     'year': year
@@ -47,23 +47,23 @@ data['people'].append({
 
 data['people'].append({
     'name': 'DY3JetsToLL_M50_2015',
-    'inputDataset': '/DY3JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
-    'nEvents': '18845701',
-    'nFiles': '21',
+    'inputDataset': '',
+    'nEvents': '',
+    'nFiles': '',
     'isMC': isMC_,
     'xs': '102.468',
     'year': year
-})"""
+})
 
 data['people'].append({
     'name': 'DY4JetsToLL_M50_2015',
-    'inputDataset': '/DY4JetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer19UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
-    'nEvents': '7538537',
-    'nFiles': '13',
+    'inputDataset': '',
+    'nEvents': '',
+    'nFiles': '',
     'isMC': isMC_,
     'xs': '48.8496',
     'year': year
-})
+})"""
 
 data['people'].append({
     'name': 'TTToSemiLeptonic_2015',
@@ -97,9 +97,9 @@ data['people'].append({
 
 data['people'].append({
     'name': 'ST_tW_top_2015',
-    'inputDataset': '/ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODv2-106X_mcRun2_asymptotic_v15-v1/NANOAODSIM',
-    'nEvents': '3361253',
-    'nFiles': '4',
+    'inputDataset': '/ST_tW_top_5f_NoFullyHadronicDecays_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODAPVv2-106X_mcRun2_asymptotic_preVFP_v9-v2/NANOAODSIM',
+    'nEvents': '3294673',
+    'nFiles': '25',
     'isMC': isMC_,
     'xs': '19.02828375', #https://arxiv.org/pdf/1805.07399.pdf 35.85 * (1-(1-3*0.105)**2)
     'year': year
@@ -164,7 +164,7 @@ data['people'].append({
     'xs': '0.5644',
     'year': year
 })
-"""
+
 data['people'].append({
     'name' : 'WGToLNuG_2015',
     'inputDataset': '/WGToLNuG_TuneCP5_13TeV-madgraphMLM-pythia8/RunIISummer20UL16NanoAODAPVv2-106X_mcRun2_asymptotic_preVFP_v9-v1/NANOAODSIM',
